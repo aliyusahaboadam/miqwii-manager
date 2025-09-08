@@ -47,7 +47,7 @@ const loginSlice = createSlice({
         login: [],
         loginStatus: 'idle',
         error: null,
-        isAuthenticated: !! localStorage.getItem(token),
+        isAuthenticated: !! localStorage.getItem("token"),
     },
     reducers: {},
     extraReducers: (builder) => {
