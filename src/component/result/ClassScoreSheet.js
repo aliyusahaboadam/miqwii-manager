@@ -1,0 +1,332 @@
+
+import {PDFDownloadLink, Document, Page, pdf, View, StyleSheet, Font} from '@react-pdf/renderer';
+import { ScoreTable } from './ScoreTable';
+import { KeyTable } from './KeyTable';
+import { Text } from '@react-pdf/renderer';
+import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
+import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
+import { getResultByClassId } from '../../redux/reducer/scoreSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { result } from 'lodash';
+import { useLocation } from 'react-router-dom';
+import { ClassScoreSheetTable } from './ClassScoreSheetTable';
+
+
+// Create PDF document
+const ClassScoreSheet =  ({ row }) => {
+
+    const dispatch = useDispatch();
+    const scoreState = useSelector((state) => state.scores);
+    const { results, fetchingStatus } = scoreState;
+    const location = useLocation();
+
+
+
+    useEffect(() => {
+        
+        fetchData();
+        
+      
+      }, [location.pathname]);
+
+
+      const fetchData = () => {
+        if (fetchingStatus === 'idle') {
+        //   dispatch(getResultByClassId(classId))
+        }
+      }
+
+
+      console.log(" result " + JSON.stringify(results));
+
+
+    Font.register({
+  family: 'Roboto',
+  src: roboto,
+});
+
+Font.register({
+  family: 'Oswald',
+  src: Oswald,
+});
+
+// Sample data for testing
+const ScoreSheetColumns = [
+
+  { 
+    accessorKey: 'regNo', 
+    header: () => 'Reg No', 
+    size: 40
+  },
+  { 
+    accessorKey: 'fullname', 
+    header: () => 'Names', 
+    size: 60,
+   //meta: { type: 'float' } 
+  },
+  
+
+    { 
+    accessorKey: '', 
+    header: () => 'CA1', 
+    size: 20,
+    // meta: { type: 'float' } 
+  }
+
+
+  ,
+
+    { 
+    accessorKey: '', 
+    header: () => 'CA2', 
+    size: 20,
+    // meta: { type: 'float' } 
+  }
+  ,
+   { 
+    accessorKey: '', 
+    header: () => 'Exam', 
+    size: 15,
+    // meta: { type: 'float' } 
+  },
+
+  
+
+  { 
+    accessorKey: '', 
+    header: () => 'Total', 
+    size: 15,
+   
+  }
+];
+
+
+
+
+const ScoreKeyColumns = [
+  { 
+    accessorKey: 'a', 
+    // header: () => 'S/N', 
+    size: 35, 
+    bold: false
+  },
+  { 
+    accessorKey: 'b', 
+    // header: () => 'Subject', 
+    size: 35
+  }
+
+  ,
+  { 
+    accessorKey: 'c', 
+    // header: () => 'Subject', 
+    size: 20 
+  },
+
+  ,
+  { 
+    accessorKey: 'd', 
+    // header: () => 'Subject', 
+    size: 20 
+  }
+
+  ,
+  { 
+    accessorKey: 'e', 
+    // header: () => 'Subject', 
+    size: 20
+  }
+];
+
+
+// My Test Data for Score
+// const sampleData = [
+//   {  subject: {
+//       name: 'john@example.com',
+//       phone: '123-456-7890',
+//       age: 30
+//     }, max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
+//  {  subject: "Mathematic", max: 100, ca1: 18, ca2: 20,totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
+//  {  subject: "Tauheed", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
+//    {  subject: "Basic Science", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
+//  { subject: "Adab", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
+//  { subject: "English Language", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
+//    { subject: "Home Economic", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "B", remark: 'Pass' },
+//  {  subject: "English Literature",max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "D", remark: 'Fail' },
+//  {  subject: "IRK", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "E", remark: 'Good' },
+//    {  subject: "English", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Very Good' },
+//  {  subject: "English", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
+//  {  subject: "English", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
+// ];
+
+const scoreKeyData = [
+  { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' },
+   { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
+];
+
+
+    return (
+
+<PDFDownloadLink 
+  document={ 
+  <Document>
+
+    {/* {
+    
+        results.map((row) => (
+
+           ))
+    } */}
+
+             <Page size="A4" style={resultStyle.body}>
+      <Text style={ resultStyle.schoolName}>{row.school.name}</Text>
+      <Text style={resultStyle.address}>{row.school.address}</Text>
+      <Text style={resultStyle.boldMottoText}> Motto:   <Text style={resultStyle.motto}>{row.school.motto}</Text> </Text>
+      <Text style={resultStyle.boldText}>School Reg: No.:  <Text style={resultStyle.address}> {row.school.regNo}</Text> Tel:   <Text style={resultStyle.address}>{row.school.contact}</Text> </Text>
+        <Text style={resultStyle.secondHeader}> REPORT SHEET FOR {row.academicSession.term} TERM {row.academicSession.session} ACADEMIC SESSION </Text>
+       
+
+       
+    
+      <ClassScoreSheetTable columns={ScoreSheetColumns} data={row.students} />
+    
+      <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
+    </Page>
+
+     
+    
+  </Document>
+  } 
+  fileName="result.pdf"
+>
+  Download Score Sheet
+</PDFDownloadLink>
+
+       
+    );
+  
+}
+
+export default ClassScoreSheet;
+
+
+
+const resultStyle = StyleSheet.create({
+  body: {
+    paddingTop: 35,
+    paddingBottom: 65,
+    paddingHorizontal: 35,
+  },
+  schoolName: {
+    fontSize: 24,
+    textAlign: 'center',
+    fontFamily: 'Oswald'
+  },
+  address: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 0,
+    fontFamily: 'Roboto'
+  },
+
+   motto: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 0,
+    fontFamily: 'Roboto'
+  },
+
+  detailsText: {
+    fontSize: 10,
+    textAlign: 'start',
+    marginBottom: 2,
+    fontFamily: 'Roboto'
+  },
+   
+    boldText: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 5,
+    fontFamily: 'Oswald',
+    fontWeight: 'bold'
+  },
+
+   boldMottoText: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 0,
+    fontFamily: 'Oswald',
+    fontWeight: 'bold'
+  },
+
+  boldTextSecondary: {
+    fontSize: 10,
+    textAlign: 'left',
+   marginTop: 10,
+    fontWeight: 'bold'
+  },
+
+   secondHeader: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginBottom: 10,
+    fontFamily: 'Oswald',
+    fontWeight: 'bold',
+    borderStyle: "solid",
+    borderColor: "#3f3f3f",
+    borderWidth: 1,
+    paddingHorizontal: 5,
+  },
+  subtitle: {
+    fontSize: 10,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    fontFamily: 'Oswald'
+  },
+  text: {
+    margin: 12,
+    fontSize: 14,
+    textAlign: 'justify',
+    fontFamily: 'Times-Roman'
+  },
+  image: {
+    marginVertical: 15,
+    marginHorizontal: 100,
+  },
+  header: {
+    fontSize: 12,
+    marginBottom: 20,
+    textAlign: 'center',
+    color: 'grey',
+  },
+  brandName: {
+    position: 'absolute',
+    fontSize: 12,
+    bottom: 30,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    color: 'grey',
+  },
+
+  secondaryContainer: {
+   marginTop: 20,
+   width: '50%'
+  },
+  
+  detailsContainer: {
+   flexDirection: "row",
+   justifyContent: 'center',
+   width: '100%',
+   marginBottom: 10
+  },
+
+  childContainer: {
+    width: 'auto',
+    flexDirection: 'column',
+    paddingLeft: 10
+  }
+
+
+});
