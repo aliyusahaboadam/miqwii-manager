@@ -31,7 +31,7 @@ import { getIn } from 'formik';
 import { saveScore } from '../../redux/reducer/scoreSlice';
 import Dialog from '@mui/material/Dialog';
 import { Alert, Snackbar } from "@mui/material";
-import {getScoreInputState } from '../../redux/reducer/scoreSlice';
+import {getScoreInputState, getScoreByClassIdAndSubjectId } from '../../redux/reducer/scoreSlice';
 
 
 // Import for dashboard Below
@@ -159,16 +159,14 @@ const TeacherSubject = () => {
     const navigate = useNavigate();
     const params = useParams();
     const location = useLocation()
-  
-    const subjectState = useSelector((state) => state.subjects);
-    const { teacherSubjects } = subjectState;
+ 
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const {subjectId, classId, className, subjectName } =  useParams();
 
     const scoreState = useSelector((state) => state.scores);
-    const {disableScoreInputFirstCA,  disableScoreInputSecondCA, disableScoreInputExam} = scoreState;
+    const {scores,disableScoreInputFirstCA,  disableScoreInputSecondCA, disableScoreInputExam} = scoreState;
 
 
 
@@ -187,10 +185,10 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   const fetchData = () => {
     dispatch(getStudentsByClassId(classId));
     dispatch(getScoreInputState());
-
   }
 
   const rows = Array.isArray(studentsInClassByClassId) ? studentsInClassByClassId : [];
+
 
 
 
@@ -215,7 +213,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       setPage(0);
     };
 
-
+ 
          const handleFormSubmit = async (values, { resetForm })  => {
             
                try {
@@ -226,24 +224,29 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                } catch (error) {
                 setAlertType("error");
                 setMessage(error.message);
-                console.log("message" + error.message);
                }
     
                 setOpen(true);
-                resetForm(); // This will reset the forto the initial values
+                resetForm(); // This will reset the form to the initial values
         };
 
 
+
+// FIX: Convert subjectId from string to number for proper comparison
+const subjectIdNumber = Number(subjectId);
+
   const initialValues = {
   students: studentsInClassByClassId.map((student) => {
-    const score = student.scoreReduced?.[0] || {}; // Safely get the first score or fallback to empty object
+    // FIX: Convert subjectId to number before comparison
+    const score = student.scoreReduced?.find(s => Number(s.subjectId) === subjectIdNumber) ?? {};
+    
     return {
       studentId: student.id,
       classId: classId,
-      subjectId: subjectId,
-      scoreId: score.id || 0,
+      subjectId: subjectIdNumber,
+      scoreId: score.id || null,
       score: {
-        id: score.id,
+        id: score.id || null,
         firstTest: score.firstTest || '',
         secondTest: score.secondTest || '',
         exam: score.exam || '',
@@ -719,7 +722,7 @@ const handleClose = (event, reason) => {
 
         <Snackbar
                open={open}
-               autoHideDuration={3000} // Automatically hide after 1 second
+               autoHideDuration={3000} // Automatically hide after 3 seconds
                onClose={handleClose}
                anchorOrigin={{ vertical: "center", horizontal: "center" }} // Position at the top center
              >
@@ -818,108 +821,6 @@ const handleClose = (event, reason) => {
              
        
       </Box>
-      {/*This Area is for Snackbar*/}
-        
-                    <Snackbar
-                       open={open}
-                       autoHideDuration={3000} // Automatically hide after 1 second
-                       onClose={handleClose}
-                       anchorOrigin={{ vertical: "center", horizontal: "center" }} // Position at the top center
-                     >
-        
-        
-        
-        
-              <div>
-              <Dialog
-                open={open}
-                onClose={handleClose}
-                BackdropProps={{
-                  sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" }, // Darker overlay
-                }}
-        
-                sx={{
-                  "& .MuiDialog-paper": {
-                    width: '100%',
-                    borderRadius: "15px", // Optional: Rounded corners
-                  },
-                }}
-              
-              >
-        
-                {
-        
-                  alertType === 'success' ? 
-        
-                  <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-success']].join(' ')}>
-                  <div class={dashboard['card_body']}>
-        
-                               
-                     <span class={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
-                          
-                          <IconButton onClick={handleClose}>
-                            <CloseIcon sx={{ fontSize: 30, color: '#0e387a' }} />
-                          </IconButton>
-                 </span>
-        
-                  <span class={dashboard['icon-container']}>
-                          <svg class={[dashboard['icon--big'], dashboard['icon--success']].join(' ')}>
-                              <use href="/images/sprite.svg#success-icon"></use>
-                            </svg>
-                      </span>
-        
-                  <Typography sx={{ fontSize: 21}}>
-                    <p class={dashboard['alert-message']}>{message}</p>
-                 </Typography>
-                   
-                  </div>
-                   <Typography sx={{ fontSize: 20}}>
-                 <p class={dashboard['card_footer']}>success</p>
-                </Typography>
-                </div>
-        
-                : 
-        
-                <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-error']].join(' ')}>
-                <div class={dashboard['card_body']}>
-        
-        
-                   <span class={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
-                        
-                             <IconButton onClick={handleClose}>
-                               <CloseIcon sx={{ fontSize: 30 }} />
-                             </IconButton>
-                    </span>
-        
-        
-                <span class={dashboard['icon-container']}>
-                        <svg class={[dashboard['icon--big'], dashboard['icon--error']].join(' ')}>
-                            <use href="/images/sprite.svg#error-icon"></use>
-                          </svg>
-                    </span>
-                 <Typography sx={{ fontSize: 21}}>
-                    <p class={dashboard['alert-message']}>{message}</p>
-                 </Typography>
-                </div>
-                <Typography sx={{ fontSize: 20}}>
-                 <p class={dashboard['card_footer']}>error</p>
-                </Typography>
-                
-              </div>
-        
-        
-                }
-              
-        
-         
-                    
-                   
-              </Dialog>
-        
-              </div>
-        
-              
-                     </Snackbar>
     </Box>
 
      
@@ -935,13 +836,6 @@ const handleClose = (event, reason) => {
 }
 
 export default TeacherSubject;
-
-
-
-
-
-
-
 
 
 

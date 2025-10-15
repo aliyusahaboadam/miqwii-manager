@@ -42,14 +42,11 @@ import {
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignSelf: 'center',
   width: '100%',
-  minHeight: '550px',
-  maxHeight: '77vh', // Fixed height
   overflowY: 'auto', // Enables vertical scrolling
   '&::-webkit-scrollbar': {
           display: 'none',
@@ -77,7 +74,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   position: 'relative',
   minHeight: '100vh',
   width: '100%',
-  backgroundColor: '#0A2859',
+  backgroundColor: 'rgba(10, 40, 89)',
   backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='251' height='251' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%230E387A' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%230E387A'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");`,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
@@ -101,7 +98,6 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     }),
   },
 }));
-
 
 
 const AddSession = () => {
@@ -138,12 +134,9 @@ const AddSession = () => {
   const subjectRegistrationSchema = object({
        session: string().required("Session required"),
        term: string().required("Term required"),
-       currentSSSTermFee: number(),
-       nextSSSTermFee: number(),
-       currentJSSTermFee: number(),
-       nextJSSTermFee: number(),
-       currentPRITermFee: number(),
-       nextPRITermFee: number(),
+       nextSSSTermFee: number().required("SSS next term fee required"),
+       nextJSSTermFee: number().required("JSS next term fee required"),
+       nextPRITermFee: number().required("PRI next term fee required"),
 
   });
   
@@ -728,38 +721,68 @@ const handleClose = (event, reason) => {
               
 
                 <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                
-                     <FormControl sx={{ m: 1, minWidth: "40%" }}>
+              
+                         
+                       <FormControl sx={{ m: 1, minWidth: "30%"}}>
 
-                      <TextField
-                            label="SSS School Fee"
-                            variant="filled"
-                            fullWidth
-                            margin="normal"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={values.currentSSSTermFee}
-                            name='currentSSSTermFee'
-                            error={touched.currentSSSTermFee && Boolean(errors.currentSSSTermFee)}
-                            helperText={touched.currentSSSTermFee && errors.currentSSSTermFee}
-                            
-                            slotProps={{
-                              formHelperText: {
-                                sx: { fontSize: 15 },  // Increase font size of helper text
-                              },
-                              input: {
-                                style: { fontSize: 18 }, // font size for input text
-                              },
-                              inputLabel: {
-                                style: { fontSize: 16 }, // font size for label text
-                              }
-                            }}
-                          />
-                        
+                        <TextField
+                              label="Primary Next Term Fee"
+                              variant="filled"
+                              fullWidth
+                              margin="normal"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={values.nextPRITermFee}
+                              name='nextPRITermFee'
+                              error={touched.nextPRITermFee && Boolean(errors.nextPRITermFee)}
+                              helperText={touched.nextPRITermFee && errors.nextPRITermFee}
+                              
+                              slotProps={{
+                                formHelperText: {
+                                  sx: { fontSize: 15 },  // Increase font size of helper text
+                                },
+                                input: {
+                                  style: { fontSize: 18 }, // font size for input text
+                                },
+                                inputLabel: {
+                                  style: { fontSize: 16 }, // font size for label text
+                                }
+                              }}
+                            />
+                       
                       </FormControl>
-                   
                 
-                      <FormControl sx={{ m: 1, minWidth: "40%"}}>
+                      <FormControl sx={{ m: 1, minWidth: "30%"}}>
+
+                        <TextField
+                              label="JSS Next Term Fee"
+                              variant="filled"
+                              fullWidth
+                              margin="normal"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={values.nextJSSTermFee}
+                              name='nextJSSTermFee'
+                              error={touched.nextJSSTermFee && Boolean(errors.nextJSSTermFee)}
+                              helperText={touched.nextJSSTermFee && errors.nextJSSTermFee}
+                              
+                              slotProps={{
+                                formHelperText: {
+                                  sx: { fontSize: 15 },  // Increase font size of helper text
+                                },
+                                input: {
+                                  style: { fontSize: 18 }, // font size for input text
+                                },
+                                inputLabel: {
+                                  style: { fontSize: 16 }, // font size for label text
+                                }
+                              }}
+                            />
+                       
+                      </FormControl>
+              
+                
+                      <FormControl sx={{ m: 1, minWidth: "30%"}}>
 
                         <TextField
                               label="SSS Next Term Fee"
@@ -795,135 +818,10 @@ const handleClose = (event, reason) => {
 
              
 
-            <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                
-                     <FormControl sx={{ m: 1, minWidth: "40%" }}>
-
-                      <TextField
-                            label="JSS School Fee"
-                            variant="filled"
-                            fullWidth
-                            margin="normal"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={values.currentJSSTermFee}
-                            name='currentJSSTermFee'
-                            error={touched.currentJSSTermFee && Boolean(errors.currentJSSTermFee)}
-                            helperText={touched.currentJSSTermFee && errors.currentJSSTermFee}
-                            
-                            slotProps={{
-                              formHelperText: {
-                                sx: { fontSize: 15 },  // Increase font size of helper text
-                              },
-                              input: {
-                                style: { fontSize: 18 }, // font size for input text
-                              },
-                              inputLabel: {
-                                style: { fontSize: 16 }, // font size for label text
-                              }
-                            }}
-                          />
-                        
-                      </FormControl>
-                   
-                
-                      <FormControl sx={{ m: 1, minWidth: "40%"}}>
-
-                        <TextField
-                              label="JSS Next Term Fee"
-                              variant="filled"
-                              fullWidth
-                              margin="normal"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              value={values.nextJSSTermFee}
-                              name='nextSSSTermFee'
-                              error={touched.nextJSSTermFee && Boolean(errors.nextJSSTermFee)}
-                              helperText={touched.nextJSSTermFee && errors.nextJSSTermFee}
-                              
-                              slotProps={{
-                                formHelperText: {
-                                  sx: { fontSize: 15 },  // Increase font size of helper text
-                                },
-                                input: {
-                                  style: { fontSize: 18 }, // font size for input text
-                                },
-                                inputLabel: {
-                                  style: { fontSize: 16 }, // font size for label text
-                                }
-                              }}
-                            />
-                       
-                      </FormControl>
-              
-                     </div>
 
                    
 
 
-
-                     <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                
-                     <FormControl sx={{ m: 1, minWidth: "40%" }}>
-
-                      <TextField
-                            label="Primary School Fee"
-                            variant="filled"
-                            fullWidth
-                            margin="normal"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={values.currentPRITermFee}
-                            name='currentPRITermFee'
-                            error={touched.currentPRITermFee && Boolean(errors.currentPRITermFee)}
-                            helperText={touched.currentPRITermFee && errors.currentPRITermFee}
-                            
-                            slotProps={{
-                              formHelperText: {
-                                sx: { fontSize: 15 },  // Increase font size of helper text
-                              },
-                              input: {
-                                style: { fontSize: 18 }, // font size for input text
-                              },
-                              inputLabel: {
-                                style: { fontSize: 16 }, // font size for label text
-                              }
-                            }}
-                          />
-                        
-                      </FormControl>
-                   
-                
-                      <FormControl sx={{ m: 1, minWidth: "40%"}}>
-
-                        <TextField
-                              label="Primary Next Term Fee"
-                              variant="filled"
-                              fullWidth
-                              margin="normal"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              value={values.nextPRITermFee}
-                              name='nextPRITermFee'
-                              error={touched.nextPRITermFee && Boolean(errors.nextPRITermFee)}
-                              helperText={touched.nextPRITermFee && errors.nextPRITermFee}
-                              
-                              slotProps={{
-                                formHelperText: {
-                                  sx: { fontSize: 15 },  // Increase font size of helper text
-                                },
-                                input: {
-                                  style: { fontSize: 18 }, // font size for input text
-                                },
-                                inputLabel: {
-                                  style: { fontSize: 16 }, // font size for label text
-                                }
-                              }}
-                            />
-                       
-                      </FormControl>
-              
-                     </div>
 
              {/* {BUTTON } */}
 

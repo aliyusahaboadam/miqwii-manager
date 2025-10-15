@@ -70,7 +70,6 @@ export const allStudentCountInClass = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.get(BASE_URL + `/all-students-count-in-class/${id}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-      console.log("From Inside Slice all " + response.data);
       return response.data; // Return the saved user response
 
     } catch (error) {
@@ -86,7 +85,7 @@ export const maleStudentCountInClass = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.get(BASE_URL + `/males-students-count-in-class/${id}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-     console.log("From Inside Slice male " + response.data);
+
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || "Something went wrong");
@@ -101,7 +100,7 @@ export const femaleStudentCountInClass = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.get(BASE_URL + `/females-students-count-in-class/${id}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-     console.log("From Inside Slice female" + response.data);
+     
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || "Something went wrong");
@@ -172,7 +171,7 @@ export const getAuthenticatedStudentById = createAsyncThunk(
 export const getStudentRegNo = createAsyncThunk(
   'class/getStudentByRegNo',
   async (regNo,  { rejectWithValue }) => {
-    console.log("from inside slice " + regNo);
+    
     try {
       const token = localStorage.getItem('token');
       const response = await api.post(BASE_URL + `/get-by-regNo`, regNo,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`, "Content-Type":"application/json"}});

@@ -77,7 +77,7 @@ function App() {
   return (
     <Router>
     <Routes>
-        <Route exact path='/'  element={<Testing/>}/>
+        {/* <Route exact path='/'  element={<Testing/>}/> */}
    
 
            {/*Student Releted*/}
@@ -159,7 +159,7 @@ function App() {
         <Route exact path='/school/login'  element={<SchoolLogin/>}/>
         <Route exact path='/school/verify-account'  element={ <VerifierPage/> }/>
            {/*Website*/}
-        <Route exact path='/home' element={<Home/>}/>
+        <Route exact path='/' element={<Home/>}/>
         <Route exact path='/services' element={<Services/>}/>
         <Route exact path='/contact-us' element={<ContactUs/>}/>
         <Route exact path='/about-us' element={<AboutUs/>}/>

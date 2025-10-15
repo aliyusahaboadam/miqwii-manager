@@ -21,6 +21,10 @@ const StudentResults =  ({ classId }) => {
     const location = useLocation();
 
 
+ const formatAmount = (amount) => {
+  return `NGN${new Intl.NumberFormat('en-NG').format(amount)}`;
+};
+
 
     useEffect(() => {
         
@@ -115,6 +119,36 @@ const ScoreColumns = [
 
 
 
+const feesKeyColumns = [
+  { 
+    accessorKey: 'nextSSSTermFee', 
+    header: () => 'SSS Class', 
+    size: 35, 
+    bold: false
+  },
+  { 
+    accessorKey: 'nextJSSTermFee', 
+     header: () => 'JSS Class', 
+    size: 35
+  }
+
+  ,
+  { 
+    accessorKey: 'nextPRITermFee', 
+    header: () => 'PRI Class', 
+    size: 35 
+  },
+
+];
+
+const feeKeyData = [
+   {
+  nextSSSTermFee: formatAmount(results?.[0]?.academicSession?.nextSSSTermFee || 0),
+  nextJSSTermFee: formatAmount(results?.[0]?.academicSession?.nextJSSTermFee || 0),
+  nextPRITermFee: formatAmount(results?.[0]?.academicSession?.nextPRITermFee || 0)
+}
+];
+
 
 const ScoreKeyColumns = [
   { 
@@ -178,6 +212,8 @@ const scoreKeyData = [
 ];
 
 
+
+
     return (
 
 <PDFDownloadLink 
@@ -228,23 +264,26 @@ const scoreKeyData = [
 </View>
 <Text style={resultStyle.secondHeader}> REPORT SHEET FOR {result.academicSession.term} TERM {result.academicSession.session} ACADEMIC SESSION </Text>
          
-          <View style={resultStyle.detailsContainer}>
-             <View style={resultStyle.childContainer}>
-                  <Text style={resultStyle.boldTextSecondary}>Name:  <Text style={resultStyle.detailsText}>{result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}</Text> </Text> 
-                <Text style={resultStyle.boldTextSecondary}>Reg No:   <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>  </Text> 
-                 <Text style={resultStyle.boldTextSecondary}>Class:   <Text style={resultStyle.detailsText}>{result.class1.name}</Text>  </Text>
-             </View>
-             <View style={resultStyle.childContainer}>
-                <Text style={resultStyle.boldTextSecondary}>Position:  <Text style={resultStyle.detailsText}>{result.position}</Text> </Text> 
-                <Text style={resultStyle.boldTextSecondary}>No In Class:   <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>  </Text> 
-                 <Text style={resultStyle.boldTextSecondary}>Student Average:   <Text style={resultStyle.detailsText}>{result.overallAverage} </Text>  </Text>
-             </View>
-             <View style={resultStyle.childContainer}>
-                <Text style={resultStyle.boldTextSecondary}>Term:  <Text style={resultStyle.detailsText}>{result.academicSession.term}</Text> </Text> 
-                <Text style={resultStyle.boldTextSecondary}>Lowest Average in Class:   <Text style={resultStyle.detailsText}>{result.lowestAverage}</Text>  </Text> 
-                 <Text style={resultStyle.boldTextSecondary}>Highest Average in Class:    <Text style={resultStyle.detailsText}>{result.highestAverage}</Text>  </Text>
-             </View>
-          </View>
+              <View style={resultStyle.detailsContainer}>
+                              <View style={resultStyle.childContainer}>
+                                   <Text style={resultStyle.boldTextSecondary}>Name:  <Text style={resultStyle.detailsText}>{result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}</Text> </Text> 
+                                 <Text style={resultStyle.boldTextSecondary}>Reg No:   <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>  </Text> 
+                                  <Text style={resultStyle.boldTextSecondary}>Class:   <Text style={resultStyle.detailsText}>{result.class1.name}</Text>  </Text>
+                                 
+                              </View>
+                              <View style={resultStyle.childContainer}>
+                                 <Text style={resultStyle.boldTextSecondary}>Position:  <Text style={resultStyle.detailsText}>{result.position}</Text> </Text> 
+                                 <Text style={resultStyle.boldTextSecondary}>No In Class:   <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>  </Text> 
+                                  <Text style={resultStyle.boldTextSecondary}>Student Average:   <Text style={resultStyle.detailsText}>{result.overallAverage} </Text>  </Text>
+                              
+                              </View>
+                              <View style={resultStyle.childContainer}>
+                                 <Text style={resultStyle.boldTextSecondary}>Term:  <Text style={resultStyle.detailsText}>{result.academicSession.term}</Text> </Text> 
+                                 <Text style={resultStyle.boldTextSecondary}>Lowest Average in Class:   <Text style={resultStyle.detailsText}>{result.lowestAverage}</Text>  </Text> 
+                                  <Text style={resultStyle.boldTextSecondary}>Highest Average in Class:    <Text style={resultStyle.detailsText}>{result.highestAverage}</Text>  </Text>
+                                 
+                              </View>
+                           </View>
 
        
     
@@ -256,6 +295,15 @@ const scoreKeyData = [
       </Text>
         <KeyTable columns={ScoreKeyColumns} data={scoreKeyData} />
       </View>
+
+        <View style={resultStyle.secondaryContainer}> 
+      <Text style={resultStyle.subtitle}>
+        SCHOOL NEXT TERM FEES
+      </Text>
+        <KeyTable columns={feesKeyColumns} data={feeKeyData} />
+      </View>
+
+      
       <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
     </Page>
 
@@ -352,14 +400,14 @@ const resultStyle = StyleSheet.create({
   boldTextSecondary: {
     fontSize: 10,
     textAlign: 'left',
-   marginTop: 10,
+   marginTop: 5,
     fontWeight: 'bold'
   },
 
    secondHeader: {
     fontSize: 12,
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 0,
     fontFamily: 'Oswald',
     fontWeight: 'bold',
     borderStyle: "solid",
@@ -400,7 +448,7 @@ const resultStyle = StyleSheet.create({
   },
 
   secondaryContainer: {
-   marginTop: 20,
+   marginTop: 10,
    width: '50%'
   },
   
@@ -408,13 +456,14 @@ const resultStyle = StyleSheet.create({
    flexDirection: "row",
    justifyContent: 'center',
    width: '100%',
-   marginBottom: 10
+   marginBottom: 5,
   },
 
   childContainer: {
     width: 'auto',
     flexDirection: 'column',
-    paddingLeft: 10
+    paddingLeft: 10,
+    margin:0 
   }
 
 

@@ -575,9 +575,10 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     </header>
     
 
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="/result/show-result" className={[navbar['link--drawer'], navbar['']].join(' ')}>Generate Result</a>
-    </div>
+     <div className={navbar['collapsible__content--drawer']}>
+       <a href="/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}>Generate Result</a>
+       <a href="/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}>Search Result</a>
+       </div>
 
  </div>
 

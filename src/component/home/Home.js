@@ -82,7 +82,7 @@ const Home = () => {
           <header style={{marginTop: "-2rem"}} className={[home["block__header"], home["hero__content"]].join(' ')}>
             <h2  >From Chalk to Cloud!</h2>
             <p className={[home["hero__tagline"], home["p"]].join(' ')}>
-               Miqwii Manager opens doors, not just one but three —
+               Miqwii School Management opens doors, not just one but three —
                 For schools, teachers, and learners. A single platform, 
                 Each user guided by their own chart.
     
@@ -166,13 +166,13 @@ Whether you lead, teach, or learn with pride, Miqwii walks with you, side by sid
                         <span className={home["plan__price"]} >1x</span>
                         <span className={home["plan__billing-cycle"]} >/Size</span>
                         <span className={[home["badge"], home["badge--secondary"], home["badge--small"]].join(' ')}>Students</span>
-                        <span className={home["plan__description"]}>0 - 300 Student Capacity</span>
+                        <span className={home["plan__description"]}>0 - 500 Student Capacity</span>
              
                      </header>
                      <div className={home["card_body"]}>
                          <ul className={[home["list"], home["list--tick"]].join(' ')}>
                              <li className={home["list__item"]}>New or Small School Starting Digital Management</li>
-                             <li className={home["list__item"]}>School under 300 Student</li>
+                             <li className={home["list__item"]}>School under 500 Student</li>
                              <li className={home["list__item"]}>Limited Staff Account</li>
 
                          </ul>

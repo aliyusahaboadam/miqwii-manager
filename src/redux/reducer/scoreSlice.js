@@ -41,7 +41,7 @@ export const getStudentScores = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.get(BASE_URL + `/get-scores/${id}`, {}, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-     console.log("From inside subject slice " +  response.data)
+    
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
@@ -56,7 +56,7 @@ export const changeInputStateSecondCA = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.post(BASE_URL + `/change-2ndCA-state/${enable}`, {}, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-     console.log("From inside subject slice " +  response.data)
+    
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
@@ -70,7 +70,7 @@ export const changeInputStateExam = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.post(BASE_URL + `/change-exam-state/${enable}`, {}, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-     console.log("From inside subject slice " +  response.data)
+
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
@@ -85,7 +85,22 @@ export const getScoreInputState = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.get(BASE_URL + `/get-input-state`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-     console.log("From inside subject slice " +  response.data)
+
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
+export const getScoreByClassIdAndSubjectId = createAsyncThunk(
+  'score/getScoreByClassIdAndSubjectId',
+  async ({subjectId, classId},  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-score-by-classId-and-subjectId/${subjectId}/${classId}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
@@ -141,7 +156,7 @@ export const getResultByStudentRegNo = createAsyncThunk(
   async (requestData,  { rejectWithValue }) => {
     
     try {
-      console.log("From Inside Slice " + requestData);
+   
       const token = localStorage.getItem('token');
       const response = await api.post(BASE_URL + `/get-results-by-regNo`, requestData, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`, "Content-Type":"application/json"}});
       return response.data; // Return the saved user response
@@ -273,6 +288,19 @@ const scoreSlice = createSlice({
            state.results = action.payload;
           })
           .addCase(getResultByStudentRegNo.rejected, (state) => {
+            state.fetchingStatus = 'failed';
+          })
+
+
+
+           .addCase(getScoreByClassIdAndSubjectId.pending, (state) => {
+            state.fetchingStatus = 'loading';
+          })
+          .addCase(getScoreByClassIdAndSubjectId.fulfilled, (state, action) => {
+            state.fetchingStatus = 'succeeded';
+           state.scores = action.payload;
+          })
+          .addCase(getScoreByClassIdAndSubjectId.rejected, (state) => {
             state.fetchingStatus = 'failed';
           })
 
