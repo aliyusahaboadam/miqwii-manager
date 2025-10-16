@@ -1,5 +1,5 @@
 import NavBar from "../Chunks/NavBar";
-import home from "../style/Home.module.css";
+import home from "../stylep.module.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -190,7 +190,7 @@ Whether you lead, teach, or learn with pride, Miqwii walks with you, side by sid
                         <span className={home["plan__price"]} >3x</span>
                         <span className={home["plan__billing-cycle"]}>/Size</span>
                         <span className={[home["badge"], home["badge--primary"], home["badge--small"]].join(' ')}>Students</span>
-                        <span className={home["plan__description"]}>300 - 1000 Capacity</span>
+                        <span className={home["plan__description"]}>500 - 1000 Capacity</span>
              
                      </header>
                      <div className={home["card_body"]}>

@@ -86,7 +86,7 @@ const SchoolRegistration = () => {
     name: string().max(42, "School Name must not exceed 42 characters")
               .required("School Name is required"),
 
-    address: string().max(50, "Address must not exceed 50 characters")
+    address: string().max(100, "Address must not exceed 100 characters")
     .required("Address is required"),
     
     motto: string().max(50, "Motto must not exceed 50 characters")
