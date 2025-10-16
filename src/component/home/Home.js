@@ -1,5 +1,5 @@
 import NavBar from "../Chunks/NavBar";
-import home from "../stylep.module.css";
+import home from "../style/Home.module.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
