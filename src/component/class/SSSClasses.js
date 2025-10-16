@@ -306,32 +306,33 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           
      
 
-       {/* Student Navbar Content */}
+    {/* Student Navbar Content */}
        <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
-         <header className={navbar['collapsible__header']}>
-        <div className={navbar['collapsible__icon']}>
-  
-        <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-              <use href="../images/sprite.svg#student"></use>
-            </svg>
-          <p className={navbar['collapsible__heading']}>Students</p>
-        </div>
-        
-          
-          <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
-              <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                  <use href="../images/sprite.svg#chevron"></use>
-                </svg>
-          </span>
-      </header>
-      
-  
-      <div className={navbar['collapsible__content--drawer']}>
-      <a href="/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Student</a>
-      <a href="/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}>View Students</a>
+       <header className={navbar['collapsible__header']}>
+      <div className={navbar['collapsible__icon']}>
+
+      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+            <use href="../images/sprite.svg#student"></use>
+          </svg>
+        <p className={navbar['collapsible__heading']}>Students</p>
       </div>
-  
-   </div>    
+      
+        
+        <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
+            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                <use href="../images/sprite.svg#chevron"></use>
+              </svg>
+        </span>
+    </header>
+    
+
+    <div className={navbar['collapsible__content--drawer']}>
+    <a href="/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Student</a>
+    <a href="/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}>View Students</a>
+     <a href="/school/student-activator" className={[navbar['link--drawer'], navbar['']].join(' ')}>Switch Students Account</a>
+    </div>
+
+ </div>  
 
    {/* Class Navbar Content */}
       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
@@ -449,7 +450,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
      {/* Result Navbar Content */}
-        <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-6')}    className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
+      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-6')}    className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
 
@@ -504,8 +505,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
 
- 
-      {/* Subscription Navbar Content */}
+       {/* Subscription Navbar Content */}
       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
@@ -531,7 +531,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     </div>
 
  </div>
-
 
 
  {/* Profile Navbar Content */}
