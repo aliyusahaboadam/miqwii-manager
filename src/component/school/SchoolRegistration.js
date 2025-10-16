@@ -152,7 +152,6 @@ const togglePasswordVisibility = () => {
                       console.log(body);
                       setAlertType("success");
                       setMessage(body.message)
-                      navigate("/school/login")
                      } catch (error) {
                       console.log(error.message);
                       setAlertType('error');
