@@ -238,6 +238,9 @@ const subjectIdNumber = Number(subjectId);
   const initialValues = {
   students: studentsInClassByClassId.map((student) => {
     // FIX: Convert subjectId to number before comparison
+    console.log("subjectID Number " + subjectIdNumber);
+    console.log("subjectID " + JSON.stringify(student.scoreReduced));
+     console.log("score Reduce " + subjectId);
     const score = student.scoreReduced?.find(s => Number(s.subjectId) === subjectIdNumber) ?? {};
     console.log("scores " + JSON.stringify(score));
     return {
