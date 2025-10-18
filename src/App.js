@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StudentResult from './PDFViewer/StudentResult';
 import SchoolLogin from './component/school/SchoolLogin';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import SchoolRegistration from './component/school/SchoolRegistration';
 import SchoolDashboard from './component/dashboards/SchoolDashboard';
 import AddStudent from './component/student/AddStudent';
