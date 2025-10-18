@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Dialog from '@mui/material/Dialog';
 import {Close as  Cancel } from "@mui/icons-material";
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from "react-helmet";
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -166,6 +167,11 @@ const togglePasswordVisibility = () => {
   return (
   
    <SignInContainer>
+  <Helmet>
+        <title>Create Account - Miqwii</title>
+        <meta name="description" content="Register with Miqwii for smooth school management perfomance." />
+      </Helmet>
+
 
              <Formik
                     initialValues={{
