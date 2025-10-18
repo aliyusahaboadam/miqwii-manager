@@ -8,8 +8,8 @@ export const sendPasswordRequest = createAsyncThunk(
   'teacher/sendPasswordRequest',
   async (email, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await api.post(BASE_URL + `/save-password-request/${email}`, {}, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+
+      const response = await api.post(BASE_URL + `/save-password-request/${email}`, {});
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || "Something went wrong");
@@ -24,7 +24,7 @@ export const sendPasswordReset = createAsyncThunk(
   async (passwordResetRequest, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.post(BASE_URL + `/save-reset-password`, passwordResetRequest, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`, "Content-Type":"application/json"}});
+      const response = await api.post(BASE_URL + `/save-reset-password`, passwordResetRequest, { headers: { "Content-Type":"application/json"}});
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || "Something went wrong");
