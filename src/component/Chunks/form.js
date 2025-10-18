@@ -297,7 +297,7 @@ const handleClose = (event, reason) => {
              {/* {BUTTON } */}
 
              <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Submitting...' : 'Add Subjects'}</button>
-             <span className={style['form-link']} > Did not Have Class:  <a className={style['link__register']} href="/class/add-class">Add Class</a></span>
+             <span className={style['form-link']} > Did not Have Class:  <a className={style['link__register']} href="#/class/add-class">Add Class</a></span>
              <span className={style['form-link']} >Add classes to be able to add subject to a particuler class entity</span>
     </Card>
 

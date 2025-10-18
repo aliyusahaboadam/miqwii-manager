@@ -294,8 +294,8 @@ setDisplayText(role.find(role => role.id === id).text)
             
 
           <div className={style['form-link--container']}>
-             <span className={style['form-link']} > Register School here:  <a className={style['link__register']} href="/school/register">Register</a></span>
-             <span className={style['form-link']} > <a className={style['link__register']}  href="/password/password-request">Forgot Password</a></span>
+             <span className={style['form-link']} > Register School here:  <a className={style['link__register']} href="#/school/register">Register</a></span>
+             <span className={style['form-link']} > <a className={style['link__register']}  href="#/password/password-request">Forgot Password</a></span>
          </div>
 
      

@@ -195,7 +195,7 @@ const handleClose = (event, reason) => {
             
 
           <div className={style['form-link--container']}>
-             <span className={style['form-link']} > Already Have an Accoutn:  <a className={style['link__register']} href="/school/login">Login</a></span>
+             <span className={style['form-link']} > Already Have an Accoutn:  <a className={style['link__register']} href="#/school/login">Login</a></span>
           </div>
 
      

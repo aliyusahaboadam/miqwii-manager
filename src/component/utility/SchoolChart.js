@@ -44,8 +44,7 @@ const SchoolDemographicsCharts = () => {
     const SSS = classCountSpecificSSS?.length || 0;
 
 
-    console.log("Larinamle " + JSON.stringify(classCountSpecificPRI[0]?.teachers.length));
-
+   
 
     const PRI_TEACHERS = classCountSpecificPRI[0]?.teachers?.length || 0;
     const JSS_TEACHERS  = classCountSpecificJSS[0]?.teachers?.length || 0;
