@@ -179,7 +179,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   
 
 
-      console.log("ARRAY " + rows);
+     
 
      const handleCheckboxChange = (id) => {
     // formik.setFieldValue("selectedId", id);
