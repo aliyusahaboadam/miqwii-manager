@@ -21,12 +21,12 @@ const SchoolNavBar = () =>{
 
       <ul className={[navbar["list"], navbar["drawer__list"], navbar[""]].join(' ')}>
         
-        <li className={navbar["nav__item"]}><a href="#">  <span class={[navbar["badge"], navbar["badge--secondary"], navbar['list--badge']].join(' ')}>Home</span></a></li>
-          <li className={navbar["nav__item"]}><a href="#">Service</a></li>
-          <li className={navbar["nav__item"]}><a href="#">About Us</a></li>
-          <li className={navbar["nav__item"]}><a href="#">Contact Us</a></li>
-          <li className={navbar["nav__item"]}><a href="#">pricing</a></li>
-          <li className={navbar["nav__item"]}><a href="#">About us</a></li>
+        <li className={navbar["nav__item"]}><a href="##">  <span class={[navbar["badge"], navbar["badge--secondary"], navbar['list--badge']].join(' ')}>Home</span></a></li>
+          <li className={navbar["nav__item"]}><a href="##">Service</a></li>
+          <li className={navbar["nav__item"]}><a href="##">About Us</a></li>
+          <li className={navbar["nav__item"]}><a href="##">Contact Us</a></li>
+          <li className={navbar["nav__item"]}><a href="##">pricing</a></li>
+          <li className={navbar["nav__item"]}><a href="##">About us</a></li>
          
           <li className={navbar["nav__item"]}>
            
@@ -94,12 +94,12 @@ const SchoolNavBar = () =>{
            
           <ul className={[navbar["list"], navbar["nav__list"], navbar[""]].join(' ')}>
         
-          <li className={navbar["nav__item"]}><a href="#">  <span class={[navbar["badge"], navbar["badge--secondary"], navbar['list--badge']].join(' ')}>Home</span></a></li>
-            <li className={navbar["nav__item"]}><a href="#">Service</a></li>
-            <li className={navbar["nav__item"]}><a href="#">About Us</a></li>
-            <li className={navbar["nav__item"]}><a href="#">Contact Us</a></li>
-            <li className={navbar["nav__item"]}><a href="#">pricing</a></li>
-            <li className={navbar["nav__item"]}><a href="#">About us</a></li>
+          <li className={navbar["nav__item"]}><a href="##">  <span class={[navbar["badge"], navbar["badge--secondary"], navbar['list--badge']].join(' ')}>Home</span></a></li>
+            <li className={navbar["nav__item"]}><a href="##">Service</a></li>
+            <li className={navbar["nav__item"]}><a href="##">About Us</a></li>
+            <li className={navbar["nav__item"]}><a href="##">Contact Us</a></li>
+            <li className={navbar["nav__item"]}><a href="##">pricing</a></li>
+            <li className={navbar["nav__item"]}><a href="##">About us</a></li>
            
             <li className={navbar["nav__item"]}>
              

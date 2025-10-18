@@ -318,7 +318,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
           <div className={navbar['profile--selection__container']}>
           <div className={navbar['profile']}>
-           <a href="/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+           <a href="#/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
           <div className={navbar['logout']}>
            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -400,8 +400,8 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}>Home</a>
-    <a href="/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}>Schools</a>
+    <a href="#/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}>Home</a>
+    <a href="#/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}>Schools</a>
     </div>
 
  </div> 
@@ -429,7 +429,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="/admin/profile" className={[navbar['link--drawer'], navbar['']].join(' ')}>Profile</a>
+   <a href="#/admin/profile" className={[navbar['link--drawer'], navbar['']].join(' ')}>Profile</a>
     <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
     </div>
 

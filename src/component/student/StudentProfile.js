@@ -255,7 +255,7 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
           <div className={navbar['profile--selection__container']}>
           <div className={navbar['profile']}>
-           <a href="/student/student-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+           <a href="#/student/student-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
           <div className={navbar['logout']}>
            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -337,7 +337,7 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
       
   
       <div className={navbar['collapsible__content--drawer']}>
-     <a href="/student/home" className={[navbar['link--drawer'], navbar['']].join(' ')}>Home</a>
+     <a href="#/student/home" className={[navbar['link--drawer'], navbar['']].join(' ')}>Home</a>
       </div>
   
    </div> 
@@ -370,7 +370,7 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
       
   
       <div className={navbar['collapsible__content--drawer']}>
-      <a href="/result/student-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}>Search Result</a>
+      <a href="#/result/student-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}>Search Result</a>
       </div>
   
    </div>
@@ -398,8 +398,8 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
       
   
       <div className={navbar['collapsible__content--drawer']}>
-      <a href="/student/student-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}>Profile</a>
-      <a href="/password/password-reset-student" className={[navbar['link--drawer'], navbar['']].join(' ')}>Change Password</a>
+      <a href="#/student/student-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}>Profile</a>
+      <a href="#/password/password-reset-student" className={[navbar['link--drawer'], navbar['']].join(' ')}>Change Password</a>
       <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
       </div>
   
