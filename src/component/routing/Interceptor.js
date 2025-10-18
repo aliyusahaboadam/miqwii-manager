@@ -8,7 +8,7 @@ api.interceptors.response.use(
   (err) => {
     if (err.response && err.response.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/school/login";
+      window.location.href = "#/school/login";
     }
     return Promise.reject(err);
   }
