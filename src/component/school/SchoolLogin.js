@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import {IconButton, InputAdornment } from "@mui/material";
 import { useDispatch, useSelector } from 'react-redux';
 import { loginRequest } from '../../redux/reducer/loginSlice';
+import { Helmet } from "react-helmet";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -173,6 +174,11 @@ setDisplayText(role.find(role => role.id === id).text)
   return (
   
    <SignInContainer>
+
+     <Helmet>
+        <title>Login - Miqwii</title>
+        <meta name="description" content="Login to your Miqwii account to manage your school portal." />
+      </Helmet>
 
              <Formik
                   initialValues={{

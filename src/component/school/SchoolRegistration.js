@@ -85,12 +85,14 @@ const SchoolRegistration = () => {
 
   const schoolRegistrationSchema = object({
     name: string().max(42, "School Name must not exceed 42 characters")
+              .min(10, "School Name should not be less than 10")
               .required("School Name is required"),
 
     address: string().max(100, "Address must not exceed 100 characters")
     .required("Address is required"),
     
     motto: string().max(50, "Motto must not exceed 50 characters")
+    .min(10, "Motto should not be less than 10")
     .required("Motto is required"),
 
     contact: string()
