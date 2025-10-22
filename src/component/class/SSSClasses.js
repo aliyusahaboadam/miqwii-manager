@@ -700,7 +700,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                                 <TableFooter>
                                 <TableRow>
                                   <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                    rowsPerPageOptions={[100, 200, 300, { label: 'All', value: -1 }]}
                                     colSpan={3}
                                     count={rows.length}
                                     rowsPerPage={rowsPerPage}
