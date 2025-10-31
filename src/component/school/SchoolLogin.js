@@ -81,7 +81,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 const SchoolLogin = () => {
 
   const loginSchema = object({
-    username: string().max(35, "ID must not exceed 35 characters")
+    username: string().max(60, "ID must not exceed 60 characters")
               .required("ID is required"),
 
     password: string()
