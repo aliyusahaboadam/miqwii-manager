@@ -89,7 +89,7 @@ const  ActionMenu = ({ row, onDelete, onEdit }) => {
             
                     
         >
-          {/* <MenuItem  style={{fontSize: 17}}  onClick={handleEdit}>Edit</MenuItem> */}
+          <MenuItem  style={{fontSize: 17}}  onClick={handleEdit}>Edit</MenuItem>
           <MenuItem style={{fontSize: 17}} onClick={handleDeleteClick}>Delete</MenuItem>
         </Menu>
   

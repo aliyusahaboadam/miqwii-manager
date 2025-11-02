@@ -107,6 +107,7 @@ function App() {
         <Route exact path='/class/add-pri-class'  element={ <AddPriClass/> }/>
         <Route exact path='/class/add-nur-class'  element={ <AddNurClass/> }/>
         <Route exact path='/class/delete-class'  element={ <DeleteClass/> }/>
+        <Route exact path='/class/update-class/:className'  element={ <UpdateClass/> }/>
               {/*Subject Releted*/}
         <Route exact path='/subject/add-subjects'  element={ <AddSubjects/> }/>
         <Route exact path='/subject/view-subjects'  element={ <ViewSubjects/> }/>

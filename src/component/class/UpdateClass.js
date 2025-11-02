@@ -158,6 +158,8 @@ const handleClose = (event, reason) => {
             navigate("/class/jss-classes");
           } else if (className.startsWith('S')) {
             navigate("/class/sss-classes");
+          }  else if (className.startsWith('N')) {
+            navigate("/class/nursery-classes");
           }
            } catch (error) {
           console.log(error);
