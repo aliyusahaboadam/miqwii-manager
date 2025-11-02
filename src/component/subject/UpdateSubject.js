@@ -415,9 +415,11 @@ const handleClose = (event, reason) => {
     <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>JSS Classes</a>
     <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>SSS Classes</a>
     <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>Primary Classes</a>
+<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>Nursery Classes</a>
     <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add JSS Class</a>
     <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add SSS Class</a>
     <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Primary Class</a>
+<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Nur Class</a>
     </div>
 
  </div> 

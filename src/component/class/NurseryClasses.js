@@ -72,7 +72,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 
 
-const PrimaryClasses  = () => {
+const NurseryClasses  = () => {
 
 
   const theme = useTheme();
@@ -133,9 +133,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
   const fetchData = () => {
-      dispatch(getClassNamesStartingWith('P'));
+      dispatch(getClassNamesStartingWith('N'));
       dispatch(getClassCount());
-      dispatch(getClassCountSpecific('P'));
+      dispatch(getClassCountSpecific('N'));
   }
 
 
@@ -165,8 +165,8 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       setAnchorEl(null);
     };
 
-    const navigateToAddPriClasses = () => {
-      navigate('/class/add-pri-class')
+    const navigateToAddNurClasses = () => {
+      navigate('/class/add-nur-class')
     }
 
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -617,7 +617,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
             
             
             
-            Available Primary Classes
+            Available Nursery Classes
             
             </div>
             
@@ -659,11 +659,11 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
             
             
                  <div class={dashboard['card--small-head']}>
-                  Add Primary Classes
+                  Add Nursery Classes
                  </div>
             
                          
-                <button onClick={navigateToAddPriClasses}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Primary Class</button>
+                <button onClick={navigateToAddNurClasses}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Nursery Class</button>
             
             
               </div>
@@ -677,7 +677,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                                                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                                      <TableHead>
                                                        <TableRow>
-                                                         <StyledTableCell>PRI Classes</StyledTableCell>
+                                                         <StyledTableCell>Nur Classes</StyledTableCell>
                                                          <StyledTableCell>Score Sheet</StyledTableCell>
                                                          <StyledTableCell align="left">No. of student</StyledTableCell>
                                                          <StyledTableCell align="right">Action&nbsp;</StyledTableCell>
@@ -766,7 +766,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     );
 }
 
-export default PrimaryClasses;
+export default NurseryClasses;
 
 
 

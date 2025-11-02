@@ -68,6 +68,8 @@ import StudentResultByRegNoTeacherDashboard from './component/result/StudentResu
 import AdminProfile from './component/admin/AdminProfile';
 import UploadSchoolLogo from './component/school/UploadSchoolLogo';
 import StudentActivator from './component/school/StudentActivator';
+import AddNurClass from './component/class/AddNurClass';
+import NurseryClasses from './component/class/NurseryClasses';
 
 
 function App() {
@@ -98,10 +100,12 @@ function App() {
          <Route exact path='/class/jss-classes'  element={ <JSSClasses/> }/>
          <Route exact path='/class/sss-classes'  element={ <SSSClasses/> }/>
          <Route exact path='/class/primary-classes'  element={ <PrimaryClasses/> }/>
+         <Route exact path='/class/nursery-classes'  element={ <NurseryClasses/> }/>
 
         <Route exact path='/class/add-jss-class'  element={ <AddJSSClass/> }/>
         <Route exact path='/class/add-sss-class'  element={ <AddSSSClass/> }/>
         <Route exact path='/class/add-pri-class'  element={ <AddPriClass/> }/>
+        <Route exact path='/class/add-nur-class'  element={ <AddNurClass/> }/>
         <Route exact path='/class/delete-class'  element={ <DeleteClass/> }/>
               {/*Subject Releted*/}
         <Route exact path='/subject/add-subjects'  element={ <AddSubjects/> }/>

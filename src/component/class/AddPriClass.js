@@ -387,9 +387,11 @@ const handleClose = (event, reason) => {
     <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>JSS Classes</a>
     <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>SSS Classes</a>
     <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>Primary Classes</a>
+<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>Nursery Classes</a>
     <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add JSS Class</a>
     <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add SSS Class</a>
     <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Primary Class</a>
+<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Nur Class</a>
     </div>
 
  </div> 
@@ -677,6 +679,22 @@ const handleClose = (event, reason) => {
                 <MenuItem  sx={{ fontSize: 18 }} value={"PRI3B"}>{"PRI3B"}</MenuItem>
                 <MenuItem  sx={{ fontSize: 18 }} value={"PRI3C"}>{"PRI3C"}</MenuItem>
                 <MenuItem  sx={{ fontSize: 18 }} value={"PRI3D"}>{"PRI3D"}</MenuItem>
+
+
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI4A"}>{"PRI4A"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI4B"}>{"PRI4B"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI4C"}>{"PRI4C"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI4D"}>{"PRI4D"}</MenuItem>
+
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI5A"}>{"PRI5A"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI5B"}>{"PRI5B"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI5C"}>{"PRI5C"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI5D"}>{"PRI5D"}</MenuItem>
+                
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI6A"}>{"PRI6A"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI6B"}>{"PRI6B"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI6C"}>{"PRI6C"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRI6D"}>{"PRI6D"}</MenuItem>
 
   
         </Select>
