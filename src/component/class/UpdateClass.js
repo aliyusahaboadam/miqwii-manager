@@ -152,15 +152,15 @@ const handleClose = (event, reason) => {
           console.log(result);
           setAlertType("success");
           setMessage(result.message);
-          if (className.startsWith('P')) {
-             navigate("/class/primary-classes");
-          } else if (className.startsWith('J')) {
-            navigate("/class/jss-classes");
-          } else if (className.startsWith('S')) {
-            navigate("/class/sss-classes");
-          }  else if (className.startsWith('N')) {
-            navigate("/class/nursery-classes");
-          }
+          // if (className.startsWith('P')) {
+          //    navigate("/class/primary-classes");
+          // } else if (className.startsWith('J')) {
+          //   navigate("/class/jss-classes");
+          // } else if (className.startsWith('S')) {
+          //   navigate("/class/sss-classes");
+          // }  else if (className.startsWith('N')) {
+          //   navigate("/class/nursery-classes");
+          // }
            } catch (error) {
           console.log(error);
           setAlertType("error");
