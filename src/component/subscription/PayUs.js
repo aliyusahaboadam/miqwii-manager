@@ -287,7 +287,9 @@ const   fetchSchool = async () => {
 
 
 
-   if (state.studentSize <= 500) {
+ if (state.studentSize <= 200) {
+    amount = 20000
+  } else if (state.studentSize > 200 && state.studentSize <= 500) {
     amount = 35000
   } else if (state.studentSize > 500 && state.studentSize <= 1000) {
     amount = 39000
