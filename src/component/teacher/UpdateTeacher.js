@@ -415,9 +415,12 @@ const handleClose = (event, reason) => {
     </header>
     
 
-    <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
-    </div>
+      <div className={navbar['collapsible__content--drawer']}>
+       <a href="#/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}>Home</a>
+        <a href="#/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Session</a>
+        <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}>Setup Session</a>
+    <a href="#/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add School Logo</a>
+        </div>
 
  </div> 
 

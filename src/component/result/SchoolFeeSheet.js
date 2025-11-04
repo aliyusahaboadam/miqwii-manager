@@ -1,5 +1,4 @@
-
-import {PDFDownloadLink, Document, Page, pdf, View, StyleSheet, Font} from '@react-pdf/renderer';
+import {Document, Page, pdf, View, StyleSheet, Font} from '@react-pdf/renderer';
 import { ScoreTable } from './ScoreTable';
 import { KeyTable } from './KeyTable';
 import { Text } from '@react-pdf/renderer';
@@ -7,172 +6,168 @@ import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
 import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { result } from 'lodash';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ClassScoreSheetTable } from './ClassScoreSheetTable';
 
+const SchoolFeeSheet = ({ rows }) => {
+  const dispatch = useDispatch();
+  const scoreState = useSelector((state) => state.scores);
+  const { results, fetchingStatus } = scoreState;
+  const location = useLocation();
+  const [isGenerating, setIsGenerating] = useState(false);
 
-// Create PDF document
-const SchoolFeeSheet =  ({ rows }) => {
+  useEffect(() => {
+    fetchData();
+  }, [location.pathname]);
 
-    const dispatch = useDispatch();
-    const scoreState = useSelector((state) => state.scores);
-    const { results, fetchingStatus } = scoreState;
-    const location = useLocation();
+  const fetchData = () => {
+    if (fetchingStatus === 'idle') {
+      // dispatch(getResultByClassId(classId))
+    }
+  };
 
+  console.log(" result " + JSON.stringify(results));
 
+  Font.register({
+    family: 'Roboto',
+    src: roboto,
+  });
 
-    useEffect(() => {
-        
-        fetchData();
-        
-      
-      }, [location.pathname]);
+  Font.register({
+    family: 'Oswald',
+    src: Oswald,
+  });
 
-
-      const fetchData = () => {
-        if (fetchingStatus === 'idle') {
-        //   dispatch(getResultByClassId(classId))
-        }
-      }
-
-
-      console.log(" result " + JSON.stringify(results));
-
-
-    Font.register({
-  family: 'Roboto',
-  src: roboto,
-});
-
-Font.register({
-  family: 'Oswald',
-  src: Oswald,
-});
-
-// Sample data for testing
-const ScoreSheetColumns = [
-
-  { 
-    accessorKey: 'regNo', 
-    header: () => 'Reg No', 
-    size: 40
-  },
-  { 
-    accessorKey: 'fullname', 
-    header: () => 'Names', 
-    size: 60,
-   //meta: { type: 'float' } 
-  },
-  
-
+  const ScoreSheetColumns = [
     { 
-    accessorKey: 'feeStatus', 
-    header: () => 'Fee Status', 
-    size: 20,
-    // meta: { type: 'float' } 
-  }
+      accessorKey: 'regNo', 
+      header: () => 'Reg No', 
+      size: 40
+    },
+    { 
+      accessorKey: 'fullname', 
+      header: () => 'Names', 
+      size: 60,
+    },
+    { 
+      accessorKey: 'feeStatus', 
+      header: () => 'Fee Status', 
+      size: 20,
+    }
+  ];
 
-];
+  const ScoreKeyColumns = [
+    { accessorKey: 'a', size: 35, bold: false },
+    { accessorKey: 'b', size: 35 },
+    { accessorKey: 'c', size: 20 },
+    { accessorKey: 'd', size: 20 },
+    { accessorKey: 'e', size: 20 }
+  ];
 
+  const scoreKeyData = [
+    { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' },
+    { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
+  ];
 
-
-
-const ScoreKeyColumns = [
-  { 
-    accessorKey: 'a', 
-    // header: () => 'S/N', 
-    size: 35, 
-    bold: false
-  },
-  { 
-    accessorKey: 'b', 
-    // header: () => 'Subject', 
-    size: 35
-  }
-
-  ,
-  { 
-    accessorKey: 'c', 
-    // header: () => 'Subject', 
-    size: 20 
-  },
-
-  ,
-  { 
-    accessorKey: 'd', 
-    // header: () => 'Subject', 
-    size: 20 
-  }
-
-  ,
-  { 
-    accessorKey: 'e', 
-    // header: () => 'Subject', 
-    size: 20
-  }
-];
-
-
-// My Test Data for Score
-// const sampleData = [
-//   {  subject: {
-//       name: 'john@example.com',
-//       phone: '123-456-7890',
-//       age: 30
-//     }, max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
-//  {  subject: "Mathematic", max: 100, ca1: 18, ca2: 20,totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
-//  {  subject: "Tauheed", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
-//    {  subject: "Basic Science", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
-//  { subject: "Adab", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
-//  { subject: "English Language", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
-//    { subject: "Home Economic", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "B", remark: 'Pass' },
-//  {  subject: "English Literature",max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "D", remark: 'Fail' },
-//  {  subject: "IRK", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "E", remark: 'Good' },
-//    {  subject: "English", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Very Good' },
-//  {  subject: "English", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
-//  {  subject: "English", max: 100, ca1: 18, ca2: 20, totalTest: 38, exam: 60, total: 80, grade: "A", remark: 'Excellence' },
-// ];
-
-const scoreKeyData = [
-  { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' },
-   { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
-];
-
-
-    return (
-
-<PDFDownloadLink 
-  document={ 
-  <Document>
+  // PDF Document Component
+  const MyDocument = () => (
+    <Document>
       <Page size="A4" style={resultStyle.body}>
-              
-      <Text style={ resultStyle.schoolName}>{rows[0]?.school.name || ""}</Text>
-      <Text style={resultStyle.address}>{rows[0]?.school.address || ""}</Text>
-      <Text style={resultStyle.boldMottoText}> Motto:   <Text style={resultStyle.motto}>{rows[0]?.school.motto || ""}</Text> </Text>
-      <Text style={resultStyle.boldText}>School Reg: No.:  <Text style={resultStyle.address}> {rows[0]?.school.regNo || ""}</Text> Tel:   <Text style={resultStyle.address}>{rows[0]?.school.contact || ""}</Text> </Text>
-      <Text style={resultStyle.secondHeader}> REPORT SHEET FOR {rows[0]?.academicSession.term || ""} TERM {rows[0]?.academicSession.session || ""} ACADEMIC SESSION </Text>
+        <Text style={resultStyle.schoolName}>{rows[0]?.school.name || ""}</Text>
+        <Text style={resultStyle.address}>{rows[0]?.school.address || ""}</Text>
+        <Text style={resultStyle.boldMottoText}>
+          Motto: <Text style={resultStyle.motto}>{rows[0]?.school.motto || ""}</Text>
+        </Text>
+        <Text style={resultStyle.boldText}>
+          School Reg: No.: <Text style={resultStyle.address}>{rows[0]?.school.regNo || ""}</Text> Tel: <Text style={resultStyle.address}>{rows[0]?.school.contact || ""}</Text>
+        </Text>
+        <Text style={resultStyle.secondHeader}>
+          REPORT SHEET FOR {rows[0]?.academicSession.term || ""} TERM {rows[0]?.academicSession.session || ""} ACADEMIC SESSION
+        </Text>
 
-           <ClassScoreSheetTable columns={ScoreSheetColumns} data={rows} />
-    
-      <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
-    </Page>
-  </Document>
-  } 
-  fileName="result.pdf"
->
-  Download School Fee Record
-</PDFDownloadLink>
+        <ClassScoreSheetTable columns={ScoreSheetColumns} data={rows} />
+        
+        <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
+      </Page>
+    </Document>
+  );
 
-       
-    );
-  
-}
+  // Handle PDF Download
+  const handleDownloadPDF = async () => {
+    try {
+      setIsGenerating(true);
+      const blob = await pdf(<MyDocument />).toBlob();
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'school_fee_record.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
+      setIsGenerating(false);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      setIsGenerating(false);
+      alert('Error generating PDF. Please try again.');
+    }
+  };
+
+  // Handle PDF View
+  const handleViewPDF = async () => {
+    try {
+      setIsGenerating(true);
+      const blob = await pdf(<MyDocument />).toBlob();
+      const url = URL.createObjectURL(blob);
+      
+      window.open(url, '_blank');
+      setIsGenerating(false);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      setIsGenerating(false);
+      alert('Error generating PDF. Please try again.');
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', gap: '10px' }}>
+      <button 
+        onClick={handleDownloadPDF} 
+        disabled={isGenerating || !rows || rows.length === 0}
+        style={{
+          padding: '10px 20px',
+          backgroundColor: isGenerating ? '#ccc' : '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: isGenerating ? 'not-allowed' : 'pointer'
+        }}
+      >
+        {isGenerating ? 'Generating...' : 'Download School Fee Record'}
+      </button>
+      
+      <button 
+        onClick={handleViewPDF} 
+        disabled={isGenerating || !rows || rows.length === 0}
+        style={{
+          padding: '10px 20px',
+          backgroundColor: isGenerating ? '#ccc' : '#28a745',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: isGenerating ? 'not-allowed' : 'pointer'
+        }}
+      >
+        {isGenerating ? 'Generating...' : 'View Fee Record'}
+      </button>
+    </div>
+  );
+};
 
 export default SchoolFeeSheet;
-
-
 
 const resultStyle = StyleSheet.create({
   body: {
@@ -191,45 +186,39 @@ const resultStyle = StyleSheet.create({
     marginBottom: 0,
     fontFamily: 'Roboto'
   },
-
-   motto: {
+  motto: {
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 0,
     fontFamily: 'Roboto'
   },
-
   detailsText: {
     fontSize: 10,
     textAlign: 'start',
     marginBottom: 2,
     fontFamily: 'Roboto'
   },
-   
-    boldText: {
+  boldText: {
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 5,
     fontFamily: 'Oswald',
     fontWeight: 'bold'
   },
-
-   boldMottoText: {
+  boldMottoText: {
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 0,
     fontFamily: 'Oswald',
     fontWeight: 'bold'
   },
-
   boldTextSecondary: {
     fontSize: 10,
     textAlign: 'left',
-   marginTop: 10,
+    marginTop: 10,
     fontWeight: 'bold'
   },
-
-   secondHeader: {
+  secondHeader: {
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 10,
@@ -271,24 +260,19 @@ const resultStyle = StyleSheet.create({
     textAlign: 'center',
     color: 'grey',
   },
-
   secondaryContainer: {
-   marginTop: 20,
-   width: '50%'
+    marginTop: 20,
+    width: '50%'
   },
-  
   detailsContainer: {
-   flexDirection: "row",
-   justifyContent: 'center',
-   width: '100%',
-   marginBottom: 10
+    flexDirection: "row",
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 10
   },
-
   childContainer: {
     width: 'auto',
     flexDirection: 'column',
     paddingLeft: 10
   }
-
-
 });
