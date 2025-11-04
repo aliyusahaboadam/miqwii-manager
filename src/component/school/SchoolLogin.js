@@ -175,10 +175,7 @@ setDisplayText(role.find(role => role.id === id).text)
   
    <SignInContainer>
 
-     <Helmet>
-        <title>Login - Miqwii</title>
-        <meta name="description" content="Login to your Miqwii account to manage your school portal." />
-      </Helmet>
+     
 
              <Formik
                   initialValues={{

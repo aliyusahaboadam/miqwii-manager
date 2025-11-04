@@ -169,10 +169,7 @@ const togglePasswordVisibility = () => {
   return (
   
    <SignInContainer>
-  <Helmet>
-        <title>Create Account - Miqwii</title>
-        <meta name="description" content="Register with Miqwii for smooth school management perfomance." />
-      </Helmet>
+ 
 
 
              <Formik
