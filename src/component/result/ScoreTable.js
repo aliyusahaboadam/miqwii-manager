@@ -9,9 +9,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderLeftWidth: 0,
     borderTopWidth: 0,
-    paddingVertical: 4,
+    paddingVertical: 3,
     paddingHorizontal: 5,
-    fontSize: 11,
+    fontSize: 9.5,
     fontFamily: 'Roboto'
   },
   tableRowStyle: {
