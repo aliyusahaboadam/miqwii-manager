@@ -135,7 +135,7 @@ const UpdateSubject = () => {
 
   const subjectRegistrationSchema = object({
       
-      name: string().max(15, "Subject Name must not exceed 15 characters")
+      name: string().max(22, "Subject Name must not exceed 22 characters")
                     .required("Subject is required"),
   
 
