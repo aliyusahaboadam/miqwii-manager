@@ -19,7 +19,7 @@ import Loading from '../Chunks/loading';
 import { getTeacherById, updateTeacher } from '../../redux/reducer/teacherSlice';
 import Autocomplete from '@mui/material/Autocomplete';
 import { getAllSubject, getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
-
+import { Checkbox } from "@mui/material";
 
 
 // Import for dashboard Below
@@ -825,143 +825,198 @@ const handleClose = (event, reason) => {
     />
 
 
-      <Autocomplete
-              multiple
-              limitTags={1}
-              id="multiple-limit-tags"
-              options={classNames}
-              getOptionLabel={(option) => option}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              onChange={(event, value) => setFieldValue("classes", value)}
-              renderInput={(params) => (
-                <TextField
-                 {...params} 
-                 label="Classes" 
-                 placeholder="Classes"
-                 variant="filled"
-                 fullWidth
-                 margin='normal'
-                 name='classes'
-                 error={touched.classes && Boolean(errors.classes)}
-                 helperText={touched.classes && errors.classes}
-                 value={values.classes}
-                 
-                slotProps={{
-                  formHelperText: {
-                    sx: { fontSize: 15 },  // Increase font size of helper text
-                  },
-                 
-                  inputLabel: {
-                    style: { fontSize: 16 }, // font size for label text
-                  }
-                }}
-        
-                 
-                />
-              )}
-            
-              sx={{
-                "& .MuiAutocomplete-tag": {
-                  fontSize: "14px", // Customize the font size of the tags
-                  backgroundColor: "#e0f7fa", // Optional: Change tag background color
-                },
-                "& .MuiAutocomplete-option": {
-                  fontSize: "16px", // Customize the font size of dropdown options
-                },
-                
-              }}
-        
-              slotProps={{
-                textField: {
-                  InputLabelProps: {
-                    style: { fontSize: "18px", color: "blue" }, // Customize label
-                  },
-                  inputProps: {
-                    style: { fontSize: "16px" }, // Customize input font size
-                  },
-                },
-                popper: {
-                  sx: {
-                    "& .MuiAutocomplete-option": {
-                      fontSize: "16px", // Customize dropdown option font size
-                    },
-                  },
-                },
-                tag: {
-                  style: { fontSize: "14px", backgroundColor: "#e0f7fa" }, // Tag styles
-                },
-              }}
-            
-            />
+    <Autocomplete
+  multiple
+  limitTags={1}
+  id="classes-autocomplete"
+  options={['Select All', ...classNames]}
+  getOptionLabel={(option) => option}
+  value={values.classes || []}
+  onChange={(event, value, reason, details) => {
+    if (details?.option === 'Select All') {
+      if (value.length - 1 === classNames.length) {
+        setFieldValue("classes", []);
+      } else {
+        setFieldValue("classes", classNames);
+      }
+    } else {
+      const filteredValue = value.filter(item => item !== 'Select All');
+      setFieldValue("classes", filteredValue);
+    }
+  }}
+  renderOption={(props, option) => {
+    if (option === 'Select All') {
+      const allSelected = values.classes?.length === classNames.length;
+      return (
+        <li {...props} key="select-all">
+          <Checkbox
+            checked={allSelected}
+            style={{ marginRight: 8 }}
+          />
+          ✓ Select All
+        </li>
+      );
+    }
+    return <li {...props} key={option}>{option}</li>;
+  }}
+  renderInput={(params) => (
+    <TextField
+     {...params} 
+     label="Classes" 
+     placeholder="Classes"
+     variant="filled"
+     fullWidth
+     margin='normal'
+     name='classes'
+     error={touched.classes && Boolean(errors.classes)}
+     helperText={touched.classes && errors.classes}
+     
+    slotProps={{
+      formHelperText: {
+        sx: { fontSize: 15 },
+      },
+     
+      inputLabel: {
+        style: { fontSize: 16 },
+      }
+    }}
+
+     
+    />
+  )}
+
+  sx={{
+    "& .MuiAutocomplete-tag": {
+      fontSize: "14px",
+      backgroundColor: "#e0f7fa",
+    },
+    "& .MuiAutocomplete-option": {
+      fontSize: "16px",
+    },
     
+  }}
+
+  slotProps={{
+    textField: {
+      InputLabelProps: {
+        style: { fontSize: "18px", color: "blue" },
+      },
+      inputProps: {
+        style: { fontSize: "16px" },
+      },
+    },
+    popper: {
+      sx: {
+        "& .MuiAutocomplete-option": {
+          fontSize: "16px",
+        },
+      },
+    },
+    tag: {
+      style: { fontSize: "14px", backgroundColor: "#e0f7fa" },
+    },
+  }}
+
+/>
+
+
+// 2. SUBJECTS AUTOCOMPLETE WITH SELECT ALL
+<Autocomplete
+  multiple
+  limitTags={1}
+  id="subjects-autocomplete"
+  options={[
+    { id: 'select-all', name: '✓ Select All' },
+    ...subjectWithClassname
+  ]}
+  getOptionLabel={(option) => option.name}
+  value={values.subjects || []}
+  onChange={(event, value, reason, details) => {
+    if (details?.option?.id === 'select-all') {
+      if (value.length === subjectWithClassname.length) {
+        setFieldValue("subjects", []);
+      } else {
+        setFieldValue("subjects", subjectWithClassname);
+      }
+    } else {
+      const filteredValue = value.filter(item => item.id !== 'select-all');
+      setFieldValue("subjects", filteredValue);
+    }
+  }}
+  renderOption={(props, option) => {
+    if (option.id === 'select-all') {
+      const allSelected = values.subjects?.length === subjectWithClassname.length;
+      return (
+        <li {...props} key={option.id}>
+          <Checkbox
+            checked={allSelected}
+            style={{ marginRight: 8 }}
+          />
+          {option.name}
+        </li>
+      );
+    }
+    return <li {...props} key={option.id}>{option.name}</li>;
+  }}
+  renderInput={(params) => (
+    <TextField
+     {...params} 
+     label="Subjects" 
+     placeholder="Subjects"
+     variant="filled"
+     fullWidth
+     margin='normal'
+     name='subjects'
+     error={touched.subjects && Boolean(errors.subjects)}
+     helperText={touched.subjects && errors.subjects}
+     
+    slotProps={{
+      formHelperText: {
+        sx: { fontSize: 15 },
+      },
+     
+      inputLabel: {
+        style: { fontSize: 16 },
+      }
+    }}
+
+     
+    />
+  )}
+
+  sx={{
+    "& .MuiAutocomplete-tag": {
+      fontSize: "14px",
+      backgroundColor: "#e0f7fa",
+    },
+    "& .MuiAutocomplete-option": {
+      fontSize: "16px",
+    },
     
-               <Autocomplete
-                  multiple
-                  limitTags={1}
-                  id="multiple-limit-tags"
-                  options={subjectWithClassname}
-                  getOptionLabel={(option) => option.name}
-                  onChange={(event, value) => setFieldValue("subjects", value)}
-                  renderInput={(params) => (
-                    <TextField
-                     {...params} 
-                     label="Subjects" 
-                     placeholder="Subjects"
-                     variant="filled"
-                     fullWidth
-                     margin='normal'
-                     name='subjects'
-                     error={touched.subjects && Boolean(errors.subjects)}
-                     helperText={touched.subjects && errors.subjects}
-                     value={values.subjects?.name}
-                     
-                    slotProps={{
-                      formHelperText: {
-                        sx: { fontSize: 15 },  // Increase font size of helper text
-                      },
-                     
-                      inputLabel: {
-                        style: { fontSize: 16 }, // font size for label text
-                      }
-                    }}
-            
-                     
-                    />
-                  )}
-                
-                  sx={{
-                    "& .MuiAutocomplete-tag": {
-                      fontSize: "14px", // Customize the font size of the tags
-                      backgroundColor: "#e0f7fa", // Optional: Change tag background color
-                    },
-                    "& .MuiAutocomplete-option": {
-                      fontSize: "16px", // Customize the font size of dropdown options
-                    },
-                    
-                  }}
-            
-                  slotProps={{
-                    textField: {
-                      InputLabelProps: {
-                        style: { fontSize: "18px", color: "blue" }, // Customize label
-                      },
-                      inputProps: {
-                        style: { fontSize: "16px" }, // Customize input font size
-                      },
-                    },
-                    popper: {
-                      sx: {
-                        "& .MuiAutocomplete-option": {
-                          fontSize: "16px", // Customize dropdown option font size
-                        },
-                      },
-                    },
-                    tag: {
-                      style: { fontSize: "14px", backgroundColor: "#e0f7fa" }, // Tag styles
-                    },
-                  }}
-                
-                />
+  }}
+
+  slotProps={{
+    textField: {
+      InputLabelProps: {
+        style: { fontSize: "18px", color: "blue" },
+      },
+      inputProps: {
+        style: { fontSize: "16px" },
+      },
+    },
+    popper: {
+      sx: {
+        "& .MuiAutocomplete-option": {
+          fontSize: "16px",
+        },
+      },
+    },
+    tag: {
+      style: { fontSize: "14px", backgroundColor: "#e0f7fa" },
+    },
+  }}
+
+/>
 
 
              {/* {BUTTON } */}
