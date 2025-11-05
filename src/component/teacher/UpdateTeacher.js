@@ -920,7 +920,7 @@ const handleClose = (event, reason) => {
 />
 
 
-// 2. SUBJECTS AUTOCOMPLETE WITH SELECT ALL
+
 <Autocomplete
   multiple
   limitTags={1}
