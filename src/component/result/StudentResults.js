@@ -5,26 +5,16 @@ import { Text } from '@react-pdf/renderer';
 import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
 import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
-  const scoreState = useSelector((state) => state.scores);
-  const { results, fetchingStatus } = scoreState;
   const [isGenerating, setIsGenerating] = useState(false);
-  const [hasFetched, setHasFetched] = useState(false);
 
   const formatAmount = (amount) => {
     return `NGN${new Intl.NumberFormat('en-NG').format(amount)}`;
   };
-
-  // Filter results for this specific class
-  const filteredResults = results?.filter(result => result?.class1?.id === classId) || [];
-
-  console.log("ClassId:", classId);
-  console.log("All results:", results);
-  console.log("Filtered results for this class:", filteredResults);
 
   Font.register({
     family: 'Roboto',
@@ -36,6 +26,7 @@ const StudentResults = ({ classId }) => {
     src: Oswald,
   });
 
+  // Sample data for testing
   const ScoreColumns = [
     { 
       accessorKey: 'subjectName', 
@@ -116,7 +107,7 @@ const StudentResults = ({ classId }) => {
     { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
   ];
 
-  // PDF Document Component
+  // PDF Document Component - Now accepts results as parameter
   const MyDocument = ({ resultsData }) => {
     const feeKeyData = [
       {
@@ -222,81 +213,110 @@ const StudentResults = ({ classId }) => {
     );
   };
 
-  // Fetch results when button is clicked
-  const fetchAndWait = async () => {
-    setHasFetched(false);
-    await dispatch(getResultByClassId(classId));
-    // Wait for state to update
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setHasFetched(true);
-  };
-
-  // Handle PDF Download
+  // Handle PDF Download - Fetch results when button is clicked
   const handleDownloadPDF = async () => {
     try {
       setIsGenerating(true);
       
-      // Fetch results
-      await fetchAndWait();
+      console.log('Fetching results for classId:', classId);
       
-      // Get the latest results from Redux after fetch
-      const currentResults = scoreState.results?.filter(result => result?.class1?.id === classId) || [];
+      // Fetch results for this specific class first
+      const resultAction = await dispatch(getResultByClassId(classId));
       
-      console.log("Results after fetch:", currentResults);
+      console.log('Result action:', resultAction);
       
-      if (!currentResults || currentResults.length === 0) {
-        alert('No results found for this class. Please ensure results have been generated.');
-        setIsGenerating(false);
-        return;
+      // Check if fetch was successful and extract the payload
+      if (getResultByClassId.fulfilled.match(resultAction)) {
+        const fetchedResults = resultAction.payload;
+        
+        console.log('Fetched results:', fetchedResults);
+        
+        // Verify we have results
+        if (!fetchedResults || fetchedResults.length === 0) {
+          alert('No results found for this class.');
+          setIsGenerating(false);
+          return;
+        }
+        
+        // Log the first result to verify correct class
+        console.log('Generating PDF for class:', fetchedResults[0]?.class1?.name);
+        
+        // Now generate PDF with the fetched results directly
+        const blob = await pdf(<MyDocument resultsData={fetchedResults} />).toBlob();
+        const url = URL.createObjectURL(blob);
+        
+        // Create temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `result-${fetchedResults[0]?.class1?.name || classId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        URL.revokeObjectURL(url);
+      } else {
+        console.error('Failed to fetch results:', resultAction);
+        alert('Failed to fetch results. Please try again.');
       }
-
-      const blob = await pdf(<MyDocument resultsData={currentResults} />).toBlob();
-      const url = URL.createObjectURL(blob);
       
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `results-${currentResults[0]?.class1?.name || 'class'}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      URL.revokeObjectURL(url);
       setIsGenerating(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
       setIsGenerating(false);
-      alert('Error generating PDF: ' + error.message);
+      alert('Error generating PDF. Please try again.');
     }
   };
 
-  // Handle PDF View
+  // Handle PDF View - Fetch results when button is clicked
   const handleViewPDF = async () => {
     try {
       setIsGenerating(true);
       
-      // Fetch results
-      await fetchAndWait();
+      console.log('Fetching results for classId:', classId);
       
-      // Get the latest results from Redux after fetch
-      const currentResults = scoreState.results?.filter(result => result?.class1?.id === classId) || [];
+      // Fetch results for this specific class first
+      const resultAction = await dispatch(getResultByClassId(classId));
       
-      console.log("Results after fetch:", currentResults);
+      console.log('Result action:', resultAction);
       
-      if (!currentResults || currentResults.length === 0) {
-        alert('No results found for this class. Please ensure results have been generated.');
-        setIsGenerating(false);
-        return;
+      // Check if fetch was successful and extract the payload
+      if (getResultByClassId.fulfilled.match(resultAction)) {
+        const fetchedResults = resultAction.payload;
+        
+        console.log('Fetched results:', fetchedResults);
+        
+        // Verify we have results
+        if (!fetchedResults || fetchedResults.length === 0) {
+          alert('No results found for this class.');
+          setIsGenerating(false);
+          return;
+        }
+        
+        // Log the first result to verify correct class
+        console.log('Generating PDF for class:', fetchedResults[0]?.class1?.name);
+        
+        // Now generate PDF with the fetched results directly
+        const blob = await pdf(<MyDocument resultsData={fetchedResults} />).toBlob();
+        const url = URL.createObjectURL(blob);
+        
+        // Open in new tab
+        window.open(url, '_blank');
+        
+        // Clean up after a delay to ensure the PDF opens
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 1000);
+      } else {
+        console.error('Failed to fetch results:', resultAction);
+        alert('Failed to fetch results. Please try again.');
       }
-
-      const blob = await pdf(<MyDocument resultsData={currentResults} />).toBlob();
-      const url = URL.createObjectURL(blob);
       
-      window.open(url, '_blank');
       setIsGenerating(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
       setIsGenerating(false);
-      alert('Error generating PDF: ' + error.message);
+      alert('Error generating PDF. Please try again.');
     }
   };
 
@@ -311,8 +331,7 @@ const StudentResults = ({ classId }) => {
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: isGenerating ? 'not-allowed' : 'pointer',
-          fontSize: '14px'
+          cursor: isGenerating ? 'not-allowed' : 'pointer'
         }}
       >
         {isGenerating ? 'Generating...' : 'Download Results'}
@@ -327,8 +346,7 @@ const StudentResults = ({ classId }) => {
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: isGenerating ? 'not-allowed' : 'pointer',
-          fontSize: '14px'
+          cursor: isGenerating ? 'not-allowed' : 'pointer'
         }}
       >
         {isGenerating ? 'Generating...' : 'View Results'}
