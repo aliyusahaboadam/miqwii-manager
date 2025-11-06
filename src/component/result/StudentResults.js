@@ -6,19 +6,32 @@ import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
 import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
   const scoreState = useSelector((state) => state.scores);
-  const { results } = scoreState;
+  const { results, fetchingStatus } = scoreState;
   const [isGenerating, setIsGenerating] = useState(false);
 
   const formatAmount = (amount) => {
     return `NGN${new Intl.NumberFormat('en-NG').format(amount)}`;
   };
 
-  console.log(" result " + JSON.stringify(results));
+  // Filter results for this specific class using useMemo to avoid recalculation
+  const filteredResults = useMemo(() => {
+    if (!results || !Array.isArray(results)) return [];
+    return results.filter(result => result.class1?.id === classId);
+  }, [results, classId]);
+
+  useEffect(() => {
+    // Only fetch if classId exists and changes
+    if (classId) {
+      dispatch(getResultByClassId(classId));
+    }
+  }, [classId, dispatch]); // Removed location.pathname
+
+  console.log("Filtered results for classId", classId, ":", JSON.stringify(filteredResults));
 
   Font.register({
     family: 'Roboto',
@@ -100,9 +113,9 @@ const StudentResults = ({ classId }) => {
 
   const feeKeyData = [
     {
-      nextSSSTermFee: formatAmount(results?.[0]?.academicSession?.nextSSSTermFee || 0),
-      nextJSSTermFee: formatAmount(results?.[0]?.academicSession?.nextJSSTermFee || 0),
-      nextPRITermFee: formatAmount(results?.[0]?.academicSession?.nextPRITermFee || 0)
+      nextSSSTermFee: formatAmount(filteredResults?.[0]?.academicSession?.nextSSSTermFee || 0),
+      nextJSSTermFee: formatAmount(filteredResults?.[0]?.academicSession?.nextJSSTermFee || 0),
+      nextPRITermFee: formatAmount(filteredResults?.[0]?.academicSession?.nextPRITermFee || 0)
     }
   ];
 
@@ -119,10 +132,10 @@ const StudentResults = ({ classId }) => {
     { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
   ];
 
-  // PDF Document Component
+  // PDF Document Component - now uses filteredResults
   const MyDocument = () => (
     <Document>
-      {results.map((result, index) => (
+      {filteredResults.map((result, index) => (
         <Page key={index} size="A4" style={resultStyle.body}>
           <View style={resultStyle.logoAndHeadingContainer}>
             <View style={resultStyle.logo}>
@@ -215,34 +228,34 @@ const StudentResults = ({ classId }) => {
     </Document>
   );
 
-  // Handle PDF Download - Fetch results when button is clicked
+  // Handle PDF Download - Works better on mobile
   const handleDownloadPDF = async () => {
+    // Validation checks
+    if (fetchingStatus === 'loading') {
+      alert('Results are still loading. Please wait.');
+      return;
+    }
+
+    if (!filteredResults || filteredResults.length === 0) {
+      alert('No results found for this class. Please ensure results have been generated.');
+      return;
+    }
+
     try {
       setIsGenerating(true);
+      const blob = await pdf(<MyDocument />).toBlob();
+      const url = URL.createObjectURL(blob);
       
-      // Fetch results for this specific class first
-      const resultAction = await dispatch(getResultByClassId(classId));
+      // Create temporary link and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `results-${filteredResults[0]?.class1?.name || 'class'}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
-      // Check if fetch was successful
-      if (getResultByClassId.fulfilled.match(resultAction)) {
-        // Now generate PDF with fresh results
-        const blob = await pdf(<MyDocument />).toBlob();
-        const url = URL.createObjectURL(blob);
-        
-        // Create temporary link and trigger download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `result-class-${classId}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        // Clean up
-        URL.revokeObjectURL(url);
-      } else {
-        alert('Failed to fetch results. Please try again.');
-      }
-      
+      // Clean up
+      URL.revokeObjectURL(url);
       setIsGenerating(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -251,31 +264,26 @@ const StudentResults = ({ classId }) => {
     }
   };
 
-  // Handle PDF View - Fetch results when button is clicked
+  // Handle PDF View - Alternative for mobile users
   const handleViewPDF = async () => {
+    // Validation checks
+    if (fetchingStatus === 'loading') {
+      alert('Results are still loading. Please wait.');
+      return;
+    }
+
+    if (!filteredResults || filteredResults.length === 0) {
+      alert('No results found for this class. Please ensure results have been generated.');
+      return;
+    }
+
     try {
       setIsGenerating(true);
+      const blob = await pdf(<MyDocument />).toBlob();
+      const url = URL.createObjectURL(blob);
       
-      // Fetch results for this specific class first
-      const resultAction = await dispatch(getResultByClassId(classId));
-      
-      // Check if fetch was successful
-      if (getResultByClassId.fulfilled.match(resultAction)) {
-        // Now generate PDF with fresh results
-        const blob = await pdf(<MyDocument />).toBlob();
-        const url = URL.createObjectURL(blob);
-        
-        // Open in new tab
-        window.open(url, '_blank');
-        
-        // Clean up after a delay to ensure the PDF opens
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 1000);
-      } else {
-        alert('Failed to fetch results. Please try again.');
-      }
-      
+      // Open in new tab
+      window.open(url, '_blank');
       setIsGenerating(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -283,37 +291,39 @@ const StudentResults = ({ classId }) => {
       alert('Error generating PDF. Please try again.');
     }
   };
+
+  const isDisabled = isGenerating || fetchingStatus === 'loading' || !filteredResults || filteredResults.length === 0;
 
   return (
     <div style={{ display: 'flex', gap: '10px' }}>
       <button 
         onClick={handleDownloadPDF} 
-        disabled={isGenerating}
+        disabled={isDisabled}
         style={{
           padding: '10px 20px',
-          backgroundColor: isGenerating ? '#ccc' : '#007bff',
+          backgroundColor: isDisabled ? '#ccc' : '#007bff',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: isGenerating ? 'not-allowed' : 'pointer'
+          cursor: isDisabled ? 'not-allowed' : 'pointer'
         }}
       >
-        {isGenerating ? 'Generating...' : 'Download Results'}
+        {isGenerating ? 'Generating...' : fetchingStatus === 'loading' ? 'Loading...' : 'Download Results'}
       </button>
       
       <button 
         onClick={handleViewPDF} 
-        disabled={isGenerating}
+        disabled={isDisabled}
         style={{
           padding: '10px 20px',
-          backgroundColor: isGenerating ? '#ccc' : '#28a745',
+          backgroundColor: isDisabled ? '#ccc' : '#28a745',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: isGenerating ? 'not-allowed' : 'pointer'
+          cursor: isDisabled ? 'not-allowed' : 'pointer'
         }}
       >
-        {isGenerating ? 'Generating...' : 'View Results'}
+        {isGenerating ? 'Generating...' : fetchingStatus === 'loading' ? 'Loading...' : 'View Results'}
       </button>
     </div>
   );
