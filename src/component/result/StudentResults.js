@@ -6,32 +6,34 @@ import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
 import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState, useMemo } from 'react';
+import { useState } from 'react';
 
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
   const scoreState = useSelector((state) => state.scores);
   const { results, fetchingStatus } = scoreState;
   const [isGenerating, setIsGenerating] = useState(false);
+  const [localResults, setLocalResults] = useState(null); // Store results locally for this class
 
   const formatAmount = (amount) => {
     return `NGN${new Intl.NumberFormat('en-NG').format(amount)}`;
   };
 
-  // Filter results for this specific class using useMemo to avoid recalculation
-  const filteredResults = useMemo(() => {
-    if (!results || !Array.isArray(results)) return [];
-    return results.filter(result => result.class1?.id === classId);
-  }, [results, classId]);
-
-  useEffect(() => {
-    // Only fetch if classId exists and changes
-    if (classId) {
-      dispatch(getResultByClassId(classId));
+  // Fetch results when user clicks the button
+  const fetchResultsForClass = async () => {
+    try {
+      await dispatch(getResultByClassId(classId)).unwrap();
+      // After fetch completes, filter and store locally
+      const filtered = results?.filter(result => result.class1?.id === classId) || [];
+      setLocalResults(filtered);
+      return filtered;
+    } catch (error) {
+      console.error('Error fetching results:', error);
+      throw error;
     }
-  }, [classId, dispatch]); // Removed location.pathname
+  };
 
-  console.log("Filtered results for classId", classId, ":", JSON.stringify(filteredResults));
+  console.log("Local results for classId", classId, ":", JSON.stringify(localResults));
 
   Font.register({
     family: 'Roboto',
@@ -43,7 +45,6 @@ const StudentResults = ({ classId }) => {
     src: Oswald,
   });
 
-  // Sample data for testing
   const ScoreColumns = [
     { 
       accessorKey: 'subjectName', 
@@ -111,14 +112,6 @@ const StudentResults = ({ classId }) => {
     },
   ];
 
-  const feeKeyData = [
-    {
-      nextSSSTermFee: formatAmount(filteredResults?.[0]?.academicSession?.nextSSSTermFee || 0),
-      nextJSSTermFee: formatAmount(filteredResults?.[0]?.academicSession?.nextJSSTermFee || 0),
-      nextPRITermFee: formatAmount(filteredResults?.[0]?.academicSession?.nextPRITermFee || 0)
-    }
-  ];
-
   const ScoreKeyColumns = [
     { accessorKey: 'a', size: 35, bold: false },
     { accessorKey: 'b', size: 35 },
@@ -132,129 +125,142 @@ const StudentResults = ({ classId }) => {
     { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
   ];
 
-  // PDF Document Component - now uses filteredResults
-  const MyDocument = () => (
-    <Document>
-      {filteredResults.map((result, index) => (
-        <Page key={index} size="A4" style={resultStyle.body}>
-          <View style={resultStyle.logoAndHeadingContainer}>
-            <View style={resultStyle.logo}>
-              <Image 
-                src={`https://images-0.s3.us-west-2.amazonaws.com/${result.school.logo}`} 
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain" 
-                }} 
-              />
-            </View>
-            <View style={resultStyle.heading}>
-              <Text style={resultStyle.schoolName}>{result.school.name}</Text>
-              <Text style={resultStyle.address}>{result.school.address}</Text>
-              <Text style={resultStyle.boldMottoText}>
-                Motto: <Text style={resultStyle.motto}>{result.school.motto}</Text>
-              </Text>
-              <Text style={resultStyle.boldText}>
-                School Reg: No.: <Text style={resultStyle.address}>{result.school.regNo}</Text> Tel: <Text style={resultStyle.address}>{result.school.contact}</Text>
-              </Text>
-            </View>
-            <View style={resultStyle.logo}>
-              <Image 
-                src={`https://images-0.s3.us-west-2.amazonaws.com/${result.school.logo}`} 
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain" 
-                }} 
-              />
-            </View>
-          </View>
-          
-          <Text style={resultStyle.secondHeader}>
-            REPORT SHEET FOR {result.academicSession.term} TERM {result.academicSession.session} ACADEMIC SESSION
-          </Text>
-          
-          <View style={resultStyle.detailsContainer}>
-            <View style={resultStyle.childContainer}>
-              <Text style={resultStyle.boldTextSecondary}>
-                Name: <Text style={resultStyle.detailsText}>{result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Reg No: <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Class: <Text style={resultStyle.detailsText}>{result.class1.name}</Text>
-              </Text>
-            </View>
-            <View style={resultStyle.childContainer}>
-              <Text style={resultStyle.boldTextSecondary}>
-                Position: <Text style={resultStyle.detailsText}>{result.position}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Student Average: <Text style={resultStyle.detailsText}>{result.overallAverage}</Text>
-              </Text>
-            </View>
-            <View style={resultStyle.childContainer}>
-              <Text style={resultStyle.boldTextSecondary}>
-                Term: <Text style={resultStyle.detailsText}>{result.academicSession.term}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Lowest Average in Class: <Text style={resultStyle.detailsText}>{result.lowestAverage}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Highest Average in Class: <Text style={resultStyle.detailsText}>{result.highestAverage}</Text>
-              </Text>
-            </View>
-          </View>
+  // PDF Document Component - now uses a parameter for results
+  const MyDocument = ({ resultsData }) => {
+    const feeKeyData = [
+      {
+        nextSSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextSSSTermFee || 0),
+        nextJSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextJSSTermFee || 0),
+        nextPRITermFee: formatAmount(resultsData?.[0]?.academicSession?.nextPRITermFee || 0)
+      }
+    ];
 
-          <ScoreTable columns={ScoreColumns} data={result.scores} />
-          
-          <View style={resultStyle.secondaryContainer}> 
-            <Text style={resultStyle.subtitle}>KEYS</Text>
-            <KeyTable columns={ScoreKeyColumns} data={scoreKeyData} />
-          </View>
+    return (
+      <Document>
+        {resultsData.map((result, index) => (
+          <Page key={index} size="A4" style={resultStyle.body}>
+            <View style={resultStyle.logoAndHeadingContainer}>
+              <View style={resultStyle.logo}>
+                <Image 
+                  src={`https://images-0.s3.us-west-2.amazonaws.com/${result.school.logo}`} 
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain" 
+                  }} 
+                />
+              </View>
+              <View style={resultStyle.heading}>
+                <Text style={resultStyle.schoolName}>{result.school.name}</Text>
+                <Text style={resultStyle.address}>{result.school.address}</Text>
+                <Text style={resultStyle.boldMottoText}>
+                  Motto: <Text style={resultStyle.motto}>{result.school.motto}</Text>
+                </Text>
+                <Text style={resultStyle.boldText}>
+                  School Reg: No.: <Text style={resultStyle.address}>{result.school.regNo}</Text> Tel: <Text style={resultStyle.address}>{result.school.contact}</Text>
+                </Text>
+              </View>
+              <View style={resultStyle.logo}>
+                <Image 
+                  src={`https://images-0.s3.us-west-2.amazonaws.com/${result.school.logo}`} 
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain" 
+                  }} 
+                />
+              </View>
+            </View>
+            
+            <Text style={resultStyle.secondHeader}>
+              REPORT SHEET FOR {result.academicSession.term} TERM {result.academicSession.session} ACADEMIC SESSION
+            </Text>
+            
+            <View style={resultStyle.detailsContainer}>
+              <View style={resultStyle.childContainer}>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Name: <Text style={resultStyle.detailsText}>{result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}</Text>
+                </Text> 
+                <Text style={resultStyle.boldTextSecondary}>
+                  Reg No: <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>
+                </Text> 
+                <Text style={resultStyle.boldTextSecondary}>
+                  Class: <Text style={resultStyle.detailsText}>{result.class1.name}</Text>
+                </Text>
+              </View>
+              <View style={resultStyle.childContainer}>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Position: <Text style={resultStyle.detailsText}>{result.position}</Text>
+                </Text> 
+                <Text style={resultStyle.boldTextSecondary}>
+                  No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
+                </Text> 
+                <Text style={resultStyle.boldTextSecondary}>
+                  Student Average: <Text style={resultStyle.detailsText}>{result.overallAverage}</Text>
+                </Text>
+              </View>
+              <View style={resultStyle.childContainer}>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Term: <Text style={resultStyle.detailsText}>{result.academicSession.term}</Text>
+                </Text> 
+                <Text style={resultStyle.boldTextSecondary}>
+                  Lowest Average in Class: <Text style={resultStyle.detailsText}>{result.lowestAverage}</Text>
+                </Text> 
+                <Text style={resultStyle.boldTextSecondary}>
+                  Highest Average in Class: <Text style={resultStyle.detailsText}>{result.highestAverage}</Text>
+                </Text>
+              </View>
+            </View>
 
-          <View style={resultStyle.secondaryContainer}> 
-            <Text style={resultStyle.subtitle}>SCHOOL NEXT TERM FEES</Text>
-            <KeyTable columns={feesKeyColumns} data={feeKeyData} />
-          </View>
-          
-          <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
-        </Page>
-      ))}
-    </Document>
-  );
+            <ScoreTable columns={ScoreColumns} data={result.scores} />
+            
+            <View style={resultStyle.secondaryContainer}> 
+              <Text style={resultStyle.subtitle}>KEYS</Text>
+              <KeyTable columns={ScoreKeyColumns} data={scoreKeyData} />
+            </View>
 
-  // Handle PDF Download - Works better on mobile
+            <View style={resultStyle.secondaryContainer}> 
+              <Text style={resultStyle.subtitle}>SCHOOL NEXT TERM FEES</Text>
+              <KeyTable columns={feesKeyColumns} data={feeKeyData} />
+            </View>
+            
+            <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
+          </Page>
+        ))}
+      </Document>
+    );
+  };
+
+  // Handle PDF Download
   const handleDownloadPDF = async () => {
-    // Validation checks
-    if (fetchingStatus === 'loading') {
-      alert('Results are still loading. Please wait.');
-      return;
-    }
-
-    if (!filteredResults || filteredResults.length === 0) {
-      alert('No results found for this class. Please ensure results have been generated.');
-      return;
-    }
-
     try {
       setIsGenerating(true);
-      const blob = await pdf(<MyDocument />).toBlob();
+      
+      // Fetch fresh results for this specific class
+      const freshResults = await fetchResultsForClass();
+      
+      // Wait a bit for Redux state to update
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Get the filtered results
+      const filtered = results?.filter(result => result.class1?.id === classId) || freshResults;
+      
+      if (!filtered || filtered.length === 0) {
+        alert('No results found for this class. Please ensure results have been generated.');
+        setIsGenerating(false);
+        return;
+      }
+
+      const blob = await pdf(<MyDocument resultsData={filtered} />).toBlob();
       const url = URL.createObjectURL(blob);
       
-      // Create temporary link and trigger download
       const link = document.createElement('a');
       link.href = url;
-      link.download = `results-${filteredResults[0]?.class1?.name || 'class'}.pdf`;
+      link.download = `results-${filtered[0]?.class1?.name || 'class'}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       
-      // Clean up
       URL.revokeObjectURL(url);
       setIsGenerating(false);
     } catch (error) {
@@ -264,25 +270,29 @@ const StudentResults = ({ classId }) => {
     }
   };
 
-  // Handle PDF View - Alternative for mobile users
+  // Handle PDF View
   const handleViewPDF = async () => {
-    // Validation checks
-    if (fetchingStatus === 'loading') {
-      alert('Results are still loading. Please wait.');
-      return;
-    }
-
-    if (!filteredResults || filteredResults.length === 0) {
-      alert('No results found for this class. Please ensure results have been generated.');
-      return;
-    }
-
     try {
       setIsGenerating(true);
-      const blob = await pdf(<MyDocument />).toBlob();
+      
+      // Fetch fresh results for this specific class
+      const freshResults = await fetchResultsForClass();
+      
+      // Wait a bit for Redux state to update
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Get the filtered results
+      const filtered = results?.filter(result => result.class1?.id === classId) || freshResults;
+      
+      if (!filtered || filtered.length === 0) {
+        alert('No results found for this class. Please ensure results have been generated.');
+        setIsGenerating(false);
+        return;
+      }
+
+      const blob = await pdf(<MyDocument resultsData={filtered} />).toBlob();
       const url = URL.createObjectURL(blob);
       
-      // Open in new tab
       window.open(url, '_blank');
       setIsGenerating(false);
     } catch (error) {
@@ -292,38 +302,36 @@ const StudentResults = ({ classId }) => {
     }
   };
 
-  const isDisabled = isGenerating || fetchingStatus === 'loading' || !filteredResults || filteredResults.length === 0;
-
   return (
     <div style={{ display: 'flex', gap: '10px' }}>
       <button 
         onClick={handleDownloadPDF} 
-        disabled={isDisabled}
+        disabled={isGenerating}
         style={{
           padding: '10px 20px',
-          backgroundColor: isDisabled ? '#ccc' : '#007bff',
+          backgroundColor: isGenerating ? '#ccc' : '#007bff',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: isDisabled ? 'not-allowed' : 'pointer'
+          cursor: isGenerating ? 'not-allowed' : 'pointer'
         }}
       >
-        {isGenerating ? 'Generating...' : fetchingStatus === 'loading' ? 'Loading...' : 'Download Results'}
+        {isGenerating ? 'Generating...' : 'Download Results'}
       </button>
       
       <button 
         onClick={handleViewPDF} 
-        disabled={isDisabled}
+        disabled={isGenerating}
         style={{
           padding: '10px 20px',
-          backgroundColor: isDisabled ? '#ccc' : '#28a745',
+          backgroundColor: isGenerating ? '#ccc' : '#28a745',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: isDisabled ? 'not-allowed' : 'pointer'
+          cursor: isGenerating ? 'not-allowed' : 'pointer'
         }}
       >
-        {isGenerating ? 'Generating...' : fetchingStatus === 'loading' ? 'Loading...' : 'View Results'}
+        {isGenerating ? 'Generating...' : 'View Results'}
       </button>
     </div>
   );
