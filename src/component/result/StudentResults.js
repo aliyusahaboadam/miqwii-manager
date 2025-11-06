@@ -25,9 +25,9 @@ const StudentResults = ({ classId }) => {
   }, [classId, location.pathname]);
 
   const fetchData = () => {
-    if (fetchingStatus === 'idle') {
+   
       dispatch(getResultByClassId(classId));
-    }
+   
   };
 
   console.log(" result " + JSON.stringify(results));

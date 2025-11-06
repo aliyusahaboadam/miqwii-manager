@@ -642,7 +642,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                   <TableHead>
                                     <TableRow>
-                                      <StyledTableCell>Primary Classes</StyledTableCell>
+                                      <StyledTableCell>Classes</StyledTableCell>
                                       <StyledTableCell align="left">Action</StyledTableCell>
                                     </TableRow>
                                   </TableHead>
