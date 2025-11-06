@@ -6,28 +6,16 @@ import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
 import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
 
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
   const scoreState = useSelector((state) => state.scores);
-  const { results, fetchingStatus } = scoreState;
-  const location = useLocation();
+  const { results } = scoreState;
   const [isGenerating, setIsGenerating] = useState(false);
 
   const formatAmount = (amount) => {
     return `NGN${new Intl.NumberFormat('en-NG').format(amount)}`;
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [classId, location.pathname]);
-
-  const fetchData = () => {
-   
-      dispatch(getResultByClassId(classId));
-   
   };
 
   console.log(" result " + JSON.stringify(results));
@@ -227,23 +215,34 @@ const StudentResults = ({ classId }) => {
     </Document>
   );
 
-  // Handle PDF Download - Works better on mobile
+  // Handle PDF Download - Fetch results when button is clicked
   const handleDownloadPDF = async () => {
     try {
       setIsGenerating(true);
-      const blob = await pdf(<MyDocument />).toBlob();
-      const url = URL.createObjectURL(blob);
       
-      // Create temporary link and trigger download
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'result.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Fetch results for this specific class first
+      const resultAction = await dispatch(getResultByClassId(classId));
       
-      // Clean up
-      URL.revokeObjectURL(url);
+      // Check if fetch was successful
+      if (getResultByClassId.fulfilled.match(resultAction)) {
+        // Now generate PDF with fresh results
+        const blob = await pdf(<MyDocument />).toBlob();
+        const url = URL.createObjectURL(blob);
+        
+        // Create temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `result-class-${classId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        URL.revokeObjectURL(url);
+      } else {
+        alert('Failed to fetch results. Please try again.');
+      }
+      
       setIsGenerating(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -252,15 +251,31 @@ const StudentResults = ({ classId }) => {
     }
   };
 
-  // Handle PDF View - Alternative for mobile users
+  // Handle PDF View - Fetch results when button is clicked
   const handleViewPDF = async () => {
     try {
       setIsGenerating(true);
-      const blob = await pdf(<MyDocument />).toBlob();
-      const url = URL.createObjectURL(blob);
       
-      // Open in new tab
-      window.open(url, '_blank');
+      // Fetch results for this specific class first
+      const resultAction = await dispatch(getResultByClassId(classId));
+      
+      // Check if fetch was successful
+      if (getResultByClassId.fulfilled.match(resultAction)) {
+        // Now generate PDF with fresh results
+        const blob = await pdf(<MyDocument />).toBlob();
+        const url = URL.createObjectURL(blob);
+        
+        // Open in new tab
+        window.open(url, '_blank');
+        
+        // Clean up after a delay to ensure the PDF opens
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 1000);
+      } else {
+        alert('Failed to fetch results. Please try again.');
+      }
+      
       setIsGenerating(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -273,7 +288,7 @@ const StudentResults = ({ classId }) => {
     <div style={{ display: 'flex', gap: '10px' }}>
       <button 
         onClick={handleDownloadPDF} 
-        disabled={isGenerating || !results || results.length === 0}
+        disabled={isGenerating}
         style={{
           padding: '10px 20px',
           backgroundColor: isGenerating ? '#ccc' : '#007bff',
@@ -288,7 +303,7 @@ const StudentResults = ({ classId }) => {
       
       <button 
         onClick={handleViewPDF} 
-        disabled={isGenerating || !results || results.length === 0}
+        disabled={isGenerating}
         style={{
           padding: '10px 20px',
           backgroundColor: isGenerating ? '#ccc' : '#28a745',
