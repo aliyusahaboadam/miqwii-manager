@@ -248,7 +248,7 @@ const SchoolDemographicsCharts = () => {
             </PieChart>
           </ResponsiveContainer>
           <div style={chartStyle.chartTotal}>
-            <p>Total Staff: {teacherData.reduce((sum, item) => sum + item.value, 0)}</p>
+            <p>Teacher in Class: {teacherData.reduce((sum, item) => sum + item.value, 0)}</p>
           </div>
         </div>
 
@@ -290,7 +290,7 @@ const SchoolDemographicsCharts = () => {
             <p style={chartStyle.summaryItemValue}>{studentGenderData.reduce((sum, item) => sum + item.value, 0)}</p>
           </div>
           <div style={summaryStyles.staff}>
-            <h3 style={chartStyle.summaryItemTitle}>Total Staff</h3>
+            <h3 style={chartStyle.summaryItemTitle}>Teacher in Class</h3>
             <p style={chartStyle.summaryItemValue}>{teacherData.reduce((sum, item) => sum + item.value, 0)}</p>
           </div>
           <div style={summaryStyles.classes}>
