@@ -94,6 +94,21 @@ export const getClassCountSpecificPRI = createAsyncThunk(
 );
 
 
+
+export const getClassCountSpecificNur = createAsyncThunk(
+  'class/getClassCountSpecificPRI',
+  async (prefix,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-class-count-specific-for-chart/${prefix}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
 export const getClassCountSpecificJSS = createAsyncThunk(
   'class/getClassCountSpecificJSS',
   async (prefix,  { rejectWithValue }) => {
@@ -217,6 +232,7 @@ const classSlice = createSlice({
         classCountSpecificJSS: [],
         classCountSpecificPRI: [],
         classCountSpecificSSS: [],
+        classCountSpecificNur: [],
         classesOwnedByTeacher: [],
         classCount: 0,
         classCountSpecific: 0,
@@ -294,6 +310,19 @@ const classSlice = createSlice({
             state.classCountSpecificPRI = action.payload;
           })
           .addCase(getClassCountSpecificPRI.rejected, (state) => {
+            state.fetchingStatus = 'failed';
+          })
+
+
+
+           .addCase(getClassCountSpecificNur.pending, (state) => {
+            state.fetchingStatus = 'loading';
+          })
+          .addCase(getClassCountSpecificNur.fulfilled, (state, action) => {
+            state.fetchingStatus = 'succeeded';
+            state.classCountSpecificNur = action.payload;
+          })
+          .addCase(getClassCountSpecificNur.rejected, (state) => {
             state.fetchingStatus = 'failed';
           })
 

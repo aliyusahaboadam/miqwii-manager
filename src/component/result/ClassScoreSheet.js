@@ -98,7 +98,7 @@ const ClassScoreSheet = ({ row }) => {
           School Reg: No.: <Text style={resultStyle.address}>{row.school.regNo}</Text> Tel: <Text style={resultStyle.address}>{row.school.contact}</Text>
         </Text>
         <Text style={resultStyle.secondHeader}>
-          REPORT SHEET FOR {row.academicSession.term} TERM {row.academicSession.session} ACADEMIC SESSION
+          SCORE SHEET FOR {row.className + "  " + row.academicSession.term} TERM {row.academicSession.session} ACADEMIC SESSION
         </Text>
         
         <ClassScoreSheetTable columns={ScoreSheetColumns} data={row.students} />

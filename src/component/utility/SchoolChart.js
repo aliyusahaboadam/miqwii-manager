@@ -2,7 +2,7 @@ import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import { useDispatch, useSelector} from 'react-redux';
-import { getClassCountSpecificJSS, getClassCountSpecificSSS, getClassCountSpecificPRI, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
+import { getClassCountSpecificJSS, getClassCountSpecificNur, getClassCountSpecificSSS, getClassCountSpecificPRI, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { maleStudentCount, femaleStudentCount } from '../../redux/reducer/studentSlice';
@@ -13,7 +13,7 @@ const SchoolDemographicsCharts = () => {
    
 
     const classState = useSelector((state) => state.classes);
-    const { classNamesSpecific,  classCount,  classCountSpecificJSS, classCountSpecificSSS, classCountSpecificPRI} = classState;
+    const { classNamesSpecific,  classCount,  classCountSpecificJSS,classCountSpecificNur, classCountSpecificSSS, classCountSpecificPRI} = classState;
     
     const studentState = useSelector((state) => state.students);
     const {maleStudent, femaleStudent } = studentState;
@@ -28,6 +28,7 @@ const SchoolDemographicsCharts = () => {
             dispatch(getClassCountSpecificJSS('J'));
             dispatch(getClassCountSpecificSSS('S'));
             dispatch(getClassCountSpecificPRI('P'));
+            dispatch(getClassCountSpecificPRI('N'));
         }, []);
       
         // const fetchData = () => {
@@ -42,14 +43,14 @@ const SchoolDemographicsCharts = () => {
     const PRI = classCountSpecificPRI?.length || 0;
     const JSS = classCountSpecificJSS?.length || 0;
     const SSS = classCountSpecificSSS?.length || 0;
-
+    const NUR = classCountSpecificSSS?.length || 0;
 
    
 
     const PRI_TEACHERS = classCountSpecificPRI[0]?.teachers?.length || 0;
     const JSS_TEACHERS  = classCountSpecificJSS[0]?.teachers?.length || 0;
     const SSS_TEACHERS  = classCountSpecificSSS[0]?.teachers?.length || 0;
-
+    const NUR_TEACHERS  = classCountSpecificNur[0]?.teachers?.length || 0;
 
   const chartStyle =  {
 
@@ -156,11 +157,13 @@ const SchoolDemographicsCharts = () => {
     { name: 'Primary Teachers',value: PRI_TEACHERS, color: '#00008B' },
     { name: 'JSS Teachers', value: JSS_TEACHERS, color: '#1F75FE' },
     { name: 'SSS Teachers',value:  SSS_TEACHERS, color: '#74BBFB' },
+    { name: 'Nursery Teachers',value:  NUR_TEACHERS, color: '#5788b3ff' }
   ];
 
   // Sample data for classes
   const classData = [
     { name: 'Primary Classes', value: PRI, color: '#7D77DE' },
+    { name: 'Nursery Classes', value: NUR , color: '#1432dcff' },
     { name: 'JSS Classes', value: JSS, color: '#013375' },
     { name: 'SSS Classes', value: SSS , color: '#0167AD' }
   ];

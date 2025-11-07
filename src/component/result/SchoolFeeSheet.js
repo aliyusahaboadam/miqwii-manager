@@ -83,7 +83,7 @@ const SchoolFeeSheet = ({ rows }) => {
           School Reg: No.: <Text style={resultStyle.address}>{rows[0]?.school.regNo || ""}</Text> Tel: <Text style={resultStyle.address}>{rows[0]?.school.contact || ""}</Text>
         </Text>
         <Text style={resultStyle.secondHeader}>
-          REPORT SHEET FOR {rows[0]?.academicSession.term || ""} TERM {rows[0]?.academicSession.session || ""} ACADEMIC SESSION
+          FEES SHEET FOR {rows[0]?.class1.name || ""} {rows[0]?.academicSession.term || ""} TERM {rows[0]?.academicSession.session || ""} ACADEMIC SESSION
         </Text>
 
         <ClassScoreSheetTable columns={ScoreSheetColumns} data={rows} />
