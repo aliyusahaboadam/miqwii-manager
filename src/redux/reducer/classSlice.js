@@ -96,7 +96,7 @@ export const getClassCountSpecificPRI = createAsyncThunk(
 
 
 export const getClassCountSpecificNur = createAsyncThunk(
-  'class/getClassCountSpecificPRI',
+  'class/getClassCountSpecificNur',
   async (prefix,  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
