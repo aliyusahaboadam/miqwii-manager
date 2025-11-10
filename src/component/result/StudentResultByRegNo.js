@@ -48,7 +48,7 @@ const StudentResultByRegNo = ({ requestData }) => {
     src: Oswald,
   });
 
-  const ScoreColumns = [
+   const ScoreColumns = [
     { 
       accessorKey: 'subjectName', 
       header: () => 'Subject', 
@@ -71,8 +71,8 @@ const StudentResultByRegNo = ({ requestData }) => {
     },
     { 
       accessorKey: 'totalTest', 
-      header: () => 'CA Total', 
-      size: 20,
+      header: () => 'Sum', 
+      size: 16,
     },
     { 
       accessorKey: 'exam', 
@@ -85,9 +85,14 @@ const StudentResultByRegNo = ({ requestData }) => {
       size: 15,
     },
     { 
+      accessorKey: 'positionPerSubjectFormatted', 
+      header: () => 'Pos', 
+      size: 16,
+    },
+    { 
       accessorKey: 'grade', 
       header: () => 'Grade', 
-      size: 15,
+      size: 16,
     },
     { 
       accessorKey: 'remark', 
@@ -330,7 +335,7 @@ const resultStyle = StyleSheet.create({
     height: 60,
   },
   schoolName: {
-    fontSize: 24,
+    fontSize: 22,
     textAlign: 'center',
     fontFamily: 'Oswald'
   },

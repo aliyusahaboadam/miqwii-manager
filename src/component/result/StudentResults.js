@@ -7,6 +7,7 @@ import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
+import { formatPosition } from '../utility/FormatPositon';
 
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
@@ -50,8 +51,8 @@ const StudentResults = ({ classId }) => {
     },
     { 
       accessorKey: 'totalTest', 
-      header: () => 'CA Total', 
-      size: 20,
+      header: () => 'Sum', 
+      size: 16,
     },
     { 
       accessorKey: 'exam', 
@@ -64,9 +65,14 @@ const StudentResults = ({ classId }) => {
       size: 15,
     },
     { 
+      accessorKey: 'positionPerSubjectFormatted', 
+      header: () => 'Pos', 
+      size: 16,
+    },
+    { 
       accessorKey: 'grade', 
       header: () => 'Grade', 
-      size: 15,
+      size: 16,
     },
     { 
       accessorKey: 'remark', 
@@ -172,7 +178,7 @@ const StudentResults = ({ classId }) => {
               </View>
               <View style={resultStyle.childContainer}>
                 <Text style={resultStyle.boldTextSecondary}>
-                  Position: <Text style={resultStyle.detailsText}>{result.position}</Text>
+                  Position: <Text style={resultStyle.detailsText}>{formatPosition(result.position)}</Text>
                 </Text> 
                 <Text style={resultStyle.boldTextSecondary}>
                   No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
@@ -379,7 +385,7 @@ const resultStyle = StyleSheet.create({
     height: 60,
   },
   schoolName: {
-    fontSize: 24,
+    fontSize: 22,
     textAlign: 'center',
     fontFamily: 'Oswald'
   },

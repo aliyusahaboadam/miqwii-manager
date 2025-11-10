@@ -8,6 +8,7 @@ import { getResultByAuthStudent } from '../../redux/reducer/scoreSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { formatPosition } from '../utility/FormatPositon';
 
 const StudentResultById = () => {
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ const StudentResultById = () => {
     src: Oswald,
   });
 
-  const ScoreColumns = [
+   const ScoreColumns = [
     { 
       accessorKey: 'subjectName', 
       header: () => 'Subject', 
@@ -65,8 +66,8 @@ const StudentResultById = () => {
     },
     { 
       accessorKey: 'totalTest', 
-      header: () => 'CA Total', 
-      size: 20,
+      header: () => 'Sum', 
+      size: 16,
     },
     { 
       accessorKey: 'exam', 
@@ -79,9 +80,14 @@ const StudentResultById = () => {
       size: 15,
     },
     { 
+      accessorKey: 'positionPerSubjectFormatted', 
+      header: () => 'Pos', 
+      size: 16,
+    },
+    { 
       accessorKey: 'grade', 
       header: () => 'Grade', 
-      size: 15,
+      size: 16,
     },
     { 
       accessorKey: 'remark', 
@@ -186,7 +192,7 @@ const StudentResultById = () => {
             </View>
             <View style={resultStyle.childContainer}>
               <Text style={resultStyle.boldTextSecondary}>
-                Position: <Text style={resultStyle.detailsText}>{result.position}</Text>
+                Position: <Text style={resultStyle.detailsText}>{formatPosition(result.position)}</Text>
               </Text> 
               <Text style={resultStyle.boldTextSecondary}>
                 No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
@@ -324,7 +330,7 @@ const resultStyle = StyleSheet.create({
     height: 60,
   },
   schoolName: {
-    fontSize: 24,
+    fontSize: 22,
     textAlign: 'center',
     fontFamily: 'Oswald'
   },
