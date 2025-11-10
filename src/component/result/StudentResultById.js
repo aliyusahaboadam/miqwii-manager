@@ -26,9 +26,9 @@ const StudentResultById = () => {
   }, [location.pathname]);
 
   const fetchData = () => {
-    if (fetchingStatus === 'idle') {
+    
       dispatch(getResultByAuthStudent());
-    }
+
   };
 
   console.log(" result " + JSON.stringify(results));
@@ -139,7 +139,7 @@ const StudentResultById = () => {
   // PDF Document Component
   const MyDocument = () => (
     <Document>
-      {results.map((result, index) => (
+      {[results].map((result, index) => (
         <Page key={index} size="A4" style={resultStyle.body}>
           <View style={resultStyle.logoAndHeadingContainer}>
             <View style={resultStyle.logo}>

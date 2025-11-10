@@ -25,7 +25,7 @@ const StudentResultByRegNo = ({ requestData }) => {
   }, [requestData.regNo, location.pathname]);
 
   const fetchData = () => {
-    if (fetchingStatus === 'idle') {
+   
       const regNoData = {
         regNo: requestData.regNo,
         session: requestData.session,
@@ -33,7 +33,7 @@ const StudentResultByRegNo = ({ requestData }) => {
       };
       console.log("Confirming Data " + requestData.session);
       dispatch(getResultByStudentRegNo(regNoData));
-    }
+    
   };
 
   console.log(" result " + JSON.stringify(results));
@@ -144,7 +144,7 @@ const StudentResultByRegNo = ({ requestData }) => {
   // PDF Document Component
   const MyDocument = () => (
     <Document>
-      {results.map((result, index) => (
+      {[results].map((result, index) => (
         <Page key={index} size="A4" style={resultStyle.body}>
           <View style={resultStyle.logoAndHeadingContainer}>
             <View style={resultStyle.logo}>
