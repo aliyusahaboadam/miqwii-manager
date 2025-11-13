@@ -333,8 +333,10 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}>Home</a>
-    <a href="#/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}>Schools</a>
+    <a href="#/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Home</a>
+    <a href="#/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Schools</a>
     </div>
 
  </div> 
@@ -362,7 +364,8 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/admin/profile" className={[navbar['link--drawer'], navbar['']].join(' ')}>Profile</a>
+   <a href="#/admin/profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Profile</a>
     <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
     </div>
 

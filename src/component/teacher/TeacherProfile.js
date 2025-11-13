@@ -333,7 +333,8 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/teacher/home" className={[navbar['link--drawer'], navbar['']].join(' ')}>Home</a>
+   <a href="#/teacher/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Home</a>
     </div>
 
  </div> 
@@ -368,7 +369,8 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/result/teacher-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}>Search Result</a>
+    <a href="#/result/teacher-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Search Result</a>
     </div>
 
  </div>
@@ -395,8 +397,10 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
            
         
             <div className={navbar['collapsible__content--drawer']}>
-            <a href="#/teacher/teacher-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}>Profile</a>
-             <a href="#/password/password-reset-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}>Change Password</a>
+            <a href="#/teacher/teacher-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Profile</a>
+             <a href="#/password/password-reset-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Change Password</a>
              <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
             </div>
         

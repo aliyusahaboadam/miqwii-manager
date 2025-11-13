@@ -321,7 +321,7 @@ const   fetchSchool = async () => {
  
   const result = await dispatch(savePayment(paymentData)).unwrap();
   setAlertType("success");
-  setMessage("Payment Completed Successfully");
+  setMessage("Payment Completed Successfully, you can now login to the account");
   setOpen(true);
     } catch (error) {
       setAlertType("error");

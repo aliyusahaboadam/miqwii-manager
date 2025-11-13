@@ -576,11 +576,11 @@ Whether you're managing 50 students or 5,000, Miqwii Manager is built to work fo
                 
                      <div className={home["collapsible__content"]}>
                         <ul className={home["list"]} >
-                            <li onClick={() => navigateToRegister()}><a href="##">Create Account</a></li>
-                            <li onClick={() => navigateToLogin()}><a href="##">Login</a></li>
-                            <li onClick={() => navigateToAboutUs()}><a href="##">About Us</a></li>
-                            <li onClick={() => navigateToContactUs()}><a href="##">Contact Us</a></li>
-                            <li onClick={() => navigateToService()}><a href="##">Service</a></li>
+                            <li onClick={() => navigateToRegister()}><a >Create Account</a></li>
+                            <li onClick={() => navigateToLogin()}><a >Login</a></li>
+                            <li onClick={() => navigateToAboutUs()}><a >About Us</a></li>
+                            <li onClick={() => navigateToContactUs()}><a >Contact Us</a></li>
+                            <li onClick={() => navigateToService()}><a >Service</a></li>
                         </ul>
                     </div>
                 

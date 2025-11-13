@@ -355,7 +355,8 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
+    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Logout</a>
     </div>
 
  </div> 
@@ -385,8 +386,10 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Student</a>
-    <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}>View Students</a>
+    <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Student</a>
+    <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Students</a>
     </div>
 
  </div>   
@@ -412,14 +415,22 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>JSS Classes</a>
-    <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>SSS Classes</a>
-    <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>Primary Classes</a>
-<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>Nursery Classes</a>
-    <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add JSS Class</a>
-    <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add SSS Class</a>
-    <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Primary Class</a>
-<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Nur Class</a>
+    <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>JSS Classes</a>
+    <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>SSS Classes</a>
+    <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Primary Classes</a>
+<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
+    <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
+    <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
+    <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
+<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
     </div>
 
  </div> 
@@ -445,8 +456,10 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-        <a href="#/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}>View Subjects</a>
-    <a href="#/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Subjects</a>
+        <a href="#/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Subjects</a>
+    <a href="#/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Subjects</a>
     </div>
 
  </div>   
@@ -473,7 +486,8 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
+    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Logout</a>
     </div>
 
  </div>
@@ -500,7 +514,8 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
+    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Logout</a>
     </div>
 
  </div>
@@ -527,7 +542,8 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
+    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Logout</a>
     </div>
 
  </div>
@@ -554,7 +570,8 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
+    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Logout</a>
     </div>
 
  </div>
@@ -581,7 +598,8 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}>Pay Subscription</a>
+    <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Pay Subscription</a>
     </div>
 
  </div>
@@ -609,7 +627,8 @@ const handleClose = (event, reason) => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}>Profile</a>
+   <a href="#/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Profile</a>
     <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
     </div>
 

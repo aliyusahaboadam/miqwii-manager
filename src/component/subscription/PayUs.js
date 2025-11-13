@@ -465,10 +465,14 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}>Home</a>
-    <a href="#/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Session</a>
-    <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}>Setup Session</a>
-<a href="#/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add School Logo</a>
+   <a href="#/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Home</a>
+    <a href="#/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Session</a>
+    <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Setup Session</a>
+<a href="#/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add School Logo</a>
     </div>
 
  </div> 
@@ -499,8 +503,10 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Student</a>
-    <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}>View Students</a>
+    <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Student</a>
+    <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Students</a>
     </div>
 
  </div>     
@@ -527,14 +533,22 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>JSS Classes</a>
-    <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>SSS Classes</a>
-    <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>Primary Classes</a>
-<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}>Nursery Classes</a>
-    <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add JSS Class</a>
-    <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add SSS Class</a>
-    <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Primary Class</a>
-<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Nur Class</a>
+    <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>JSS Classes</a>
+    <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>SSS Classes</a>
+    <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Primary Classes</a>
+<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
+    <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
+    <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
+    <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
+<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
     </div>
 
  </div> 
@@ -561,8 +575,10 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-        <a href="#/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}>View Subjects</a>
-    <a href="#/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Subjects</a>
+        <a href="#/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Subjects</a>
+    <a href="#/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Subjects</a>
     </div>
 
  </div>  
@@ -589,8 +605,10 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-         <a href="#/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}>Add Teacher</a>
-     <a href="#/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}>View Teachers</a>
+         <a href="#/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Teacher</a>
+     <a href="#/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Teachers</a>
     </div>
 
  </div>
@@ -617,7 +635,8 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/settings/disable-adding-score" className={[navbar['link--drawer'], navbar['']].join(' ')}>Manage Score Input</a>
+     <a href="#/settings/disable-adding-score" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Manage Score Input</a>
      
     </div>
 
@@ -645,8 +664,10 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}>Generate Result</a>
-    <a href="#/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}>Search Result</a>
+    <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Generate Result</a>
+    <a href="#/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Search Result</a>
     </div>
 
  </div>
@@ -673,7 +694,8 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/receipt/view-student-reciept" className={[navbar['link--drawer'], navbar['']].join(' ')}>School Fees</a>
+     <a href="#/receipt/view-student-reciept" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>School Fees</a>
     </div>
 
  </div>
@@ -701,8 +723,10 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}>Make Payment</a>
-   <a href="#/payment/all-payments" className={[navbar['link--drawer'], navbar['']].join(' ')}>Payments History</a>
+   <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Make Payment</a>
+   <a href="#/payment/all-payments" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Payments History</a>
     </div>
 
  </div>
@@ -730,7 +754,8 @@ const   fetchSchool = async () => {
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}>Profile</a>
+   <a href="#/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Profile</a>
     <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
     </div>
 
