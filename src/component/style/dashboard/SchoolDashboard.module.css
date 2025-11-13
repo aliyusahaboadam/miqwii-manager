@@ -1061,6 +1061,11 @@
      margin: 0.2rem 0.6rem
  }
 
+ .link--drawer:active {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
  .collapsible__header:hover {
     background-color: #0e387a;
     color: #fff;
