@@ -24,7 +24,7 @@ import ActionMenu from '../utility/ActionMenu';
 import Loading from '../Chunks/loading';
 import { useLocation } from 'react-router-dom';
 import ClassScoreSheet from '../result/ClassScoreSheet';
-
+import CirculerProgressLoader from '../utility/CirculerProgressLoader';
 
 // Import for dashboard Below
 
@@ -115,7 +115,8 @@ const PrimaryClasses  = () => {
  const [anchorEl, setAnchorEl] = React.useState(null);
  const open = Boolean(anchorEl);
  const [page, setPage] = React.useState(0);
- const [rowsPerPage, setRowsPerPage] = React.useState(5);
+ const [rowsPerPage, setRowsPerPage] = React.useState(100);
+ const [isInitialLoad, setIsInitialLoad] = React.useState(true);
 
 const authenticated = false;
 const logout = () => {
@@ -132,11 +133,20 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   }, [location.pathname]);
 
 
-  const fetchData = () => {
-      dispatch(getClassNamesStartingWith('P'));
-      dispatch(getClassCount());
-      dispatch(getClassCountSpecific('P'));
+ const fetchData = async () => {
+  try {
+    setIsInitialLoad(true);
+    await Promise.all([
+      dispatch(getClassNamesStartingWith('P')).unwrap(),
+      dispatch(getClassCount()).unwrap(),
+      dispatch(getClassCountSpecific('P')).unwrap()
+    ]);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setIsInitialLoad(false);
   }
+};
 
 
   const rows = Array.isArray(classNamesSpecific) ? classNamesSpecific : [];
@@ -699,83 +709,93 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             {/* <div>{classNamesSpecific}</div> */}
             
             
-                      <TableContainer component={Paper} sx={{ marginTop: 1 }}>
-                                                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                                     <TableHead>
-                                                       <TableRow>
-                                                         <StyledTableCell>PRI Classes</StyledTableCell>
-                                                         <StyledTableCell>Score Sheet</StyledTableCell>
-                                                         <StyledTableCell align="left">No. of student</StyledTableCell>
-                                                         <StyledTableCell align="right">Action&nbsp;</StyledTableCell>
-                                                       </TableRow>
-                                                     </TableHead>
-                                                     <TableBody>
-                                                     {(rowsPerPage > 0
-                                                       ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                                       : rows
-                                                     ).map((row) => (
-                                                         <StyledTableRow key={row.id}>
-                                                           <StyledTableCell component="th" scope="row">
-                                                             {row.className}
-                                                           </StyledTableCell>
-                                                            <StyledTableCell component="th" scope="row">
-                                                            {
-                                                             row === null ?  "" : <ClassScoreSheet row={row}  />
-                                                            }
-                                                           </StyledTableCell>
-                                                           <StyledTableCell align="left">{row.numberOfStudent}</StyledTableCell>
-                                                           <StyledTableCell align="right">
-                                                           <div>
-                               
-                                                  
-                                                       
-                                                   <ActionMenu 
-                                                    row={row} 
-                                                    onDelete={handleDelete} 
-                                                    onEdit={handleEdit} 
-                                                    />
-                                              
+                     <TableContainer component={Paper} sx={{ marginTop: 1 }}>
+                                                {
+                                            
+                                                 isInitialLoad ? (<CirculerProgressLoader/>) :
                                                  
-                                              
-                                               </div>
-                                                           </StyledTableCell>
-                                                                          
-                                                         </StyledTableRow>
-                                                       ))}
-                                                     </TableBody>
-                                                     <TableFooter>
-                                                     <TableRow>
-                                                       <TablePagination
-                                                         rowsPerPageOptions={[100, 200, 300, { label: 'All', value: -1 }]}
-                                                         colSpan={3}
-                                                         count={rows.length}
-                                                         rowsPerPage={rowsPerPage}
-                                                         page={page}
-                                                         slotProps={{
-                                                           select: {
-                                                             inputProps: {
-                                                               'aria-label': 'rows per page',
+                                                 (
+                                                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                                    <TableHead>
+                                                      <TableRow>
+                                                        <StyledTableCell>PRI Classes</StyledTableCell>
+                                                        <StyledTableCell>Score Sheet</StyledTableCell>
+                                                        <StyledTableCell align="left">No. of student</StyledTableCell>
+                                                        <StyledTableCell align="right">Action&nbsp;</StyledTableCell>
+                                                      </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                    {(rowsPerPage > 0
+                                                      ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                                      : rows
+                                                    ).map((row) => (
+                                                        <StyledTableRow key={row.id}>
+                                                          <StyledTableCell component="th" scope="row">
+                                                            {row.className}
+                                                          </StyledTableCell>
+                                                           <StyledTableCell component="th" scope="row">
+                                                           {
+                                                            row === null ?  "" : <ClassScoreSheet row={row}  />
+                                                           }
+                                                          </StyledTableCell>
+                                                          <StyledTableCell align="left">{row.numberOfStudent}</StyledTableCell>
+                                                          <StyledTableCell align="right">
+                                                          <div>
+                              
+                                                 
+                                                      
+                                                  <ActionMenu 
+                                                   row={row} 
+                                                   onDelete={handleDelete} 
+                                                   onEdit={handleEdit} 
+                                                   />
+                                             
+                                                
+                                             
+                                              </div>
+                                                          </StyledTableCell>
+                                                                         
+                                                        </StyledTableRow>
+                                                      ))}
+                                                    </TableBody>
+                                                    <TableFooter>
+                                                    <TableRow>
+                                                      <TablePagination
+                                                        rowsPerPageOptions={[100, 200, 300, { label: 'All', value: -1 }]}
+                                                        colSpan={3}
+                                                        count={rows.length}
+                                                        rowsPerPage={rowsPerPage}
+                                                        page={page}
+                                                        slotProps={{
+                                                          select: {
+                                                            inputProps: {
+                                                              'aria-label': 'rows per page',
+                                                        
+                                                            },
+                                                            native: true,
+                                                          },
+                                                        }}
+                                                        onPageChange={handleChangePage}
+                                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                                        ActionsComponent={TablePaginationActions}
+                                          
+                                                        sx={{
+                                                          "& .MuiTablePagination-toolbar": { fontSize: 18 }, // Adjust font size
+                                                          "& .MuiTablePagination-selectLabel": { fontSize: 14 },
+                                                          "& .MuiTablePagination-input": { fontSize: 18 },
+                                                          "& .MuiTablePagination-displayedRows": { fontSize: 14 },
                                                          
-                                                             },
-                                                             native: true,
-                                                           },
-                                                         }}
-                                                         onPageChange={handleChangePage}
-                                                         onRowsPerPageChange={handleChangeRowsPerPage}
-                                                         ActionsComponent={TablePaginationActions}
-                                           
-                                                         sx={{
-                                                           "& .MuiTablePagination-toolbar": { fontSize: 18 }, // Adjust font size
-                                                           "& .MuiTablePagination-selectLabel": { fontSize: 14 },
-                                                           "& .MuiTablePagination-input": { fontSize: 18 },
-                                                           "& .MuiTablePagination-displayedRows": { fontSize: 14 },
-                                                          
-                                                         }}
-                                                       />
-                                                     </TableRow>
-                                                   </TableFooter>
-                                                   </Table>
-                                                 </TableContainer>
+                                                        }}
+                                                      />
+                                                    </TableRow>
+                                                  </TableFooter>
+                                                  </Table>
+                                                 )
+                                                
+                                                } 
+                                                 
+                                               
+                                                </TableContainer>
                     </div>
 
              

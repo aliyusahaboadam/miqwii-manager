@@ -290,6 +290,7 @@ const classSlice = createSlice({
 
           .addCase(getClassNamesStartingWith.pending, (state) => {
             state.fetchingStatus = 'loading';
+            state.classNamesSpecific = []; // Clear old data immediately
           })
           .addCase(getClassNamesStartingWith.fulfilled, (state, action) => {
             state.fetchingStatus = 'succeeded';

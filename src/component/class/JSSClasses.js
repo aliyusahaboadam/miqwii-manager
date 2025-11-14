@@ -24,6 +24,8 @@ import ActionMenu from '../utility/ActionMenu';
 import Loading from '../Chunks/loading';
 import { useLocation, useParams } from 'react-router-dom';
 import { useState } from 'react';
+import CirculerProgressLoader from '../utility/CirculerProgressLoader';
+
 
 
 
@@ -124,21 +126,33 @@ const JSSClasses  = () => {
   
 
  const [page, setPage] = React.useState(0);
- const [rowsPerPage, setRowsPerPage] = React.useState(5);
+ const [rowsPerPage, setRowsPerPage] = React.useState(100);
 
 
   useEffect(() => {
    
       fetchData();
     
-    console.log(classNamesSpecific);
   }, [location.pathname]);
 
-  const fetchData = () => {
-      dispatch(getClassNamesStartingWith('J'));
-      dispatch(getClassCount());
-      dispatch(getClassCountSpecific('J'));
+
+
+  const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+
+  const fetchData = async () => {
+  try {
+    setIsInitialLoad(true);
+    await Promise.all([
+      dispatch(getClassNamesStartingWith('J')).unwrap(),
+      dispatch(getClassCount()).unwrap(),
+      dispatch(getClassCountSpecific('J')).unwrap()
+    ]);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setIsInitialLoad(false);
   }
+};
 
 
   const rows = Array.isArray(classNamesSpecific) ? classNamesSpecific : [];
@@ -696,7 +710,12 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
           
           
                       <TableContainer component={Paper} sx={{ marginTop: 1 }}>
-                              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            {
+                        
+                             isInitialLoad ? (<CirculerProgressLoader/>) :
+                             
+                             (
+                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                 <TableHead>
                                   <TableRow>
                                     <StyledTableCell>JSS Classes</StyledTableCell>
@@ -771,6 +790,11 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                 </TableRow>
                               </TableFooter>
                               </Table>
+                             )
+                            
+                            } 
+                             
+                           
                             </TableContainer>
                   </div>
 

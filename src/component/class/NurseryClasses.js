@@ -24,6 +24,7 @@ import ActionMenu from '../utility/ActionMenu';
 import Loading from '../Chunks/loading';
 import { useLocation } from 'react-router-dom';
 import ClassScoreSheet from '../result/ClassScoreSheet';
+import CirculerProgressLoader from '../utility/CirculerProgressLoader';
 
 
 // Import for dashboard Below
@@ -115,7 +116,8 @@ const NurseryClasses  = () => {
  const [anchorEl, setAnchorEl] = React.useState(null);
  const open = Boolean(anchorEl);
  const [page, setPage] = React.useState(0);
- const [rowsPerPage, setRowsPerPage] = React.useState(5);
+ const [rowsPerPage, setRowsPerPage] = React.useState(100);
+ const [isInitialLoad, setIsInitialLoad] = React.useState(true);
 
 const authenticated = false;
 const logout = () => {
@@ -132,11 +134,20 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   }, [location.pathname]);
 
 
-  const fetchData = () => {
-      dispatch(getClassNamesStartingWith('N'));
-      dispatch(getClassCount());
-      dispatch(getClassCountSpecific('N'));
+ const fetchData = async () => {
+  try {
+    setIsInitialLoad(true);
+    await Promise.all([
+      dispatch(getClassNamesStartingWith('N')).unwrap(),
+      dispatch(getClassCount()).unwrap(),
+      dispatch(getClassCountSpecific('N')).unwrap()
+    ]);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setIsInitialLoad(false);
   }
+};
 
 
   const rows = Array.isArray(classNamesSpecific) ? classNamesSpecific : [];
@@ -700,10 +711,15 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             
             
                       <TableContainer component={Paper} sx={{ marginTop: 1 }}>
-                                                   <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                                 {
+                                             
+                                                  isInitialLoad ? (<CirculerProgressLoader/>) :
+                                                  
+                                                  (
+                                                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                                      <TableHead>
                                                        <TableRow>
-                                                         <StyledTableCell>Nur Classes</StyledTableCell>
+                                                         <StyledTableCell>Nursery Classes</StyledTableCell>
                                                          <StyledTableCell>Score Sheet</StyledTableCell>
                                                          <StyledTableCell align="left">No. of student</StyledTableCell>
                                                          <StyledTableCell align="right">Action&nbsp;</StyledTableCell>
@@ -775,6 +791,11 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                                      </TableRow>
                                                    </TableFooter>
                                                    </Table>
+                                                  )
+                                                 
+                                                 } 
+                                                  
+                                                
                                                  </TableContainer>
                     </div>
 

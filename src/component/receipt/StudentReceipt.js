@@ -118,7 +118,7 @@ const StudentReceipt  = () => {
   const location = useLocation();
 
  const [page, setPage] = React.useState(0);
- const [rowsPerPage, setRowsPerPage] = React.useState(5);
+ const [rowsPerPage, setRowsPerPage] = React.useState(100);
  const { className } =  useParams();
  const params = useParams();
  const [refreshFlag, setRefeshFlag] = useState(true);

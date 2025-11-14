@@ -8,6 +8,7 @@ import Loading from '../Chunks/loading';
 import { useState } from 'react';
 import { IconButton }  from '@mui/material';
 import { useLocation } from 'react-router-dom';
+import CirculerProgressLoader from '../utility/CirculerProgressLoader';
 
 
 
@@ -69,16 +70,14 @@ const ViewSubjects = () => {
           
         
 
-    const studentsState = useSelector((state) => state.students);
-    const { allStudent,  maleStudent,  femaleStudent, fetchingStatus} = studentsState;
-
+   
     const classState = useSelector((state) => state.classes);
-    const { classes } = classState;
+    const { classes, fetchingStatus } = classState;
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-
+     const [isInitialLoad, setIsInitialLoad] = React.useState(true);
 
     const authenticated = false;
 const logout = () => {
@@ -93,14 +92,21 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
     }, [location.pathname]);
 
-    const fetchData = () => {
-        dispatch(maleStudentCount());
-        dispatch(femaleStudentCount());
-        dispatch(allStudentCount());
-        dispatch(getAllClass());
-    }
+   const fetchData = async () => {
+  try {
+    setIsInitialLoad(true);
+    await Promise.all([
+     dispatch(getAllClass())
+    ]);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setIsInitialLoad(false);
+  }
+};
 
 
+    
     const navigateToStudents = (name) => {
       navigate(`/subject/subjects/${name}`);
     }
@@ -544,8 +550,9 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
               {
                 classes.map((class1, index) => (
-                  <>
-  
+           
+                  isInitialLoad ? (<CirculerProgressLoader/>) :
+  (
   <div class={[dashboard['card--count'], dashboard[index % 2 === 0 ? 'card--primary' : 'card--secondary']].join(' ')}>
 
              
@@ -573,7 +580,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
        
              
               </div>
-                  </>
+  )
                 ))
               }
              </div>

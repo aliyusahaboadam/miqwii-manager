@@ -162,7 +162,7 @@ const TeacherSubject = () => {
  
 
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(100);
     const {subjectId, classId, className, subjectName } =  useParams();
 
     const scoreState = useSelector((state) => state.scores);

@@ -121,7 +121,7 @@ const StudentDashboard  = () => {
  const [anchorEl, setAnchorEl] = React.useState(null);
  const open = Boolean(anchorEl);
  const [page, setPage] = React.useState(0);
- const [rowsPerPage, setRowsPerPage] = React.useState(5);
+ const [rowsPerPage, setRowsPerPage] = React.useState(100);
  const location = useLocation();
 
 
