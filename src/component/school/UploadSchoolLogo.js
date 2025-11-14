@@ -103,7 +103,7 @@ const dispatch = useDispatch();
 const location = useLocation();
 const navigate = useNavigate();
 const { id } = useParams();
-const [ loading,  setIsLoading] = useState(true);
+
 
 const handleClose = (event, reason) => {
   if (reason === "clickaway") {
@@ -148,12 +148,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                
   return (
 
-    <>
-       {
-        loading === true ? (<Loading/>) : (
-
-
-
+ 
               <SignInContainer>
 
              <Formik
@@ -385,22 +380,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                         </Snackbar>
 
    </SignInContainer>
-
-
-        )
-       }
-    </>
-  
- 
-   
-
-              
-        
-       
-        
-        
-
-        
+    
    
   );
 };
