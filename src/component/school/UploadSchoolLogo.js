@@ -114,13 +114,6 @@ const handleClose = (event, reason) => {
 
 
 
-
-
-
-
-
-
-
 const authenticated = false;
 const logout = () => {
 localStorage.removeItem('token');
