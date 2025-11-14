@@ -41,7 +41,7 @@ export const getPayments = createAsyncThunk(
   async (_,  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-payments`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      const response = await api.get(BASE_URL + `/get-school-payments`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
       console.log(JSON.stringify(response.data))
       return response.data; // Return the saved user response
     } catch (error) {

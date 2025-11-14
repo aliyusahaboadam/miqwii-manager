@@ -130,55 +130,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
 
-
-const [state, setState ] = useState({
-    id: "",
-    name: "",
-    address: "",
-    contact: "",
-    motto: "",
-    email: ""
-   });
-
-  useEffect(() => {
-    
-     
-       
-         fetchSchool()
-
-  }, []);
-
-
-   const   fetchSchool = async () => {
-        try {
-          setIsLoading(true)
-          await  dispatch(getSchoolById(id)).unwrap().then((result) => {
-            console.log("ganinan" + result.regNo);
-           setState({
-            id: result.id,
-            name: result.name,
-            address: result.address,
-            contact: result.contact,
-            motto: result.motto,
-            })
-         });
-
-         
-        }  catch (error) {  
-         
-          setAlertType("error");
-          setMessage(error.message);
-          console.log(error.message);
-         }
-         setIsLoading(false) 
-         }
-
-
-
-
-
-
-
      const handleFormSubmit = async (values, { resetForm })  => {
 
          const formData = new FormData();
