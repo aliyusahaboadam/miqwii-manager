@@ -32,7 +32,7 @@ import { saveScore } from '../../redux/reducer/scoreSlice';
 import Dialog from '@mui/material/Dialog';
 import { Alert, Snackbar } from "@mui/material";
 import {getScoreInputState, getScoreByClassIdAndSubjectId } from '../../redux/reducer/scoreSlice';
-
+import { useRef } from 'react';
 
 // Import for dashboard Below
 
@@ -83,43 +83,33 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const TeacherSubject = () => {
 
-
-
-  
   const theme = useTheme();
-          const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
-          const [isDrawerOpen, setDrawerOpen] = useState(false);
-          const [anchorProfile, setAnchorProfile] = React.useState(null);
-          const [activeChevron, setActiveChevron] = useState(null);
-        
-          const toggleChevron = (chevronId) => {
-            setActiveChevron((prev) => (prev === chevronId ? null : chevronId));
-          };
-        
-          const toggleDrawer = () => {
-            setDrawerOpen(!isDrawerOpen);
-          };
-        
-          const profilePopup  = (event) => {
-            setAnchorProfile(anchorProfile ? null : event.currentTarget);
-          };
-        
-          const openProfile = Boolean(anchorProfile);
-          const idProfile = openProfile ? 'simple-popper' : undefined;
-        
-          const handleClickAway = () => {
-              setAnchorProfile(null);
-          };
-        
-        
-          // ABOVE IS DRAWER LOGIC BELOW IS THE APP LOGIC.........................................................................................
-        
-      
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [anchorProfile, setAnchorProfile] = React.useState(null);
+  const [activeChevron, setActiveChevron] = useState(null);
 
+  const toggleChevron = (chevronId) => {
+    setActiveChevron((prev) => (prev === chevronId ? null : chevronId));
+  };
 
+  const toggleDrawer = () => {
+    setDrawerOpen(!isDrawerOpen);
+  };
 
-    const scoreRegistrationSchema = object({
-     students: array().of(
+  const profilePopup  = (event) => {
+    setAnchorProfile(anchorProfile ? null : event.currentTarget);
+  };
+
+  const openProfile = Boolean(anchorProfile);
+  const idProfile = openProfile ? 'simple-popper' : undefined;
+
+  const handleClickAway = () => {
+      setAnchorProfile(null);
+  };
+
+  const scoreRegistrationSchema = object({
+   students: array().of(
     object({      
      score: object({
          firstTest: number()
@@ -159,6 +149,7 @@ const TeacherSubject = () => {
     const navigate = useNavigate();
     const params = useParams();
     const location = useLocation()
+    const inputRefs = useRef([]);
  
 
     const [page, setPage] = React.useState(0);
@@ -167,6 +158,8 @@ const TeacherSubject = () => {
 
     const scoreState = useSelector((state) => state.scores);
     const {scores,disableScoreInputFirstCA,  disableScoreInputSecondCA, disableScoreInputExam} = scoreState;
+
+
 
 
 
@@ -188,9 +181,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   }
 
   const rows = Array.isArray(studentsInClassByClassId) ? studentsInClassByClassId : [];
-
-
-
 
     const navigateToDashboard = (name) => {
       navigate(`/teacher/home`);
@@ -214,43 +204,64 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     };
 
  
-         const handleFormSubmit = async (values, { resetForm })  => {
-            
-               try {
-         
-             const result = await dispatch(saveScore(values.students)).unwrap();
-              setAlertType("success");
-              setMessage(result.message);
-               } catch (error) {
-                setAlertType("error");
-                setMessage(error.message);
-               }
-    
-                setOpen(true);
-                resetForm(); // This will reset the form to the initial values
-        };
+    const handleFormSubmit = async (values, { resetForm })  => {
+      try {
+        // Filter out students with no scores entered
+        const studentsWithScores = values.students.filter(student => {
+          const hasScore = student.score.firstTest !== '' || 
+                          student.score.secondTest !== '' || 
+                          student.score.exam !== '';
+          return hasScore;
+        });
+
+        if (studentsWithScores.length === 0) {
+          setAlertType("error");
+          setMessage("Please enter at least one score before saving");
+          setOpen(true);
+          return;
+        }
+
+        const result = await dispatch(saveScore(studentsWithScores)).unwrap();
+        setAlertType("success");
+        setMessage(result.message);
+        
+        // Refresh the data after successful save
+        await fetchData();
+      } catch (error) {
+        setAlertType("error");
+        setMessage(error.message || "An error occurred while saving scores");
+      }
+      
+      setOpen(true);
+    };
 
 
 
-// FIX: Convert subjectId from string to number for proper comparison
+// CRITICAL FIX: Convert subjectId from string to number for proper comparison
 const subjectIdNumber = Number(subjectId);
 
-  const initialValues = {
+const initialValues = {
   students: studentsInClassByClassId.map((student) => {
-    // FIX: Convert subjectId to number before comparison
-  
-    const score = student.scoreReduced?.find(s => Number(s.subjectId) === subjectIdNumber) ?? {};
-   
+    // More robust score lookup with proper type conversion
+    let score = {};
+    
+    if (student.scoreReduced && Array.isArray(student.scoreReduced)) {
+      score = student.scoreReduced.find(s => {
+        const scoreSubjectId = Number(s.subjectId);
+        return scoreSubjectId === subjectIdNumber;
+      }) || {};
+    }
+    
     return {
       studentId: student.id,
-      classId: classId,
+      classId: Number(classId),
       subjectId: subjectIdNumber,
       scoreId: score.id || null,
       score: {
         id: score.id || null,
-        firstTest: score.firstTest || '',
-        secondTest: score.secondTest || '',
-        exam: score.exam || '',
+        firstTest: score.firstTest !== null && score.firstTest !== undefined ? score.firstTest : '',
+        secondTest: score.secondTest !== null && score.secondTest !== undefined ? score.secondTest : '',
+        exam: score.exam !== null && score.exam !== undefined ? score.exam : '',
       },
     };
   }),
@@ -266,10 +277,6 @@ const handleClose = (event, reason) => {
     return (
 
         <>
-
-
-
-
           {
             fetchingStatus === 'loading' ? (<Loading/>) : (
                      <ClickAwayListener onClickAway={handleClickAway}>
@@ -285,10 +292,7 @@ const handleClose = (event, reason) => {
             </IconButton>
           )}
           
-
-         
           <div>
- 
           {/** Profile Setup */}
           
           <IconButton onClick={profilePopup}    sx={{
@@ -395,15 +399,6 @@ onClick={(e) => e.stopPropagation()}>Home</a>
 
  </div> 
 
-
-
-          
-     
-
-    
-
-
-
    {/* Result Navbar Content */}
       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-6')}    className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
@@ -499,226 +494,239 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
 
   
        
-                     <Formik
-                            initialValues={
-                              initialValues
-                            }
-                            validationSchema={scoreRegistrationSchema}
-                            onSubmit={handleFormSubmit}
-                            enableReinitialize
-                          >
-            
-                        {({
-                          errors,
-                          handleChange, 
-                          handleSubmit, 
-                          values,
-                          isSubmitting,
-                          touched,
-                          handleBlur,
-                          setFieldValue
-                        }) => (
-        
-                     
-        
-         <>
+          <Formik
+  initialValues={initialValues}
+  validationSchema={scoreRegistrationSchema}
+  onSubmit={handleFormSubmit}
+  enableReinitialize
+>
+  {(formik) => {
+    const {
+      values,
+      errors,
+      touched,
+      handleChange,
+      handleBlur,
+      handleSubmit,
+      isSubmitting,
+    } = formik;
 
-       
-             <TableContainer component={Paper} sx={{ marginTop: 1 }}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                      <TableHead>
-                        <TableRow>
-                          <StyledTableCell align="left">S/N</StyledTableCell>
-                           <StyledTableCell align="left">Reg. No</StyledTableCell>
-                          <StyledTableCell align="left">Name</StyledTableCell>
-                          <StyledTableCell align="left">1st CA</StyledTableCell>
-                           <StyledTableCell align="right">2nd</StyledTableCell>
-                            <StyledTableCell align="left">Exam</StyledTableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                      {(rowsPerPage > 0
-                        ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        : rows
-                      ).map((row, index) => (
-                          <StyledTableRow key={row.id}>
-                              <StyledTableCell component="th" scope="row">
-                              {index + 1}
-                            </StyledTableCell>
-                              <StyledTableCell  component="th" scope="row">
-                              {row.regNo}
-                            </StyledTableCell>
-                            <StyledTableCell  component="th" scope="row">
-                              {row.firstname + " " + row.surname + " " + row.lastname}
-                            </StyledTableCell>
-                             <StyledTableCell  component="th" scope="row">
-                            <TextField
-                                  disabled={!disableScoreInputFirstCA}
-                                  label="First CA"
-                                  variant="outlined"
-                                  fullWidth
-                                  margin="normal"
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  value={values.students[index].score.firstTest}
-                                  name={`students[${index}].score.firstTest`}
-                                  error={
-                                  getIn(touched, `students[${index}].score.firstTest`) 
-                                  &&
-                                  getIn(errors, `students[${index}].score.firstTest`)
-                                }
-                                  helperText={
-                                     getIn(touched, `students[${index}].score.firstTest`) 
-                                  &&
-                                  getIn(errors, `students[${index}].score.firstTest`)
-                                  }
-                                  
-                                  slotProps={{
-                                    formHelperText: {
-                                      sx: { fontSize: 15 },  // Increase font size of helper text
-                                    },
-                                    input: {
-                                      style: { fontSize: 18 }, // font size for input text
-                                    },
-                                    inputLabel: {
-                                      style: { fontSize: 16 }, // font size for label text
-                                    }
-                                  }}
-                                />
-                            </StyledTableCell>
-                             <StyledTableCell  component="th" scope="row">
-                           <TextField
-                                 disabled={!disableScoreInputSecondCA}
-                                 label="Second C.A"
-                                 variant="outlined"
-                                 fullWidth
-                                 margin="normal"
-                                 onChange={handleChange}
-                                 onBlur={handleBlur}
-                                 value={values.students[index].score.secondTest}
-                                 name={`students[${index}].score.secondTest`}
-                                 error={
-                                   getIn(touched, `students[${index}].score.secondTest`) 
-                                  &&
-                                  getIn(errors, `students[${index}].score.secondTest`)
-                                 }
-                                 helperText={
-                                   getIn(touched, `students[${index}].score.secondTest`) 
-                                  &&
-                                  getIn(errors, `students[${index}].score.secondTest`)
-                                 }
-                                 
-                                 slotProps={{
-                                   formHelperText: {
-                                     sx: { fontSize: 15 },  // Increase font size of helper text
-                                   },
-                                   input: {
-                                     style: { fontSize: 18 }, // font size for input text
-                                   },
-                                   inputLabel: {
-                                     style: { fontSize: 16 }, // font size for label text
-                                   }
-                                 }}
-                               />
-                            </StyledTableCell>
-                             <StyledTableCell  component="th" scope="row">
-                             <TextField
-                                   disabled={!disableScoreInputExam}
-                                   label="Exam"
-                                   variant="outlined"
-                                   fullWidth
-                                   margin="normal"
-                                   onChange={handleChange}
-                                   onBlur={handleBlur}
-                                   value={values.students[index].score.exam}
-                                   name={`students[${index}].score.exam`}
-                                   error={
-                                     getIn(touched, `students[${index}].score.exam`) 
-                                  &&
-                                  getIn(errors, `students[${index}].score.exam`)
-                                   }
-                                   helperText={
-                                     getIn(touched, `students[${index}].score.exam`) 
-                                  &&
-                                  getIn(errors, `students[${index}].score.exam`)
-                                   }
-                                   
-                                   slotProps={{
-                                     formHelperText: {
-                                       sx: { fontSize: 15 },  // Increase font size of helper text
-                                     },
-                                     input: {
-                                       style: { fontSize: 18 }, // font size for input text
-                                     },
-                                     inputLabel: {
-                                       style: { fontSize: 16 }, // font size for label text
-                                     }
-                                   }}
-                                 />
-                            </StyledTableCell>
-                   
-                                           
-                          </StyledTableRow>
-                        ))}
-                      </TableBody>
-                      <TableFooter>
-                      <TableRow>
-                        <TablePagination
-                          rowsPerPageOptions={[100, 200, 300, { label: 'All', value: -1 }]}
-                          colSpan={3}
-                          count={rows.length}
-                          rowsPerPage={rowsPerPage}
-                          page={page}
-                          slotProps={{
-                            select: {
-                              inputProps: {
-                                'aria-label': 'rows per page',
-                          
-                              },
-                              native: true,
-                            },
-                          }}
-                          onPageChange={handleChangePage}
-                          onRowsPerPageChange={handleChangeRowsPerPage}
-                          ActionsComponent={TablePaginationActions}
-            
-                          sx={{
-                            "& .MuiTablePagination-toolbar": { fontSize: 18 }, // Adjust font size
-                            "& .MuiTablePagination-selectLabel": { fontSize: 14 },
-                            "& .MuiTablePagination-input": { fontSize: 18 },
-                            "& .MuiTablePagination-displayedRows": { fontSize: 14 },
-                           
-                          }}
-                        />
-                      </TableRow>
-                    </TableFooter>
-                    </Table>
-                  </TableContainer>
+    // --- REFS FOR AUTO FOCUS ---
+    if (!inputRefs.current) inputRefs.current = [];
 
+    // --- AUTO MOVE HANDLER ---
+    const handleScoreChange = (e, nextIndex) => {
+      const value = e.target.value;
 
+      // prevent more than 2 digits
+      if (value.length > 2) return;
 
+      // update formik
+      handleChange(e);
 
-          {/* {BUTTON } */}
-        
-        
-                                <div class={[dashboard['card--add'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-                
-                <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--green']].join(' ')}>{isSubmitting ? 'Submitting...' : 'Save Scores'}</button>
-              </div>
-            </div>
-                    
-         </>
-        
-                    
-                     
-          
-        
-        )}
-                           
-               
-               
-        </Formik> 
+      // auto move
+      if (value.length === 2 && inputRefs.current[nextIndex]) {
+        inputRefs.current[nextIndex].focus();
+      }
+    };
+
+    return (
+      <>
+        <TableContainer component={Paper} sx={{ marginTop: 1 }}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell align="left">S/N</StyledTableCell>
+                <StyledTableCell align="left">Reg. No</StyledTableCell>
+                <StyledTableCell align="left">Name</StyledTableCell>
+                <StyledTableCell align="left">1st CA</StyledTableCell>
+                <StyledTableCell align="right">2nd</StyledTableCell>
+                <StyledTableCell align="left">Exam</StyledTableCell>
+              </TableRow>
+            </TableHead>
+
+<TableBody>
+  {(rowsPerPage > 0
+    ? rows.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      )
+    : rows
+  ).map((row, displayIndex) => {
+    const actualIndex = rows.findIndex(
+      (student) => student.id === row.id
+    );
+
+    return (
+      <StyledTableRow key={row.id}>
+        <StyledTableCell>{page * rowsPerPage + displayIndex + 1}</StyledTableCell>
+
+        <StyledTableCell>{row.regNo}</StyledTableCell>
+
+        <StyledTableCell>
+          {row.firstname + " " + row.surname + " " + row.lastname}
+        </StyledTableCell>
+
+        {/* --- FIRST CA --- */}
+        <StyledTableCell>
+          <TextField
+            inputRef={(el) =>
+              (inputRefs.current[actualIndex * 3] = el)
+            }
+            disabled={!disableScoreInputFirstCA}
+            label="First CA"
+            variant="outlined"
+            fullWidth
+            margin="dense"
+            value={
+              values.students[actualIndex]?.score?.firstTest || ""
+            }
+            name={`students[${actualIndex}].score.firstTest`}
+            onChange={(e) =>
+              handleScoreChange(e, actualIndex * 3 + 1)
+            }
+            onBlur={handleBlur}
+            slotProps={{
+              input: { 
+                sx: { 
+                  fontSize: 16, 
+                  padding: 0,
+                  '& input': {
+                    padding: '15px 6px'
+                  }
+                } 
+              },
+              inputLabel: { sx: { fontSize: 13 } },
+              formHelperText: { sx: { fontSize: 12 } },
+            }}
+          />
+        </StyledTableCell>
+
+        {/* --- SECOND CA --- */}
+        <StyledTableCell>
+          <TextField
+            inputRef={(el) =>
+              (inputRefs.current[actualIndex * 3 + 1] = el)
+            }
+            disabled={!disableScoreInputSecondCA}
+            label="Second CA"
+            variant="outlined"
+            fullWidth
+            margin="dense"
+            value={
+              values.students[actualIndex]?.score?.secondTest || ""
+            }
+            name={`students[${actualIndex}].score.secondTest`}
+            onChange={(e) =>
+              handleScoreChange(e, actualIndex * 3 + 2)
+            }
+            onBlur={handleBlur}
+            slotProps={{
+              input: { 
+                sx: { 
+                  fontSize: 16, 
+                  padding: 0,
+                  '& input': {
+                      padding: '15px 6px'
+                  }
+                } 
+              },
+              inputLabel: { sx: { fontSize: 13 } },
+              formHelperText: { sx: { fontSize: 12 } },
+            }}
+          />
+        </StyledTableCell>
+
+        {/* --- EXAM --- */}
+        <StyledTableCell>
+          <TextField
+            inputRef={(el) =>
+              (inputRefs.current[actualIndex * 3 + 2] = el)
+            }
+            disabled={!disableScoreInputExam}
+            label="Exam"
+            variant="outlined"
+            fullWidth
+            margin="dense"
+            value={
+              values.students[actualIndex]?.score?.exam || ""
+            }
+            name={`students[${actualIndex}].score.exam`}
+            onChange={(e) =>
+              handleScoreChange(e, actualIndex * 3 + 3)
+            }
+            onBlur={handleBlur}
+            slotProps={{
+              input: { 
+                sx: { 
+                  fontSize: 16, 
+                  padding: 0,
+                  '& input': {
+                    padding: '15px 6px'
+                  }
+                } 
+              },
+              inputLabel: { sx: { fontSize: 13 } },
+              formHelperText: { sx: { fontSize: 12 } },
+            }}
+          />
+        </StyledTableCell>
+      </StyledTableRow>
+    );
+  })}
+</TableBody>
+            {/* --- PAGINATION --- */}
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[100, 200, 300, { label: "All", value: -1 }]}
+                  colSpan={3}
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  slotProps={{
+                    select: {
+                      inputProps: { "aria-label": "rows per page" },
+                      native: true,
+                    },
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                  sx={{
+                    "& .MuiTablePagination-toolbar": { fontSize: 18 },
+                    "& .MuiTablePagination-selectLabel": { fontSize: 14 },
+                    "& .MuiTablePagination-input": { fontSize: 18 },
+                    "& .MuiTablePagination-displayedRows": { fontSize: 14 },
+                  }}
+                />
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+
+        {/* --- SUBMIT BUTTON --- */}
+        <div class={[dashboard["card--add"], dashboard["card--primary"]].join(" ")}>
+          <div class={dashboard["card_body"]}>
+            <button
+              disabled={isSubmitting}
+              type="submit"
+              onClick={handleSubmit}
+              className={[
+                dashboard["btn"],
+                dashboard["btn--block"],
+                dashboard["btn--green"],
+              ].join(" ")}
+            >
+              {isSubmitting ? "Submitting..." : "Save Scores"}
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }}
+</Formik>
+
 
  
 
