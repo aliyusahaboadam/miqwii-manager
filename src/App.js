@@ -70,6 +70,7 @@ import UploadSchoolLogo from './component/school/UploadSchoolLogo';
 import StudentActivator from './component/school/StudentActivator';
 import AddNurClass from './component/class/AddNurClass';
 import NurseryClasses from './component/class/NurseryClasses';
+import AddNextTermFeeAndResumptionDate from './component/academicSession/AddNextFeeAndResumptionDate';
 
 
 function App() {
@@ -120,6 +121,7 @@ function App() {
          {/*Session Releted*/}
          <Route exact path='/session/add-session'  element={ <AddSession/> }/>
          <Route exact path='/session/setup-session'  element={ <SessionSetup/> }/>
+         <Route exact path='/session/update-session'  element={ <AddNextTermFeeAndResumptionDate/> }/>
              {/*Receipt Releted*/}
         <Route exact path='/receipt/view-student-reciept'  element={ <ViewStudentReceipt/> }/>
          <Route exact path='/receipt/student-reciept/:className'  element={ <StudentReceipt/> }/>

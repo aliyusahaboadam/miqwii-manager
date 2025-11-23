@@ -134,9 +134,7 @@ const AddSession = () => {
   const subjectRegistrationSchema = object({
        session: string().required("Session required"),
        term: string().required("Term required"),
-       nextSSSTermFee: number().required("SSS next term fee required"),
-       nextJSSTermFee: number().required("JSS next term fee required"),
-       nextPRITermFee: number().required("PRI next term fee required"),
+      
 
   });
   
@@ -159,11 +157,7 @@ navigate("/school/login")
 localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
 
-useEffect(() => {
-  if (fetchingStatus === 'idle') {
-    dispatch(getClassNames());
-  }
-}, []);
+
 
 const handleClose = (event, reason) => {
   if (reason === "clickaway") {
@@ -320,8 +314,10 @@ const handleClose = (event, reason) => {
 onClick={(e) => e.stopPropagation()}>Home</a>
     <a href="#/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Session</a>
-    <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
+    <a href="#/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
 <a href="#/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add School Logo</a>
     </div>
@@ -633,12 +629,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                     initialValues={{
                         session: "",
                         term: 0,
-                        currentSSSTermFee: 0,
-                        nextSSSTermFee: 0,
-                        currentJSSTermFee: 0,
-                        nextJSSTermFee: 0,
-                        currentPRITermFee: 0,
-                        nextPRITermFee: 0,
+                   
                     }}
                     validationSchema={subjectRegistrationSchema}
                     onSubmit={handleFormSubmit}
@@ -744,109 +735,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
      </div>
 
-       {/*Card Header*/}
-              
-
-                <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-              
-                         
-                       <FormControl sx={{ m: 1, minWidth: "30%"}}>
-
-                        <TextField
-                              label="Primary Next Term Fee"
-                              variant="filled"
-                              fullWidth
-                              margin="normal"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              value={values.nextPRITermFee}
-                              name='nextPRITermFee'
-                              error={touched.nextPRITermFee && Boolean(errors.nextPRITermFee)}
-                              helperText={touched.nextPRITermFee && errors.nextPRITermFee}
-                              
-                              slotProps={{
-                                formHelperText: {
-                                  sx: { fontSize: 15 },  // Increase font size of helper text
-                                },
-                                input: {
-                                  style: { fontSize: 18 }, // font size for input text
-                                },
-                                inputLabel: {
-                                  style: { fontSize: 16 }, // font size for label text
-                                }
-                              }}
-                            />
-                       
-                      </FormControl>
-                
-                      <FormControl sx={{ m: 1, minWidth: "30%"}}>
-
-                        <TextField
-                              label="JSS Next Term Fee"
-                              variant="filled"
-                              fullWidth
-                              margin="normal"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              value={values.nextJSSTermFee}
-                              name='nextJSSTermFee'
-                              error={touched.nextJSSTermFee && Boolean(errors.nextJSSTermFee)}
-                              helperText={touched.nextJSSTermFee && errors.nextJSSTermFee}
-                              
-                              slotProps={{
-                                formHelperText: {
-                                  sx: { fontSize: 15 },  // Increase font size of helper text
-                                },
-                                input: {
-                                  style: { fontSize: 18 }, // font size for input text
-                                },
-                                inputLabel: {
-                                  style: { fontSize: 16 }, // font size for label text
-                                }
-                              }}
-                            />
-                       
-                      </FormControl>
-              
-                
-                      <FormControl sx={{ m: 1, minWidth: "30%"}}>
-
-                        <TextField
-                              label="SSS Next Term Fee"
-                              variant="filled"
-                              fullWidth
-                              margin="normal"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              value={values.nextSSSTermFee}
-                              name='nextSSSTermFee'
-                              error={touched.nextSSSTermFee && Boolean(errors.nextSSSTermFee)}
-                              helperText={touched.nextSSSTermFee && errors.nextSSSTermFee}
-                              
-                              slotProps={{
-                                formHelperText: {
-                                  sx: { fontSize: 15 },  // Increase font size of helper text
-                                },
-                                input: {
-                                  style: { fontSize: 18 }, // font size for input text
-                                },
-                                inputLabel: {
-                                  style: { fontSize: 16 }, // font size for label text
-                                }
-                              }}
-                            />
-                       
-                      </FormControl>
-              
-                     </div>
-
-
-
-
-             
-
-
-                   
+    
 
 
 

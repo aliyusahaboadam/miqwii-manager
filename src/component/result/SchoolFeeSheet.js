@@ -74,7 +74,7 @@ const SchoolFeeSheet = ({ rows }) => {
   const MyDocument = () => (
     <Document>
       <Page size="A4" style={resultStyle.body}>
-        <Text style={resultStyle.schoolName}>{rows[0]?.school.name || ""}</Text>
+        {/* <Text style={resultStyle.schoolName}>{rows[0]?.school.name || ""}</Text>
         <Text style={resultStyle.address}>{rows[0]?.school.address || ""}</Text>
         <Text style={resultStyle.boldMottoText}>
           Motto: <Text style={resultStyle.motto}>{rows[0]?.school.motto || ""}</Text>
@@ -84,7 +84,7 @@ const SchoolFeeSheet = ({ rows }) => {
         </Text>
         <Text style={resultStyle.secondHeader}>
           FEES SHEET FOR {rows[0]?.class1.name || ""} {rows[0]?.academicSession.term || ""} TERM {rows[0]?.academicSession.session || ""} ACADEMIC SESSION
-        </Text>
+        </Text> */}
 
         <ClassScoreSheetTable columns={ScoreSheetColumns} data={rows} />
         

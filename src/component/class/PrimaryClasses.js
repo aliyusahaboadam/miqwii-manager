@@ -324,8 +324,10 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 onClick={(e) => e.stopPropagation()}>Home</a>
        <a href="#/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Session</a>
-       <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+      <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
+    <a href="#/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
    <a href="#/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add School Logo</a>
        </div>

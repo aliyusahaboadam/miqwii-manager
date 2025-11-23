@@ -1,44 +1,18 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconButton } from "@mui/material";
-import Paper from '@mui/material/Paper';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getAllSession } from '../../redux/reducer/sessionSlice';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+
 import style from '../style/form/StudentRegistration.module.css';
-import { Formik } from 'formik';
-import { object, string, array } from 'yup';
+import { lazy, useState } from 'react';
+import MuiCard from '@mui/material/Card';
+import { styled } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
 import { Alert, Snackbar } from "@mui/material";
-import { setCurrentSession } from '../../redux/reducer/sessionSlice';
-import {  
-  Dialog
-} from '@mui/material';
-import ActionMenu from '../utility/ActionMenu';
-import Loading from '../Chunks/loading';
-import { useLocation, useParams } from 'react-router-dom';
-import SchoolDemographicsCharts from '../utility/SchoolChart';
-import { getExpiryDate } from '../../redux/reducer/paymentSlice';
+import { Formik } from 'formik';
+import { object, string, array, number, date } from 'yup';
 
-
-
+import { useDispatch, useSelector } from 'react-redux';
+import { saveSession } from '../../redux/reducer/sessionSlice';
+import { useNavigate } from 'react-router-dom';
+import { getCurrentSession } from '../../redux/reducer/sessionSlice';
+import { updateSession } from '../../redux/reducer/sessionSlice';
 
 // Import for dashboard Below
 
@@ -48,107 +22,133 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-
+import { useEffect } from 'react';
 
 import { 
-  Drawer,  
+  Drawer, 
+  IconButton, 
   List, 
   Toolbar, 
   AppBar, 
   Box, 
   Typography, 
   CssBaseline,
+  TextField
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#0e387a",
-    color: theme.palette.common.white,
-    fontSize: 18,
+const Card = styled(MuiCard)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignSelf: 'center',
+  width: '100%',
+  overflowY: 'auto', // Enables vertical scrolling
+  '&::-webkit-scrollbar': {
+          display: 'none',
+        },
+        // Hide scrollbar for Firefox
+        scrollbarWidth: 'none', // Firefox
+        msOverflowStyle: 'none', // IE and Edge
+        borderRadius: '10px',
+  padding: theme.spacing(4),
+  gap: theme.spacing(0),
+  margin: 'auto',
+  [theme.breakpoints.up('sm')]: {
+    maxWidth: '450px',
   },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 18,
+  boxShadow:
+    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+  ...theme.applyStyles('dark', {
+    boxShadow:
+      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+  }),
+}));
+
+
+const SignInContainer = styled(Stack)(({ theme }) => ({
+  position: 'relative',
+  minHeight: '100vh',
+  width: '100%',
+  backgroundColor: 'rgba(10, 40, 89)',
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='251' height='251' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%230E387A' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%230E387A'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");`,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  padding: theme.spacing(2),
+  [theme.breakpoints.up('sm')]: {
+    padding: theme.spacing(4),
+  },
+  '&::before': {
+    content: '""',
+    display: 'block',
+    position: 'absolute',
+    zIndex: -1,
+    inset: 0,
+    backgroundImage:
+      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    ...theme.applyStyles('dark', {
+      backgroundImage:
+        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+    }),
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
 
+const AddNextTermFeeAndResumptionDate = () => {
 
-
-const SchoolDashboard  = () => {
 
   const theme = useTheme();
-          const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
-          const [isDrawerOpen, setDrawerOpen] = useState(false);
-          const [anchorProfile, setAnchorProfile] = React.useState(null);
-          const [activeChevron, setActiveChevron] = useState(null);
-        
-          const toggleChevron = (chevronId) => {
-            setActiveChevron((prev) => (prev === chevronId ? null : chevronId));
-          };
-        
-          const toggleDrawer = () => {
-            setDrawerOpen(!isDrawerOpen);
-          };
-        
-          const profilePopup  = (event) => {
-            setAnchorProfile(anchorProfile ? null : event.currentTarget);
-          };
-        
-          const openProfile = Boolean(anchorProfile);
-          const idProfile = openProfile ? 'simple-popper' : undefined;
-        
-          const handleClickAway = () => {
-              setAnchorProfile(null);
-          };
-        
-        
-          // ABOVE IS DRAWER LOGIC BELOW IS THE APP LOGIC.........................................................................................
-        
-      
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [anchorProfile, setAnchorProfile] = React.useState(null);
+  const [activeChevron, setActiveChevron] = useState(null);
+
+  const toggleChevron = (chevronId) => {
+    setActiveChevron((prev) => (prev === chevronId ? null : chevronId));
+  };
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!isDrawerOpen);
+  };
+
+  const profilePopup  = (event) => {
+    setAnchorProfile(anchorProfile ? null : event.currentTarget);
+  };
+
+  const openProfile = Boolean(anchorProfile);
+  const idProfile = openProfile ? 'simple-popper' : undefined;
+
+  const handleClickAway = () => {
+      setAnchorProfile(null);
+  };
 
 
-   const subjectRegistrationSchema = object({
-         selectedId: string().required("Session required"),
-        
-    });
+  // ABOVE IS DRAWER LOGIC BELOW IS THE APP LOGIC.........................................................................................
 
+  const subjectRegistrationSchema = object({
+        resumptionDate: date().required('Resumption date is required')
+       .min(new Date(), 'Resumption date must be in the future'),
 
-  const sessionState = useSelector((state) => state.sessions);
-  const { sessions , fetchingStatus} = sessionState;
-  const paymentState = useSelector((state) => state.payments);
-  const { expiryDate } = paymentState;
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+       nextSSSTermFee: number().required("SSS next term fee required"),
+       nextJSSTermFee: number().required("JSS next term fee required"),
+       nextPRITermFee: number().required("PRI next term fee required"),
+       nextNURTermFee: number().required("NUR next term fee required")
 
+  });
   
- const [anchorEl, setAnchorEl] = React.useState(null);
- const openAnchor = Boolean(anchorEl);
- const [page, setPage] = React.useState(0);
- const [rowsPerPage, setRowsPerPage] = React.useState(100);
 
 
- const [open, setOpen] = useState(false); 
- const [alertType, setAlertType] = useState(""); 
- const [message, setMessage] = useState(""); 
- const [initialSelectedId, setInitialSelectedId] = useState(null);
-const rows = Array.isArray(sessions) ? sessions : [];
- const params = useParams();
-const location = useLocation()
-
-
+const [open, setOpen] = useState(false); 
+const [alertType, setAlertType] = useState(""); 
+const [message, setMessage] = useState(""); 
+const studentState = useSelector((state) => state.students);
+const classState = useSelector((state) => state.classes);
+const { status: subjectStatus, error: subjectError } = studentState;
+const { classNames, fetchingStatus } = classState;
+const dispatch = useDispatch();
+const navigate = useNavigate();
 
 const authenticated = false;
 const logout = () => {
@@ -157,20 +157,22 @@ navigate("/school/login")
 localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
 
-  useEffect(() => {
-    
-      fetchData()  
-   
-  }, [location.pathname]);
 
-  
-   const fetchData = () => {
-       dispatch(getExpiryDate())
-       dispatch(getAllSession()); 
-   }
+// Format number to Naira display (e.g., 50000 -> ₦50,000)
+const formatToNaira = (value) => {
+  if (!value) return '';
+  const number = value.toString().replace(/[^\d]/g, ''); // Remove non-digits
+  return `₦${Number(number).toLocaleString('en-NG')}`;
+};
+
+// Remove Naira formatting and return plain number
+const parseFromNaira = (value) => {
+  if (!value) return 0;
+  return Number(value.toString().replace(/[^\d]/g, ''));
+};
 
 
-  const handleClose = (event, reason) => {
+const handleClose = (event, reason) => {
   if (reason === "clickaway") {
     return; // Prevent closing if the user clicks away
   }
@@ -178,62 +180,56 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 };
 
 
-  
-  
+
+  const [state, setState ] = useState({
+    id: '',
+    resumptionDate: "",
+    nextSSSTermFee: 0,
+    nextJSSTermFee: 0,
+    nextPRITermFee: 0,
+    nextNURTermFee: 0,
+   })
+
+  useEffect(() => {
+
+        dispatch(getCurrentSession()).unwrap().then((result) => {
+           console.log("ganinan" + result.nextJSSTermFee);
+          setState({
+              id: result.id,
+              resumptionDate: result.resumptionDate,
+              nextSSSTermFee: result.nextSSSTermFee,
+              nextJSSTermFee: result.nextJSSTermFee,
+              nextPRITermFee: result.nextPRITermFee,
+              nextNURTermFee: result.nextNURTermFee,
+           })
+        });
+
+  }, []);
 
 
-      console.log("ARRAY " + rows);
-
-     const handleCheckboxChange = (id) => {
-    // formik.setFieldValue("selectedId", id);
-  };
-
-    const navigateToAddSession = () => {
-      navigate('/session/add-session')
-    }
-
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  
-    const handleChangePage = (event, newPage) => {
-      setPage(newPage);
-    };
-  
-    const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    };
-
-  const handleFormSubmit = async (values, { resetForm })  => {
-  //   console.log(values);
-  //    console.log("from inside the useeff" + rows)
-  // const selected = rows.forEach(r => r.current === true);
-  // console.log("from inside the effect " + selected);
-  // setInitialSelectedId(selected?.id ?? null);
-         try {
-             const resultAction = await dispatch(setCurrentSession(values.selectedId)).unwrap();
-             setAlertType("success");
-             setMessage(resultAction.message);
-             }  catch (error) {
+     const handleFormSubmit = async (values, { resetForm })  => {
+          console.log(values);
+           try {
+          const resultAction = await dispatch(updateSession(values)).unwrap();
+          setAlertType("success");
+          setMessage(resultAction.message);
+           } catch (error) {
             setAlertType("error");
-            setMessage(error)
+            setMessage(error.message)
             
            }
-                    
-         setOpen(true);
-         resetForm(); // This will reset the forto the initial values
-      };
 
+            setOpen(true);
+            resetForm(); // This will reset the forto the initial values
+    };
+
+               
+  return (
+  
    
-    return (
 
 
-        
-       <>
-         {
-          fetchingStatus === 'loading' ? (<Loading/>) : (
-             <ClickAwayListener onClickAway={handleClickAway}>
+    <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
 
@@ -245,7 +241,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
               <MenuIcon sx={{ color: "inherit", fontSize: 30 }} />
             </IconButton>
           )}
-          
+          <Typography variant="h4" noWrap>
+          School Dashboards
+          </Typography>
 
          
           <div>
@@ -370,8 +368,8 @@ onClick={(e) => e.stopPropagation()}>Add School Logo</a>
           
      
 
-    {/* Student Navbar Content */}
-       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
+     {/* Student Navbar Content */}
+     <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
 
@@ -395,11 +393,10 @@ onClick={(e) => e.stopPropagation()}>Add School Logo</a>
 onClick={(e) => e.stopPropagation()}>Add Student</a>
     <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Students</a>
-     <a href="#/school/student-activator" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Switch Students Account</a>
     </div>
 
- </div>  
+ </div>   
+
 
    {/* Class Navbar Content */}
       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
@@ -532,7 +529,7 @@ onClick={(e) => e.stopPropagation()}>Manage Score Input</a>
 
 
      {/* Result Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-6')}    className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
+        <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-6')}    className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
 
@@ -590,7 +587,8 @@ onClick={(e) => e.stopPropagation()}>School Fees</a>
 
 
 
-       {/* Subscription Navbar Content */}
+ 
+      {/* Subscription Navbar Content */}
       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
@@ -618,6 +616,7 @@ onClick={(e) => e.stopPropagation()}>Payments History</a>
     </div>
 
  </div>
+
 
 
  {/* Profile Navbar Content */}
@@ -656,393 +655,259 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
            component="main"
            sx={{
              flexGrow: 1,
-             marginTop: 8,
-             fontSize: 23,
-             overflowX: 'auto',
-             width: '100%',
-             color: '#9a99ac',
+             marginTop: 7,
+            
              transition: "margin-left 0.3s ease-in-out",
            }}
          >
 
-  <div className={dashboard['secondary--container']}>
 
-       <div class={[dashboard['grid'], dashboard['grid--1x2']].join(' ')}>
+            <SignInContainer>
 
-         <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-            
-            <div class={dashboard['card_button_and_icon']}>
-            
-            <span class={dashboard['icon-container']}>
-            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#school"></use>
-            </svg>
-            </span>
+             <Formik
+                    enableReinitialize={true} 
+                    initialValues={{
+                        resumptionDate: state.resumptionDate || "",
+                        nextSSSTermFee: state.nextSSSTermFee || 0,
+                        nextJSSTermFee: state.nextJSSTermFee || 0,
+                        nextPRITermFee: state.nextPRITermFee || 0,
+                        nextNURTermFee: state.nextNURTermFee || 0,
+                    }}
+                    validationSchema={subjectRegistrationSchema}
+                    onSubmit={handleFormSubmit}
+                  >
+    
+                {({
+                  errors,
+                  handleChange, 
+                  handleSubmit, 
+                  values,
+                  isSubmitting,
+                  touched,
+                  handleBlur,
+                  setFieldValue
+                }) => (
 
-            <div>{rows.find((r) => r.school.name)?.school.name ?? 0}</div>
-            
-          
-            </div>
-            
-            
-            
-           
-            
-            </div>
-            
-            </div>
+                  <Card>
+      
 
-
-             <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
+      
+                  {/*Card Image*/}
             
-            <div class={dashboard['card_button_and_icon']}>
+                 <section class={style.container__brand}>
+                         <img src="/images/logo.png" alt="Logo"/>
+                </section>
             
-            <span class={dashboard['icon-container']}>
-            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#subscription"></use>
-            </svg>
-            </span>
-
-            <div>{"Subs ends on " }
-              <p style={{color: "#0e387a", fontSize: "1.9rem", fontWeight: 'bold'}}>
-               {expiryDate} 
-              </p>
-              </div>
+                 
+             
+                  {/*Card Header*/}
+                <p className={style['form-header']}>Next Fee/Resumption Date</p>
             
-          
-            </div>
-            
-            
-            
-           
-            
-            </div>
-            
-            </div>
-
-       </div>
-        
-            {/* <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-            
-            <div class={dashboard['card_button_and_icon']}>
-            
-            <span class={dashboard['icon-container']}>
-            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#school"></use>
-            </svg>
-            </span>
-
-            <div>{rows.find((r) => r.school.name)?.school.name ?? 0}</div>
-            
-          
-            </div>
-            
-            
-            
-           
-            
-            </div>
-            
-            </div> */}
-
-            <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
-            
-            <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-            
-            <div class={dashboard['card_button_and_icon']}>
-            
-            <span class={dashboard['icon-container']}>
-            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#session"></use>
-            </svg>
-            </span>
-            
-            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{rows.find((r) => r.current)?.session ?? 0}</span>
-            
-            
-            </div>
-            
-            
-            
-            Current Session
-            
-            </div>
-            
-            </div>
-            
-            
-            
-            
-            <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-            
-            <div class={dashboard['card_button_and_icon']}>
-            
-            <span class={dashboard['icon-container']}>
-            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#session"></use>
-            </svg>
-            </span>
-            
-            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{rows.find((r) => r.current)?.term ?? 0}</span>
-            
-            
-            </div>
-            
-            
-            Current Term
-            
-            </div>
-            
-            </div>
-            
-            
-            
-            
-            
-            
-            <div class={[dashboard['card--add'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-            
-            
-                 <div class={dashboard['card--small-head']}>
-                  Add new term and Session
-                 </div>
-            
-                         
-                <button onClick={navigateToAddSession}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--accent']].join(' ')}> Add new term</button>
-            
-            
-              </div>
-            </div>
-            
-            </div>
-           
-                   
-<div class={[dashboard['grid'], dashboard['grid--1x4']].join(' ')}>
-            
-          
-            
-            <SchoolDemographicsCharts/>
-            
-            
-            
-  
-            
-            
-         
-            
-            </div>
+ 
+    {/*Input Field*/}
 
 
-               
-                
-            
-            
-                    </div>
+    
+
+
+       {/*Card Header*/}
+              
 
              
+              
+                          <TextField
+  label="Resumption Date"
+  variant="filled"
+  fullWidth
+  margin="normal"
+  type="date"  // This makes it a date picker
+  onChange={handleChange}
+  onBlur={handleBlur}
+  value={values.resumptionDate}
+  name='resumptionDate'
+  error={touched.resumptionDate && Boolean(errors.resumptionDate)}
+  helperText={touched.resumptionDate && errors.resumptionDate}
+  
+  slotProps={{
+    formHelperText: {
+      sx: { fontSize: 15 },
+    },
+    input: {
+      style: { fontSize: 18 },
+    },
+    inputLabel: {
+      shrink: true,  // Important: keeps label visible with date input
+      style: { fontSize: 16 },
+    }
+  }}
+/>
+
+
+                        <TextField
+                              label="SSS Next Term Fee"
+                              variant="filled"
+                              fullWidth
+                              margin="normal"
+                              onChange={(e) => {
+                              const plainNumber = parseFromNaira(e.target.value);
+                              setFieldValue('nextSSSTermFee', plainNumber);
+                              }}
+                              onBlur={handleBlur}
+                              value={formatToNaira(values.nextSSSTermFee)}
+                              name='nextSSSTermFee'
+                              error={touched.nextSSSTermFee && Boolean(errors.nextSSSTermFee)}
+                              helperText={touched.nextSSSTermFee && errors.nextSSSTermFee}
+                              
+                              slotProps={{
+                                formHelperText: {
+                                  sx: { fontSize: 15 },  // Increase font size of helper text
+                                },
+                                input: {
+                                  style: { fontSize: 18 }, // font size for input text
+                                },
+                                inputLabel: {
+                                  style: { fontSize: 16 }, // font size for label text
+                                }
+                              }}
+                            />
+
+
+                                <TextField
+                              label="JSS Next Term Fee"
+                              variant="filled"
+                              fullWidth
+                              margin="normal"
+                              onChange={(e) => {
+                              const plainNumber = parseFromNaira(e.target.value);
+                              setFieldValue('nextJSSTermFee', plainNumber);
+                              }}
+                              onBlur={handleBlur}
+                              value={formatToNaira(values.nextJSSTermFee)}
+                              name='nextJSSTermFee'
+                              error={touched.nextJSSTermFee && Boolean(errors.nextJSSTermFee)}
+                              helperText={touched.nextJSSTermFee && errors.nextJSSTermFee}
+                              
+                              slotProps={{
+                                formHelperText: {
+                                  sx: { fontSize: 15 },  // Increase font size of helper text
+                                },
+                                input: {
+                                  style: { fontSize: 18 }, // font size for input text
+                                },
+                                inputLabel: {
+                                  style: { fontSize: 16 }, // font size for label text
+                                }
+                              }}
+                            />
+
+
+
+                            
+                        <TextField
+                              label="Primary Next Term Fee"
+                              variant="filled"
+                              fullWidth
+                              margin="normal"
+                              onChange={(e) => {
+                                const plainNumber = parseFromNaira(e.target.value);
+                                setFieldValue('nextPRITermFee', plainNumber);
+                              }}
+                              onBlur={handleBlur}
+                              value={formatToNaira(values.nextPRITermFee)}
+                              name='nextPRITermFee'
+                              error={touched.nextPRITermFee && Boolean(errors.nextPRITermFee)}
+                              helperText={touched.nextPRITermFee && errors.nextPRITermFee}
+                              
+                              slotProps={{
+                                formHelperText: {
+                                  sx: { fontSize: 15 },  // Increase font size of helper text
+                                },
+                                input: {
+                                  style: { fontSize: 18 }, // font size for input text
+                                },
+                                inputLabel: {
+                                  style: { fontSize: 16 }, // font size for label text
+                                }
+                              }}
+                            />
+
+
+
+
+                            
+                        <TextField
+                              label="Nursery Next Term Fee"
+                              variant="filled"
+                              fullWidth
+                              margin="normal"
+                                onChange={(e) => {
+                                const plainNumber = parseFromNaira(e.target.value);
+                                setFieldValue('nextNURTermFee', plainNumber);
+                              }}
+                              onBlur={handleBlur}
+                                value={formatToNaira(values.nextNURTermFee)}
+                              name='nextNURTermFee'
+                              error={touched.nextNURTermFee && Boolean(errors.nextNURTermFee)}
+                              helperText={touched.nextNURTermFee && errors.nextNURTermFee}
+                              
+                              slotProps={{
+                                formHelperText: {
+                                  sx: { fontSize: 15 },  // Increase font size of helper text
+                                },
+                                input: {
+                                  style: { fontSize: 18 }, // font size for input text
+                                },
+                                inputLabel: {
+                                  style: { fontSize: 16 }, // font size for label text
+                                }
+                              }}
+                            />
+
+
+                
+
+
+             {/* {BUTTON } */}
+
+             <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Updating...' : 'Update'}</button>
+    </Card>
+
+)}
+                   
+       
+       
+</Formik>  
+
+    
+     <div className={style.footer__brand}>
+              <img src="/images/logo.png" alt=""/>
+              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+       </div>
+
+            <Snackbar
+               open={open}
+               autoHideDuration={3000} // Automatically hide after 1 second
+               onClose={handleClose}
+               anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position at the top center
+             >
+               <Alert onClose={handleClose} severity={alertType} sx={{ width: "100%", 
+                   fontSize: "2rem", 
+                   padding: "16px", 
+                   textAlign: "center"}} >
+                 {message}
+               </Alert>
+             </Snackbar>
+
+   </SignInContainer>
        
       </Box>
-      {/*This Area is for Snackbar*/}
-        
-                    <Snackbar
-                       open={open}
-                       autoHideDuration={3000} // Automatically hide after 1 second
-                       onClose={handleClose}
-                       anchorOrigin={{ vertical: "center", horizontal: "center" }} // Position at the top center
-                     >
-        
-        
-        
-        
-              <div>
-              <Dialog
-                open={open}
-                onClose={handleClose}
-                BackdropProps={{
-                  sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" }, // Darker overlay
-                }}
-        
-                sx={{
-                  "& .MuiDialog-paper": {
-                    width: '100%',
-                    borderRadius: "15px", // Optional: Rounded corners
-                  },
-                }}
-              
-              >
-        
-                {
-        
-                  alertType === 'success' ? 
-        
-                  <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-success']].join(' ')}>
-                  <div class={dashboard['card_body']}>
-        
-                               
-                     <span class={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
-                          
-                          <IconButton onClick={handleClose}>
-                            <CloseIcon sx={{ fontSize: 30, color: '#0e387a' }} />
-                          </IconButton>
-                 </span>
-        
-                  <span class={dashboard['icon-container']}>
-                          <svg class={[dashboard['icon--big'], dashboard['icon--success']].join(' ')}>
-                              <use href="../images/sprite.svg#success-icon"></use>
-                            </svg>
-                      </span>
-        
-                  <Typography sx={{ fontSize: 21}}>
-                    <p class={dashboard['alert-message']}>{message}</p>
-                 </Typography>
-                   
-                  </div>
-                   <Typography sx={{ fontSize: 20}}>
-                 <p class={dashboard['card_footer']}>success</p>
-                </Typography>
-                </div>
-        
-                : 
-        
-                <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-error']].join(' ')}>
-                <div class={dashboard['card_body']}>
-        
-        
-                   <span class={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
-                        
-                             <IconButton onClick={handleClose}>
-                               <CloseIcon sx={{ fontSize: 30 }} />
-                             </IconButton>
-                    </span>
-        
-        
-                <span class={dashboard['icon-container']}>
-                        <svg class={[dashboard['icon--big'], dashboard['icon--error']].join(' ')}>
-                            <use href="../images/sprite.svg#error-icon"></use>
-                          </svg>
-                    </span>
-                 <Typography sx={{ fontSize: 21}}>
-                    <p class={dashboard['alert-message']}>{message}</p>
-                 </Typography>
-                </div>
-                <Typography sx={{ fontSize: 20}}>
-                 <p class={dashboard['card_footer']}>error</p>
-                </Typography>
-                
-              </div>
-        
-        
-                }
-              
-        
-         
-                    
-                   
-              </Dialog>
-        
-              </div>
-        
-              
-                     </Snackbar>
     </Box>
+    </ClickAwayListener>
+   
+  );
+};
 
-     
-    </ClickAwayListener>  
-          )
-         }
-       </>
-    );
-}
-
-export default SchoolDashboard;
+export default AddNextTermFeeAndResumptionDate;
 
 
 
-
-
-
-
-
-
-
-
-const ITEM_HEIGHT = 48;
-const options = [
-    'None',
-    'Atria',
-    'Callisto'
-  ];
-
-
-
-
-
-
-
-  function TablePaginationActions(props) {
-    const theme = useTheme();
-    const { count, page, rowsPerPage, onPageChange } = props;
-  
-    const handleFirstPageButtonClick = (event) => {
-      onPageChange(event, 0);
-    };
-  
-    const handleBackButtonClick = (event) => {
-      onPageChange(event, page - 1);
-    };
-  
-    const handleNextButtonClick = (event) => {
-      onPageChange(event, page + 1);
-    };
-  
-    const handleLastPageButtonClick = (event) => {
-      onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-    };
-  
-    return (
-      <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-        <IconButton
-          onClick={handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="first page"
-        >
-          {theme.direction === 'rtl' ? <LastPageIcon sx={{fontSize: 30}} /> : <FirstPageIcon sx={{fontSize: 30}} />}
-        </IconButton>
-        <IconButton
-          onClick={handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="previous page"
-        >
-          {theme.direction === 'rtl' ? <KeyboardArrowRight sx={{fontSize: 30}} /> : <KeyboardArrowLeft sx={{fontSize: 30}}/>}
-        </IconButton>
-        <IconButton
-          onClick={handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="next page"
-        >
-          {theme.direction === 'rtl' ? <KeyboardArrowLeft sx={{fontSize: 30}} /> : <KeyboardArrowRight sx={{fontSize: 30}} />}
-        </IconButton>
-        <IconButton
-          onClick={handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="last page"
-        >
-          {theme.direction === 'rtl' ? <FirstPageIcon sx={{fontSize: 30}} /> : <LastPageIcon sx={{fontSize: 30}} />}
-        </IconButton>
-      </Box>
-    );
-  }  
-
-
-  TablePaginationActions.propTypes = {
-    count: PropTypes.number.isRequired,
-    onPageChange: PropTypes.func.isRequired,
-    page: PropTypes.number.isRequired,
-    rowsPerPage: PropTypes.number.isRequired,
-  };

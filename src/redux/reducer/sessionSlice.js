@@ -29,7 +29,23 @@ export const setCurrentSession = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.put(BASE_URL + '/set-current', id , { headers: {"Authorization":`Bearer ${JSON.parse(token)}`, "Content-Type":"application/json"}});
-      console.log("Set Current Session " + response.data);
+  
+      return response.data; // Return the saved user response
+      
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Something went wrong");
+    }
+  }
+);
+
+
+
+export const updateSession = createAsyncThunk(
+  'session/updateSession',
+  async (sessionData,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post(BASE_URL + '/update-session', sessionData , { headers: {"Authorization":`Bearer ${JSON.parse(token)}`, "Content-Type":"application/json"}});
       return response.data; // Return the saved user response
       
     } catch (error) {
@@ -52,10 +68,25 @@ export const getAllSession = createAsyncThunk(
 );
 
 
+export const getCurrentSession = createAsyncThunk(
+  'session/getCurrentSession',
+  async (_,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-current-session`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
 const sessionSlice = createSlice({
     name: 'Session',
     initialState: {
         sessions: [],
+        session: null,
         savingStatus: 'idle',
         fetchingStatus: 'idle',
         error: null,
@@ -89,6 +120,22 @@ const sessionSlice = createSlice({
               .addCase(getAllSession.rejected, (state) => {
                 state.fetchingStatus = 'failed';
               })
+
+
+
+                 // get Current Session
+            
+           .addCase(getCurrentSession.pending, (state) => {
+                state.fetchingStatus = 'loading';
+              })
+              .addCase(getCurrentSession.fulfilled, (state, action) => {
+                state.fetchingStatus = 'succeeded';
+                state.session = action.payload;
+              })
+              .addCase(getCurrentSession.rejected, (state) => {
+                state.fetchingStatus = 'failed';
+              })
+
 
 
                   // get Session by ID
