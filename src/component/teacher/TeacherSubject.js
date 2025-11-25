@@ -24,6 +24,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import { getTeacherSubjectsByClassId } from '../../redux/reducer/subjectSlice';
 import { useState } from 'react';
+import CirculerProgressLoader from '../utility/CirculerProgressLoader';
 
 
 // Import for dashboard Below
@@ -140,12 +141,24 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   }, [params, location.pathname]);
 
   
-  const fetchData = () => {
-    dispatch(getTeacherSubjectsByClassId(classId));
-       dispatch(allStudentCountInClass(classId));
-        dispatch(maleStudentCountInClass(classId));
-         dispatch(femaleStudentCountInClass(classId));
-  }
+  
+    const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+  
+    const fetchData = async () => {
+    try {
+      setIsInitialLoad(true);
+      await Promise.all([
+           dispatch(getTeacherSubjectsByClassId(classId)),
+       dispatch(allStudentCountInClass(classId)),
+        dispatch(maleStudentCountInClass(classId)),
+         dispatch(femaleStudentCountInClass(classId))
+      ]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsInitialLoad(false);
+    }
+  };
 
   const rows = Array.isArray(teacherSubjects) ? teacherSubjects : [];
 
@@ -463,7 +476,12 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
 
 
         <TableContainer component={Paper} sx={{ marginTop: 1 }}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            {
+                        
+                             isInitialLoad ? (<CirculerProgressLoader/>) :
+                             
+                             (
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
                       <TableHead>
                         <TableRow>
                           <StyledTableCell align="left">S/N</StyledTableCell>
@@ -527,7 +545,12 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
                       </TableRow>
                     </TableFooter>
                     </Table>
-                  </TableContainer>
+                             )
+                            
+                            } 
+                             
+                           
+                            </TableContainer>
 
                                 <div class={[dashboard['card--add'], dashboard['card--primary']].join(' ')}>
             <div class={dashboard['card_body']}>

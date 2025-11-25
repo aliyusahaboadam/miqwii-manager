@@ -135,8 +135,10 @@ const UpdateSubject = () => {
 
   const subjectRegistrationSchema = object({
       
-      name: string().max(22, "Subject Name must not exceed 22 characters")
-                    .required("Subject is required"),
+   name: string()
+  .max(22, "Subject Name must not exceed 22 characters")
+  .matches(/^[^\/\\]*$/, "Subject name cannot contain slashes")
+  .required("Subject is required"),
   
 
      

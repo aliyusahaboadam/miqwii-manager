@@ -93,12 +93,25 @@ navigate("/school/login")
 localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
 
-    const fetchData = () => {
-        dispatch(maleStudentCount());
-        dispatch(femaleStudentCount());
-        dispatch(allStudentCount());
-        dispatch(getAllClass());
-    }
+
+
+      const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+    
+      const fetchData = async () => {
+      try {
+        setIsInitialLoad(true);
+        await Promise.all([
+         dispatch(maleStudentCount()),
+        dispatch(femaleStudentCount()),
+        dispatch(allStudentCount()),
+        dispatch(getAllClass()),
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsInitialLoad(false);
+      }
+    };
 
 
     const navigateToStudents = (name) => {
@@ -109,7 +122,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
         <>
           {
-            fetchingStatus === 'loading' ? (<Loading/>) : (
+            isInitialLoad === true ? (<Loading/>) : (
 
                   <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
