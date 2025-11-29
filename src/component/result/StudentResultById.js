@@ -23,22 +23,48 @@ const StudentResultById = () => {
 
 
   // Function to get remark based on position
-  const getPositionRemark = (position) => {
-  if (position === 1) {
-    return "Outstanding! Keep up the excellent effort.";
-  } else if (position === 2) {
-    return "Great work! You’re doing great.";
-  } else if (position === 3) {
-    return "Very good performance, You’re among the best..";
-  } else if (position >= 4 && position <= 10) {
-    return "Very good. Keep it up.";
-  } else if (position >= 11 && position <= 20) {
-    return "Good effort. Aim higher.";
-  } else if (position >= 21 && position <= 30) {
-    return "Keep improving.";
-  } else {
-    return "Stay motivated. You can do better.";
+// Function to get remark based on position and class size
+const getPositionRemark = (position, totalStudents) => {
+  // Calculate percentile (what percentage of class is below this student)
+  const percentile = ((totalStudents - position) / totalStudents) * 100;
+  
+  // Handle edge cases
+  if (totalStudents === 1) {
+    return "Only student in class. Keep it up!"; // 38 chars
   }
+  
+  // Top 5% - Outstanding
+  if (percentile >= 95) {
+    return "Outstanding! Keep up the excellent effort."; // 43 chars
+  }
+  
+  // Top 10% - Excellent
+  if (percentile >= 90) {
+    return "Excellent! You're among the very best."; // 39 chars
+  }
+  
+  // Top 20% - Very Good
+  if (percentile >= 80) {
+    return "Very good performance. Keep it up!"; // 35 chars
+  }
+  
+  // Top 40% - Good
+  if (percentile >= 60) {
+    return "Good effort. You can do better. Aim higher!"; // 44 chars
+  }
+  
+  // Top 60% - Fair
+  if (percentile >= 40) {
+    return "Fair performance. More effort is needed."; // 41 chars
+  }
+  
+  // Top 80% - Below Average
+  if (percentile >= 20) {
+    return "Put in more effort. Seek help when needed."; // 43 chars
+  }
+  
+  // Bottom 20% - Needs Improvement
+  return "Much improvement needed. Work harder!"; // 37 chars
 };
 
   useEffect(() => {
@@ -254,7 +280,7 @@ const StudentResultById = () => {
          
                            <View style={resultStyle.remarkContainer}> 
                              <Text style={resultStyle.subtitle}>CLASSROOM TEACHER'S REMARK</Text>
-                             <Text style={resultStyle.remarkText}>{getPositionRemark(result.position)}</Text>
+                             <Text style={resultStyle.remarkText}>{getPositionRemark(result.position, result.numberOfStudentInClass)}</Text>
                            </View>
                          </View>
          
