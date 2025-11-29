@@ -680,7 +680,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </svg>
             </span>
 
-            <div>{rows.find((r) => r.school.name)?.school.name ?? 0}</div>
+            <div>{rows.find((r) => r.school.name)?.school.name ?? ""}</div>
             
           
             </div>
