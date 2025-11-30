@@ -188,11 +188,11 @@ useEffect(() =>  {
       setMessage("No class found, provide classes for this school in the class section");
       setOpen(true)
     } else if (result.message === true) {
-    if (classFetchingStatus === 'idle') {
+    
      dispatch(getClassNames());
      dispatch(getAllSubjectWithClassname());
 
-   }
+  
     }
   }
 

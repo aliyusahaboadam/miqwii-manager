@@ -548,13 +548,18 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
              transition: "margin-left 0.3s ease-in-out",
            }}
          >
-   <div className={dashboard['secondary--container']}>
+         
+         {
+
+          isInitialLoad ? (<CirculerProgressLoader/>) : (  
+          
+          <div className={dashboard['secondary--container']}>
                <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
               {
                 classes.map((class1, index) => (
            
-                  isInitialLoad ? (<CirculerProgressLoader/>) :
-  (
+                  
+  
   <div class={[dashboard['card--count'], dashboard[index % 2 === 0 ? 'card--primary' : 'card--secondary']].join(' ')}>
 
              
@@ -582,12 +587,13 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
        
              
               </div>
-  )
+ 
                 ))
               }
              </div>
-            </div>
-
+            </div>)
+ 
+         }
              
        
       </Box>

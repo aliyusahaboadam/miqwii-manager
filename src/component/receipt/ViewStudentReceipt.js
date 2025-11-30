@@ -8,6 +8,7 @@ import Loading from '../Chunks/loading';
 import { IconButton } from "@mui/material";
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import CirculerProgressLoader from '../utility/CirculerProgressLoader';
 
 // Import for dashboard Below
 
@@ -77,11 +78,11 @@ const ViewStudentReceipt = () => {
   
 
     useEffect(() => {
-      if (fetchingStatus === 'idle') {
+      
        fetchData();
-      }
-      console.log(maleStudent);
-    }, [location.pathname]);
+     
+
+    }, []);
 
 
 
@@ -122,7 +123,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
         <>
           {
-            isInitialLoad === true ? (<Loading/>) : (
+            fetchingStatus === "loading" ? (<Loading/>) : (
 
                   <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
@@ -631,9 +632,11 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   </div>
               </div>
   
-  
-  
-            <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
+           
+           {
+             isInitialLoad  ? (<CirculerProgressLoader/>) : (
+               
+               <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
   
               {
                 classes.map((class1, index) => (
@@ -662,6 +665,10 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
               }
           
             </div>
+             )
+           }
+  
+           
                
         
   

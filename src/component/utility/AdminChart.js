@@ -56,9 +56,9 @@ const AdminDemographicsCharts = () => {
 
 
        useEffect(() => {
-          if (fetchingStatus === 'idle') {
+       
             fetchData()  
-          }
+     
         }, []);
       
         

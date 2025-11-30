@@ -192,9 +192,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
 
   useEffect(() => {
-    if (fetchingStatus === 'idle') {
+
       fetchData()  
-    }
+
   }, [location.pathname]);
 
   
