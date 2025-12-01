@@ -36,7 +36,7 @@ import Loading from '../Chunks/loading';
 import { useLocation, useParams } from 'react-router-dom';
 import SchoolDemographicsCharts from '../utility/SchoolChart';
 import { getExpiryDate } from '../../redux/reducer/paymentSlice';
-
+import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
 
 
 
@@ -127,7 +127,7 @@ const SchoolDashboard  = () => {
 
 
   const sessionState = useSelector((state) => state.sessions);
-  const { sessions , fetchingStatus} = sessionState;
+  const { sessionDetails , fetchingStatus} = sessionState;
   const paymentState = useSelector((state) => state.payments);
   const { expiryDate } = paymentState;
   const dispatch = useDispatch();
@@ -144,7 +144,7 @@ const SchoolDashboard  = () => {
  const [alertType, setAlertType] = useState(""); 
  const [message, setMessage] = useState(""); 
  const [initialSelectedId, setInitialSelectedId] = useState(null);
-const rows = Array.isArray(sessions) ? sessions : [];
+// const rows = Array.isArray(sessions) ? sessions : [];
  const params = useParams();
 const location = useLocation()
 
@@ -166,7 +166,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   
    const fetchData = () => {
        dispatch(getExpiryDate())
-       dispatch(getAllSession()); 
+       dispatch(getSessionDashboardDetails()); 
    }
 
 
@@ -180,9 +180,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
   
   
+    console.log("Session Details: " + sessionDetails);
 
-
-      console.log("ARRAY " + rows);
+     
 
      const handleCheckboxChange = (id) => {
     // formik.setFieldValue("selectedId", id);
@@ -193,8 +193,8 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     }
 
     // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    // const emptyRows =
+    //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
@@ -680,7 +680,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </svg>
             </span>
 
-            <div>{rows.find((r) => r.school.name)?.school.name ?? ""}</div>
+            <div>{sessionDetails?.schoolName || ""}</div>
             
           
             </div>
@@ -761,7 +761,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </svg>
             </span>
             
-            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{rows.find((r) => r.current)?.session ?? 0}</span>
+            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.session || ""}</span>
             
             
             </div>
@@ -788,7 +788,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </svg>
             </span>
             
-            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{rows.find((r) => r.current)?.term ?? 0}</span>
+            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.term || ""}</span>
             
             
             </div>

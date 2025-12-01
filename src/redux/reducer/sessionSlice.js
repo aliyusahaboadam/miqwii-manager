@@ -68,6 +68,21 @@ export const getAllSession = createAsyncThunk(
 );
 
 
+
+export const getSessionDashboardDetails = createAsyncThunk(
+  'session/getSessionDashboardDetails',
+  async (_,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-session-dashboard-details`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
 export const getCurrentSession = createAsyncThunk(
   'session/getCurrentSession',
   async (_,  { rejectWithValue }) => {
@@ -87,6 +102,7 @@ const sessionSlice = createSlice({
     initialState: {
         sessions: [],
         session: null,
+        sessionDetails: null,
         savingStatus: 'idle',
         fetchingStatus: 'idle',
         error: null,
@@ -118,6 +134,23 @@ const sessionSlice = createSlice({
                 state.sessions = action.payload;
               })
               .addCase(getAllSession.rejected, (state) => {
+                state.fetchingStatus = 'failed';
+              })
+
+
+
+
+
+                 // get Session Details
+            
+           .addCase(getSessionDashboardDetails.pending, (state) => {
+                state.fetchingStatus = 'loading';
+              })
+              .addCase(getSessionDashboardDetails.fulfilled, (state, action) => {
+                state.fetchingStatus = 'succeeded';
+                state.sessionDetails = action.payload;
+              })
+              .addCase(getSessionDashboardDetails.rejected, (state) => {
                 state.fetchingStatus = 'failed';
               })
 
