@@ -1,6 +1,6 @@
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import { maleStudentCountInClass, femaleStudentCountInClass, allStudentCountInClass, allStudentCount, maleStudentCount } from '../../redux/reducer/studentSlice';
-import { useEffect, useMemo, useCallback, memo } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getAllClass } from '../../redux/reducer/classSlice';
@@ -79,114 +79,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
-
-
-// MEMOIZED STUDENT ROW COMPONENT
-const StudentScoreRow = memo(({ 
-  row, 
-  actualIndex, 
-  displayIndex, 
-  page, 
-  rowsPerPage,
-  values,
-  handleScoreChange,
-  handleBlur,
-  disableScoreInputFirstCA,
-  disableScoreInputSecondCA,
-  disableScoreInputExam,
-  inputRefs
-}) => {
-  return (
-    <StyledTableRow>
-      <StyledTableCell>{page * rowsPerPage + displayIndex + 1}</StyledTableCell>
-      <StyledTableCell>{row.regNo}</StyledTableCell>
-      <StyledTableCell>
-        {row.firstname + " " + row.surname + " " + row.lastname}
-      </StyledTableCell>
-
-      {/* FIRST CA */}
-      <StyledTableCell>
-        <TextField
-          inputRef={(el) => (inputRefs.current[actualIndex * 3] = el)}
-          disabled={!disableScoreInputFirstCA}
-          label="First CA"
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          value={values.students[actualIndex]?.score?.firstTest || ""}
-          name={`students[${actualIndex}].score.firstTest`}
-          onChange={(e) => handleScoreChange(e, actualIndex * 3 + 1)}
-          onBlur={handleBlur}
-          slotProps={{
-            input: { 
-              sx: { 
-                fontSize: 16, 
-                padding: 0,
-                '& input': { padding: '15px 6px' }
-              } 
-            },
-            inputLabel: { sx: { fontSize: 13 } },
-            formHelperText: { sx: { fontSize: 12 } },
-          }}
-        />
-      </StyledTableCell>
-
-      {/* SECOND CA */}
-      <StyledTableCell>
-        <TextField
-          inputRef={(el) => (inputRefs.current[actualIndex * 3 + 1] = el)}
-          disabled={!disableScoreInputSecondCA}
-          label="Second CA"
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          value={values.students[actualIndex]?.score?.secondTest || ""}
-          name={`students[${actualIndex}].score.secondTest`}
-          onChange={(e) => handleScoreChange(e, actualIndex * 3 + 2)}
-          onBlur={handleBlur}
-          slotProps={{
-            input: { 
-              sx: { 
-                fontSize: 16, 
-                padding: 0,
-                '& input': { padding: '15px 6px' }
-              } 
-            },
-            inputLabel: { sx: { fontSize: 13 } },
-            formHelperText: { sx: { fontSize: 12 } },
-          }}
-        />
-      </StyledTableCell>
-
-      {/* EXAM */}
-      <StyledTableCell>
-        <TextField
-          inputRef={(el) => (inputRefs.current[actualIndex * 3 + 2] = el)}
-          disabled={!disableScoreInputExam}
-          label="Exam"
-          variant="outlined"
-          fullWidth
-          margin="dense"
-          value={values.students[actualIndex]?.score?.exam || ""}
-          name={`students[${actualIndex}].score.exam`}
-          onChange={(e) => handleScoreChange(e, actualIndex * 3 + 3)}
-          onBlur={handleBlur}
-          slotProps={{
-            input: { 
-              sx: { 
-                fontSize: 16, 
-                padding: 0,
-                '& input': { padding: '15px 6px' }
-              } 
-            },
-            inputLabel: { sx: { fontSize: 13 } },
-            formHelperText: { sx: { fontSize: 12 } },
-          }}
-        />
-      </StyledTableCell>
-    </StyledTableRow>
-  );
-});
 
 
 const TeacherSubject = () => {
@@ -312,9 +204,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     };
 
  
-    // MEMOIZED SUBMIT HANDLER
-    const handleFormSubmit = useCallback(async (values, { resetForm }) => {
+    const handleFormSubmit = async (values, { resetForm })  => {
       try {
+        // Filter out students with no scores entered
         const studentsWithScores = values.students.filter(student => {
           const hasScore = student.score.firstTest !== '' || 
                           student.score.secondTest !== '' || 
@@ -333,6 +225,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         setAlertType("success");
         setMessage(result.message);
         
+        // Refresh the data after successful save
         await fetchData();
       } catch (error) {
         setAlertType("error");
@@ -340,46 +233,45 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       }
       
       setOpen(true);
-    }, [dispatch]);
+    };
 
 
 
-// MEMOIZED INITIAL VALUES
-const initialValues = useMemo(() => {
-  const subjectIdNumber = Number(subjectId);
-  
-  return {
-    students: studentsInClassByClassId.map((student) => {
-      let score = {};
-      
-      if (student.scoreReduced && Array.isArray(student.scoreReduced)) {
-        score = student.scoreReduced.find(s => {
-          const scoreSubjectId = Number(s.subjectId);
-          return scoreSubjectId === subjectIdNumber;
-        }) || {};
-      }
-      
-      return {
-        studentId: student.id,
-        classId: Number(classId),
-        subjectId: subjectIdNumber,
-        scoreId: score.id || null,
-        score: {
-          id: score.id || null,
-          firstTest: score.firstTest !== null && score.firstTest !== undefined ? score.firstTest : '',
-          secondTest: score.secondTest !== null && score.secondTest !== undefined ? score.secondTest : '',
-          exam: score.exam !== null && score.exam !== undefined ? score.exam : '',
-        },
-      };
-    }),
-  };
-}, [studentsInClassByClassId, subjectId, classId]);
+// CRITICAL FIX: Convert subjectId from string to number for proper comparison
+const subjectIdNumber = Number(subjectId);
+
+const initialValues = {
+  students: studentsInClassByClassId.map((student) => {
+    // More robust score lookup with proper type conversion
+    let score = {};
+    
+    if (student.scoreReduced && Array.isArray(student.scoreReduced)) {
+      score = student.scoreReduced.find(s => {
+        const scoreSubjectId = Number(s.subjectId);
+        return scoreSubjectId === subjectIdNumber;
+      }) || {};
+    }
+    
+    return {
+      studentId: student.id,
+      classId: Number(classId),
+      subjectId: subjectIdNumber,
+      scoreId: score.id || null,
+      score: {
+        id: score.id || null,
+        firstTest: score.firstTest !== null && score.firstTest !== undefined ? score.firstTest : '',
+        secondTest: score.secondTest !== null && score.secondTest !== undefined ? score.secondTest : '',
+        exam: score.exam !== null && score.exam !== undefined ? score.exam : '',
+      },
+    };
+  }),
+};
 
 const handleClose = (event, reason) => {
   if (reason === "clickaway") {
-    return;
+    return; // Prevent closing if the user clicks away
   }
-  setOpen(false);
+  setOpen(false); // Close the Snackbar
 };
 
     return (
@@ -404,7 +296,7 @@ const handleClose = (event, reason) => {
           {/** Profile Setup */}
           
           <IconButton onClick={profilePopup}    sx={{
-          backgroundColor: "#0e387a",
+          backgroundColor: "#0e387a", // Custom background
           "&:hover": {
             backgroundColor: "#0c3371"
           }
@@ -413,7 +305,7 @@ const handleClose = (event, reason) => {
         >
 
           <PersonOutlineOutlinedIcon
-          sx={{ color: "white", fontSize: 25 }}
+          sx={{ color: "white", fontSize: 25 }} // fontSize in px
           />
           </IconButton>
 
@@ -447,7 +339,7 @@ const handleClose = (event, reason) => {
             boxSizing: "border-box",
           },
           "& .MuiBackdrop-root": {
-            backgroundColor: "rgba(157, 152, 202, 0.3)",
+            backgroundColor: "rgba(157, 152, 202, 0.3)", // Transparent backdrop
           }
         }}
       >
@@ -619,22 +511,24 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
       isSubmitting,
     } = formik;
 
-    // Initialize refs once
-    if (!inputRefs.current.length) {
-      inputRefs.current = new Array(rows.length * 3);
-    }
+    // --- REFS FOR AUTO FOCUS ---
+    if (!inputRefs.current) inputRefs.current = [];
 
-    // MEMOIZED SCORE CHANGE HANDLER
-    const handleScoreChange = useCallback((e, nextIndex) => {
+    // --- AUTO MOVE HANDLER ---
+    const handleScoreChange = (e, nextIndex) => {
       const value = e.target.value;
+
+      // prevent more than 2 digits
       if (value.length > 2) return;
-      
+
+      // update formik
       handleChange(e);
-      
+
+      // auto move
       if (value.length === 2 && inputRefs.current[nextIndex]) {
         inputRefs.current[nextIndex].focus();
       }
-    }, [handleChange]);
+    };
 
     return (
       <>
@@ -651,36 +545,137 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
               </TableRow>
             </TableHead>
 
-            <TableBody>
-              {(rowsPerPage > 0
-                ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                : rows
-              ).map((row, displayIndex) => {
-                const actualIndex = rows.findIndex(
-                  (student) => student.id === row.id
-                );
+<TableBody>
+  {(rowsPerPage > 0
+    ? rows.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      )
+    : rows
+  ).map((row, displayIndex) => {
+    const actualIndex = rows.findIndex(
+      (student) => student.id === row.id
+    );
 
-                return (
-                  <StudentScoreRow
-                    key={row.id}
-                    row={row}
-                    actualIndex={actualIndex}
-                    displayIndex={displayIndex}
-                    page={page}
-                    rowsPerPage={rowsPerPage}
-                    values={values}
-                    handleScoreChange={handleScoreChange}
-                    handleBlur={handleBlur}
-                    disableScoreInputFirstCA={disableScoreInputFirstCA}
-                    disableScoreInputSecondCA={disableScoreInputSecondCA}
-                    disableScoreInputExam={disableScoreInputExam}
-                    inputRefs={inputRefs}
-                  />
-                );
-              })}
-            </TableBody>
+    return (
+      <StyledTableRow key={row.id}>
+        <StyledTableCell>{page * rowsPerPage + displayIndex + 1}</StyledTableCell>
 
-            {/* PAGINATION */}
+        <StyledTableCell>{row.regNo}</StyledTableCell>
+
+        <StyledTableCell>
+          {row.firstname + " " + row.surname + " " + row.lastname}
+        </StyledTableCell>
+
+        {/* --- FIRST CA --- */}
+        <StyledTableCell>
+          <TextField
+            inputRef={(el) =>
+              (inputRefs.current[actualIndex * 3] = el)
+            }
+            disabled={!disableScoreInputFirstCA}
+            label="First CA"
+            variant="outlined"
+            fullWidth
+            margin="dense"
+            value={
+              values.students[actualIndex]?.score?.firstTest || ""
+            }
+            name={`students[${actualIndex}].score.firstTest`}
+            onChange={(e) =>
+              handleScoreChange(e, actualIndex * 3 + 1)
+            }
+            onBlur={handleBlur}
+            slotProps={{
+              input: { 
+                sx: { 
+                  fontSize: 16, 
+                  padding: 0,
+                  '& input': {
+                    padding: '15px 6px'
+                  }
+                } 
+              },
+              inputLabel: { sx: { fontSize: 13 } },
+              formHelperText: { sx: { fontSize: 12 } },
+            }}
+          />
+        </StyledTableCell>
+
+        {/* --- SECOND CA --- */}
+        <StyledTableCell>
+          <TextField
+            inputRef={(el) =>
+              (inputRefs.current[actualIndex * 3 + 1] = el)
+            }
+            disabled={!disableScoreInputSecondCA}
+            label="Second CA"
+            variant="outlined"
+            fullWidth
+            margin="dense"
+            value={
+              values.students[actualIndex]?.score?.secondTest || ""
+            }
+            name={`students[${actualIndex}].score.secondTest`}
+            onChange={(e) =>
+              handleScoreChange(e, actualIndex * 3 + 2)
+            }
+            onBlur={handleBlur}
+            slotProps={{
+              input: { 
+                sx: { 
+                  fontSize: 16, 
+                  padding: 0,
+                  '& input': {
+                      padding: '15px 6px'
+                  }
+                } 
+              },
+              inputLabel: { sx: { fontSize: 13 } },
+              formHelperText: { sx: { fontSize: 12 } },
+            }}
+          />
+        </StyledTableCell>
+
+        {/* --- EXAM --- */}
+        <StyledTableCell>
+          <TextField
+            inputRef={(el) =>
+              (inputRefs.current[actualIndex * 3 + 2] = el)
+            }
+            disabled={!disableScoreInputExam}
+            label="Exam"
+            variant="outlined"
+            fullWidth
+            margin="dense"
+            value={
+              values.students[actualIndex]?.score?.exam || ""
+            }
+            name={`students[${actualIndex}].score.exam`}
+            onChange={(e) =>
+              handleScoreChange(e, actualIndex * 3 + 3)
+            }
+            onBlur={handleBlur}
+            slotProps={{
+              input: { 
+                sx: { 
+                  fontSize: 16, 
+                  padding: 0,
+                  '& input': {
+                    padding: '15px 6px'
+                  }
+                } 
+              },
+              inputLabel: { sx: { fontSize: 13 } },
+              formHelperText: { sx: { fontSize: 12 } },
+            }}
+          />
+        </StyledTableCell>
+      </StyledTableRow>
+    );
+  })}
+</TableBody>
+            {/* --- PAGINATION --- */}
             <TableFooter>
               <TableRow>
                 <TablePagination
@@ -710,7 +705,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
           </Table>
         </TableContainer>
 
-        {/* SUBMIT BUTTON */}
+        {/* --- SUBMIT BUTTON --- */}
         <div class={[dashboard["card--add"], dashboard["card--primary"]].join(" ")}>
           <div class={dashboard["card_body"]}>
             <button
@@ -740,9 +735,9 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
 
         <Snackbar
                open={open}
-               autoHideDuration={3000}
+               autoHideDuration={3000} // Automatically hide after 3 seconds
                onClose={handleClose}
-               anchorOrigin={{ vertical: "center", horizontal: "center" }}
+               anchorOrigin={{ vertical: "center", horizontal: "center" }} // Position at the top center
              >
 
 
@@ -753,13 +748,13 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
         open={open}
         onClose={handleClose}
         BackdropProps={{
-          sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" },
+          sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" }, // Darker overlay
         }}
 
         sx={{
           "& .MuiDialog-paper": {
             width: '100%',
-            borderRadius: "15px",
+            borderRadius: "15px", // Optional: Rounded corners
           },
         }}
       
@@ -854,6 +849,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
 }
 
 export default TeacherSubject;
+
 
 
 
