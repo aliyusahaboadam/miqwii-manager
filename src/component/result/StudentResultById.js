@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { formatPosition } from '../utility/FormatPositon';
+import { getSettingsState } from '../../redux/reducer/settingsSlice';
 
 const StudentResultById = () => {
   const dispatch = useDispatch();
@@ -74,10 +75,10 @@ const getPositionRemark = (position, totalStudents) => {
   const fetchData = () => {
     
       dispatch(getResultByAuthStudent());
-
+     dispatch(getSettingsState());
   };
 
-  console.log(" result " + JSON.stringify(results));
+ const positioning = useSelector((state) => state.settings.disablePositioning);
 
   Font.register({
     family: 'Roboto',
@@ -245,8 +246,14 @@ const getPositionRemark = (position, totalStudents) => {
             </View>
             <View style={resultStyle.childContainer}>
               <Text style={resultStyle.boldTextSecondary}>
-                Position: <Text style={resultStyle.detailsText}>{formatPosition(result.position)}</Text>
-              </Text> 
+  {positioning ? 'Position:' : 'No. of Subjects:'} 
+  <Text style={resultStyle.detailsText}>
+    {positioning 
+      ? formatPosition(result.position)
+      : (result.scores.length || 'N/A')
+    }
+  </Text>
+</Text>
               <Text style={resultStyle.boldTextSecondary}>
                 No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
               </Text> 

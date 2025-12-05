@@ -11,6 +11,7 @@ import sessionSlice from '../reducer/sessionSlice';
 import passwordSlice from '../reducer/passwordSlice';
 import receiptSlice from '../reducer/receiptSlice';
 import paymentSlice from '../reducer/paymentSlice';
+import settingsSlice from '../reducer/settingsSlice';
 
 const store = configureStore({
     reducer: {
@@ -24,7 +25,8 @@ const store = configureStore({
      sessions: sessionSlice,
      passwords: passwordSlice,
      receipts: receiptSlice,
-     payments: paymentSlice
+     payments: paymentSlice,
+     settings: settingsSlice
     },
   
     devTools: composeWithDevTools(),

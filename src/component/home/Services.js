@@ -184,7 +184,7 @@ const Services = () => {
                   <div className={home["feature__content"]} >
                     <span className={home["icon-container"]} >
                         <svg className={[home["icon"], home["icon--primary"]].join(' ')}>
-                            <use href="../images/sprite.svg#score"></use>
+                            <use href="../images/sprite.svg#settings"></use>
                           </svg>
                     </span>
                     <h3 className={home["features__heading"]} >Score Sheet Generation</h3>

@@ -37,7 +37,7 @@ import TeacherDashboard from './component/dashboards/TeacherDashboard';
 import AdminDashboard from './component/dashboards/AdminDashboard';
 import StudentDashboard from './component/dashboards/StudentDashboard';
 import TeacherSubject from './component/teacher/TeacherSubject';
-import DisableScoreInput from './component/Settings/DisableScoresInput';
+import Settings from './component/Settings/Settings';
 import PasswordRequest from './component/school/PasswordRequest';
 import ResetPassword from './component/school/ResetPassword';
 import TeacherProfile from './component/teacher/TeacherProfile';
@@ -134,7 +134,7 @@ function App() {
 
 
            {/*Settings Releted*/}
-        <Route exact path='/settings/disable-adding-score'  element={ <DisableScoreInput/> }/>
+        <Route exact path='/settings/settings'  element={ <Settings/> }/>
 
           {/*Password Releted*/}
         <Route exact path='/password/password-request'  element={<PasswordRequest/>}/>

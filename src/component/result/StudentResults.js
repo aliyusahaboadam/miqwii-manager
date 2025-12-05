@@ -8,6 +8,9 @@ import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { formatPosition } from '../utility/FormatPositon';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { getSettingsState } from '../../redux/reducer/settingsSlice';
 
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
@@ -16,6 +19,19 @@ const StudentResults = ({ classId }) => {
   const formatAmount = (amount) => {
     return `N${new Intl.NumberFormat('en-NG').format(amount)}`;
   };
+
+
+
+
+
+  useEffect(() => {
+       fetchData();
+    }, []);
+  
+    
+    const fetchData = () => {
+      dispatch(getSettingsState());
+    }
 
   // Function to get remark based on position
 // Function to get remark based on position and class size
@@ -62,6 +78,11 @@ const getPositionRemark = (position, totalStudents) => {
   return "Much improvement needed. Work harder!"; // 37 chars
 };
 
+
+const positioning = useSelector((state) => state.settings.disablePositioning);
+
+
+console.log("Position: " + positioning);
 
   Font.register({
     family: 'Roboto',
@@ -238,9 +259,15 @@ const getPositionRemark = (position, totalStudents) => {
                   </Text>
                 </View>
                 <View style={resultStyle.childContainer}>
-                  <Text style={resultStyle.boldTextSecondary}>
-                    Position: <Text style={resultStyle.detailsText}>{formatPosition(result.position)}</Text>
-                  </Text> 
+   <Text style={resultStyle.boldTextSecondary}>
+  {positioning ? 'Position:' : 'No. of Subjects:'} 
+  <Text style={resultStyle.detailsText}>
+    {positioning 
+      ? formatPosition(result.position)
+      : (result.scores.length || 'N/A')
+    }
+  </Text>
+</Text>
                   <Text style={resultStyle.boldTextSecondary}>
                     No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
                   </Text> 

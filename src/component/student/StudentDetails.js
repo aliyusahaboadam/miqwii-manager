@@ -525,32 +525,6 @@ onClick={(e) => e.stopPropagation()}>Logout</a>
  </div>
 
 
-      {/* Score Navbar Content */}
-      <div   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-5' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#score"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Scores</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Logout</a>
-    </div>
-
- </div>
 
 
       {/* Result Navbar Content */}
@@ -610,7 +584,7 @@ onClick={(e) => e.stopPropagation()}>Logout</a>
 
 
       {/* Subscription Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
+    <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
 
@@ -630,11 +604,46 @@ onClick={(e) => e.stopPropagation()}>Logout</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Pay Subscription</a>
+   <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Make Payment</a>
+   <a href="#/payment/all-payments" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Payments History</a>
     </div>
 
  </div>
+
+
+
+
+ 
+  {/* Settings Navbar Content */}
+  <div  style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-5')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-5' ?  'collapsible--expanded' : null]].join(' ')} >
+        <header className={navbar['collapsible__header']}>
+       <div className={navbar['collapsible__icon']}>
+ 
+       <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+             <use href="../images/sprite.svg#settings"></use>
+           </svg>
+         <p className={navbar['collapsible__heading']}>Settings</p>
+       </div>
+       
+         
+         <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>
+             <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                 <use href="../images/sprite.svg#chevron"></use>
+               </svg>
+         </span>
+     </header>
+     
+ 
+     <div className={navbar['collapsible__content--drawer']}>
+      <a href="#/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
+ onClick={(e) => e.stopPropagation()}>Settings</a>
+      
+     </div>
+ 
+  </div>
+ 
 
 
 

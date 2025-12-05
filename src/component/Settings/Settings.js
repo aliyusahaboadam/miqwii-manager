@@ -8,7 +8,7 @@ import Switch, { SwitchProps } from '@mui/material/Switch';
 import Stack from '@mui/material/Stack';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {getScoreInputState, changeInputStateSecondCA, changeInputStateFirstCA, changeInputStateExam} from '../../redux/reducer/scoreSlice';
+import {getSettingsState, changePositioningState ,changeInputStateSecondCA, changeInputStateFirstCA, changeInputStateExam} from '../../redux/reducer/settingsSlice';
 import { useState } from 'react';
 import { IconButton }  from '@mui/material';
 
@@ -192,7 +192,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 
-const DisableScoreInput = () => {
+const Settings = () => {
 
 
   
@@ -229,10 +229,11 @@ const DisableScoreInput = () => {
  
 
 
-const enabledFirstCA = useSelector((state) => state.scores.disableScoreInputFirstCA);
-const enabledSecondCA = useSelector((state) => state.scores.disableScoreInputSecondCA);
-const enabledExam = useSelector((state) => state.scores.disableScoreInputExam);
-const fetchingStatus = useSelector((state) => state.scores.fetchingStatus);
+const enabledFirstCA = useSelector((state) => state.settings.disableScoreInputFirstCA);
+const enabledSecondCA = useSelector((state) => state.settings.disableScoreInputSecondCA);
+const enabledExam = useSelector((state) => state.settings.disableScoreInputExam);
+const enabledPositioning = useSelector((state) => state.settings.disablePositioning);
+const fetchingStatus = useSelector((state) => state.settings.fetchingStatus);
 // const { classNames: classNames,  fetchingStatus: classFetchingStatus, error: classError } = classState;
 const dispatch = useDispatch();
 const navigate = useNavigate();
@@ -253,8 +254,13 @@ useEffect(() => {
 
   
   const fetchData = () => {
-    dispatch(getScoreInputState());
+    dispatch(getSettingsState());
   }
+
+
+  const handleTogglePositioning = (event) => {
+    dispatch(changePositioningState(event.target.checked));
+  };
 
  const handleToggleFirstCA = (event) => {
     console.log("From inside C.A Test First " +  event.target.checked)
@@ -546,33 +552,7 @@ onClick={(e) => e.stopPropagation()}>View Teachers</a>
  </div>
 
 
-      {/* Score Navbar Content */}
-      <div  style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-5')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-5' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#score"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Scores</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/settings/disable-adding-score" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Manage Score Input</a>
-     
-    </div>
-
- </div>
+   
 
 
      {/* Result Navbar Content */}
@@ -636,7 +616,10 @@ onClick={(e) => e.stopPropagation()}>School Fees</a>
 
  
       {/* Subscription Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
+       
+     
+
+   <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
 
@@ -663,6 +646,58 @@ onClick={(e) => e.stopPropagation()}>Payments History</a>
     </div>
 
  </div>
+
+
+
+
+  {/* Settings Navbar Content */}
+ <div  style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-5')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-5' ?  'collapsible--expanded' : null]].join(' ')} >
+       <header className={navbar['collapsible__header']}>
+      <div className={navbar['collapsible__icon']}>
+
+      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+            <use href="../images/sprite.svg#settings"></use>
+          </svg>
+        <p className={navbar['collapsible__heading']}>Settings</p>
+      </div>
+      
+        
+        <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>
+            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                <use href="../images/sprite.svg#chevron"></use>
+              </svg>
+        </span>
+    </header>
+    
+
+    <div className={navbar['collapsible__content--drawer']}>
+     <a href="#/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Settings</a>
+     
+    </div>
+
+ </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -728,6 +763,28 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                     
 
                     <FormGroup>
+
+
+
+                      
+         <FormControlLabel
+        control={
+        <Android12Switch 
+        checked={enabledPositioning}
+        onChange={handleTogglePositioning}
+         sx={{
+        transform: 'scale(1.2)', // Scale the whole switch
+        marginRight: 1, // Optional: spacing between switch and label
+      }}
+        
+        />}
+        label={`${enabledPositioning ? "Enabled" : "Disabled"} Positioning`}
+             sx={{
+    '.MuiFormControlLabel-label': {
+      fontSize: '1.8rem', // Increase label font size
+    }}}
+      />
+
         
     <FormControlLabel
         control={
@@ -746,6 +803,10 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
       fontSize: '1.8rem', // Increase label font size
     }}}
       />
+
+
+
+
 
 
 
@@ -820,7 +881,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   );
 };
 
-export default DisableScoreInput;
+export default Settings;
 
 
 
