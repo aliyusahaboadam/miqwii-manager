@@ -195,6 +195,9 @@ console.log("Position: " + positioning);
       }
     ];
 
+
+    const logoUrl = `https://images-0.s3.us-west-2.amazonaws.com/${resultsData?.[0]?.school?.logo}`;
+
     return (
       <Document>
         {resultsData.map((result, index) => {
@@ -212,7 +215,7 @@ console.log("Position: " + positioning);
               <View style={resultStyle.logoAndHeadingContainer}>
                 <View style={resultStyle.logo}>
                   <Image 
-                    src={`https://images-0.s3.us-west-2.amazonaws.com/${result.school.logo}`} 
+                    src={logoUrl} 
                     style={{
                       width: "100%",
                       height: "100%",
@@ -232,7 +235,7 @@ console.log("Position: " + positioning);
                 </View>
                 <View style={resultStyle.logo}>
                   <Image 
-                    src={`https://images-0.s3.us-west-2.amazonaws.com/${result.school.logo}`} 
+                    src={logoUrl} 
                     style={{
                       width: "100%",
                       height: "100%",

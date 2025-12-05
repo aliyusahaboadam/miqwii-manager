@@ -20,19 +20,6 @@ export const saveScore = createAsyncThunk(
 
 
 
-export const changeInputStateFirstCA = createAsyncThunk(
-  'score/changeInputStateFirstCA',
-  async (enable,  { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.post(BASE_URL + `/change-1stCA-state/${enable}`, {} , { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-    
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
-    }
-  }
-);
 
 
 export const getStudentScores = createAsyncThunk(
@@ -50,33 +37,8 @@ export const getStudentScores = createAsyncThunk(
 );
 
 
-export const changeInputStateSecondCA = createAsyncThunk(
-  'score/changeInputStateSecondCA',
-  async (enable,  { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.post(BASE_URL + `/change-2ndCA-state/${enable}`, {}, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-    
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
-    }
-  }
-);
 
-export const changeInputStateExam = createAsyncThunk(
-  'score/changeInputStateExam',
-  async (enable,  { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.post(BASE_URL + `/change-exam-state/${enable}`, {}, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
 
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
-    }
-  }
-);
 
 
 export const getScoreInputState = createAsyncThunk(
@@ -208,9 +170,6 @@ const scoreSlice = createSlice({
         scores: [],
         studentScore: [],
         results: [],
-        disableScoreInputFirstCA: true,
-        disableScoreInputSecondCA: true,
-        disableScoreInputExam: true,
         savingStatus: 'idle',
         fetchingStatus: 'idle',
         deletingStatus: 'idle',
@@ -304,50 +263,7 @@ const scoreSlice = createSlice({
             state.fetchingStatus = 'failed';
           })
 
-              // enable score input for first C.A
-            .addCase(changeInputStateFirstCA.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(changeInputStateFirstCA.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.disableScoreInputFirstCA = action.payload.disabledFirstCA;
-            state.disableScoreInputSecondCA = action.payload.disabledSecondCA;
-            state.disableScoreInputExam = action.payload.disabledExam;
-          })
-          .addCase(changeInputStateFirstCA.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
-
-    // enable score input for second C.A
-            .addCase(changeInputStateSecondCA.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(changeInputStateSecondCA.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.disableScoreInputFirstCA = action.payload.disabledFirstCA;
-            state.disableScoreInputSecondCA = action.payload.disabledSecondCA;
-            state.disableScoreInputExam = action.payload.disabledExam;
-          })
-          .addCase(changeInputStateSecondCA.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
-           
-         // enable score input for Exam C.A
-            .addCase(changeInputStateExam.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(changeInputStateExam.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.disableScoreInputFirstCA = action.payload.disabledFirstCA;
-            state.disableScoreInputSecondCA = action.payload.disabledSecondCA;
-            state.disableScoreInputExam = action.payload.disabledExam;
-          })
-          .addCase(changeInputStateExam.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
-
-
-             // Fetching Subject By Id
+              // Fetching Subject By Id
           .addCase(getScoreById.pending, (state) => {
             state.fetchingStatus = 'loading';
           })
@@ -360,19 +276,7 @@ const scoreSlice = createSlice({
 
 
           
-             // get Score input state
-          .addCase(getScoreInputState.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(getScoreInputState.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.disableScoreInputFirstCA = action.payload.disabledFirstCA;
-            state.disableScoreInputSecondCA = action.payload.disabledSecondCA;
-            state.disableScoreInputExam = action.payload.disabledExam;
-          })
-          .addCase(getScoreInputState.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
+        
 
 
 
