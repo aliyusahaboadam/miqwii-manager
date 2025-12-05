@@ -26,7 +26,8 @@ import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import StudentResults from './StudentResults';
 import ActionMenu from '../utility/ActionMenu';
 import Loading from '../Chunks/loading';
-
+import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
+import CirculerProgressLoader from '../utility/CirculerProgressLoader';
 
 // Import for dashboard Below
 
@@ -109,14 +110,12 @@ const ShowResults  = () => {
 
 
   const classState = useSelector((state) => state.classes);
-  const { classes,  fetchingStatus} = classState;
+  const { classes } = classState;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const sessionState = useSelector((state) => state.sessions);
-  const { sessions } = sessionState;
+  const { sessionDetails,  fetchingStatus } = sessionState;
 
-  const scoreState = useSelector((state) => state.scores);
-  const { results } = scoreState;
   
  const [anchorEl, setAnchorEl] = React.useState(null);
  const open = Boolean(anchorEl);
@@ -138,20 +137,36 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   }, [location.pathname]);
 
 
-  const fetchData = () => {
-         dispatch(getAllClass());
-      dispatch(getAllSession());
-  }
 
 
 
-  const sessionRows = Array.isArray(sessions) ? sessions : [];
+   const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+      
+        const fetchData = async () => {
+        try {
+          setIsInitialLoad(true);
+          await Promise.all([
+           dispatch(getAllClass()),
+      dispatch(getSessionDashboardDetails())
+          ]);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        } finally {
+          setIsInitialLoad(false);
+        }
+      };
+
+
+     
+
+
+
+
   const rows = Array.isArray(classes) ? classes : [];
 
   // const [rows, setRows] = useState(classData);
 
 
-      console.log("ARRAY " + JSON.stringify(results));
 
 
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -623,7 +638,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </svg>
             </span>
             
-            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionRows.find((r) => r.current)?.session ?? 0}</span>
+            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.session || ""}</span>
             
             
             </div>
@@ -650,7 +665,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </svg>
             </span>
             
-            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionRows.find((r) => r.current)?.term ?? 0}</span>
+            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.term || ""}</span>
             
             
             </div>
@@ -665,7 +680,11 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             {/* <div>{classNamesSpecific}</div> */}
             
             
-                        <TableContainer component={Paper} sx={{ marginTop: 1 }}>
+                      {
+                        isInitialLoad ? <CirculerProgressLoader/> : (
+
+
+                            <TableContainer component={Paper} sx={{ marginTop: 1 }}>
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                   <TableHead>
                                     <TableRow>
@@ -734,6 +753,8 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                 </TableFooter>
                                 </Table>
                               </TableContainer>
+                        )
+                      }
                     </div>
 
              

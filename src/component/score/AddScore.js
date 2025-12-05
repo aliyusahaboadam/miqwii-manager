@@ -567,110 +567,134 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
           {row.firstname + " " + row.surname + " " + row.lastname}
         </StyledTableCell>
 
-        {/* --- FIRST CA --- */}
-        <StyledTableCell>
-          <TextField
-            inputRef={(el) =>
-              (inputRefs.current[actualIndex * 3] = el)
-            }
-            disabled={!disableScoreInputFirstCA}
-            label="First CA"
-            variant="outlined"
-            fullWidth
-            margin="dense"
-            value={
-              values.students[actualIndex]?.score?.firstTest || ""
-            }
-            name={`students[${actualIndex}].score.firstTest`}
-            onChange={(e) =>
-              handleScoreChange(e, actualIndex * 3 + 1)
-            }
-            onBlur={handleBlur}
-            slotProps={{
-              input: { 
-                sx: { 
-                  fontSize: 16, 
-                  padding: 0,
-                  '& input': {
-                    padding: '15px 6px'
-                  }
-                } 
-              },
-              inputLabel: { sx: { fontSize: 13 } },
-              formHelperText: { sx: { fontSize: 12 } },
-            }}
-          />
-        </StyledTableCell>
+       {/* --- FIRST CA --- */}
+<StyledTableCell>
+  <TextField
+    inputRef={(el) =>
+      (inputRefs.current[actualIndex * 3] = el)
+    }
+    disabled={!disableScoreInputFirstCA}
+    label="First CA"
+    variant="outlined"
+    fullWidth
+    margin="dense"
+    value={
+      values.students[actualIndex]?.score?.firstTest || ""
+    }
+    name={`students[${actualIndex}].score.firstTest`}
+    onChange={(e) =>
+      handleScoreChange(e, actualIndex * 3 + 1)
+    }
+    onBlur={handleBlur}
+    error={Boolean(
+      getIn(errors, `students[${actualIndex}].score.firstTest`) &&
+      getIn(touched, `students[${actualIndex}].score.firstTest`)
+    )}
+    helperText={
+      getIn(touched, `students[${actualIndex}].score.firstTest`) &&
+      getIn(errors, `students[${actualIndex}].score.firstTest`)
+    }
+    slotProps={{
+      input: { 
+        sx: { 
+          fontSize: 16, 
+          padding: 0,
+          '& input': {
+            padding: '15px 6px'
+          }
+        } 
+      },
+      inputLabel: { sx: { fontSize: 13 } },
+      formHelperText: { sx: { fontSize: 12 } },
+    }}
+  />
+</StyledTableCell>
 
-        {/* --- SECOND CA --- */}
-        <StyledTableCell>
-          <TextField
-            inputRef={(el) =>
-              (inputRefs.current[actualIndex * 3 + 1] = el)
-            }
-            disabled={!disableScoreInputSecondCA}
-            label="Second CA"
-            variant="outlined"
-            fullWidth
-            margin="dense"
-            value={
-              values.students[actualIndex]?.score?.secondTest || ""
-            }
-            name={`students[${actualIndex}].score.secondTest`}
-            onChange={(e) =>
-              handleScoreChange(e, actualIndex * 3 + 2)
-            }
-            onBlur={handleBlur}
-            slotProps={{
-              input: { 
-                sx: { 
-                  fontSize: 16, 
-                  padding: 0,
-                  '& input': {
-                      padding: '15px 6px'
-                  }
-                } 
-              },
-              inputLabel: { sx: { fontSize: 13 } },
-              formHelperText: { sx: { fontSize: 12 } },
-            }}
-          />
-        </StyledTableCell>
+{/* --- SECOND CA --- */}
+<StyledTableCell>
+  <TextField
+    inputRef={(el) =>
+      (inputRefs.current[actualIndex * 3 + 1] = el)
+    }
+    disabled={!disableScoreInputSecondCA}
+    label="Second CA"
+    variant="outlined"
+    fullWidth
+    margin="dense"
+    value={
+      values.students[actualIndex]?.score?.secondTest || ""
+    }
+    name={`students[${actualIndex}].score.secondTest`}
+    onChange={(e) =>
+      handleScoreChange(e, actualIndex * 3 + 2)
+    }
+    onBlur={handleBlur}
+    error={Boolean(
+      getIn(errors, `students[${actualIndex}].score.secondTest`) &&
+      getIn(touched, `students[${actualIndex}].score.secondTest`)
+    )}
+    helperText={
+      getIn(touched, `students[${actualIndex}].score.secondTest`) &&
+      getIn(errors, `students[${actualIndex}].score.secondTest`)
+    }
+    slotProps={{
+      input: { 
+        sx: { 
+          fontSize: 16, 
+          padding: 0,
+          '& input': {
+              padding: '15px 6px'
+          }
+        } 
+      },
+      inputLabel: { sx: { fontSize: 13 } },
+      formHelperText: { sx: { fontSize: 12 } },
+    }}
+  />
+</StyledTableCell>
 
-        {/* --- EXAM --- */}
-        <StyledTableCell>
-          <TextField
-            inputRef={(el) =>
-              (inputRefs.current[actualIndex * 3 + 2] = el)
-            }
-            disabled={!disableScoreInputExam}
-            label="Exam"
-            variant="outlined"
-            fullWidth
-            margin="dense"
-            value={
-              values.students[actualIndex]?.score?.exam || ""
-            }
-            name={`students[${actualIndex}].score.exam`}
-            onChange={(e) =>
-              handleScoreChange(e, actualIndex * 3 + 3)
-            }
-            onBlur={handleBlur}
-            slotProps={{
-              input: { 
-                sx: { 
-                  fontSize: 16, 
-                  padding: 0,
-                  '& input': {
-                    padding: '15px 6px'
-                  }
-                } 
-              },
-              inputLabel: { sx: { fontSize: 13 } },
-              formHelperText: { sx: { fontSize: 12 } },
-            }}
-          />
-        </StyledTableCell>
+{/* --- EXAM --- */}
+<StyledTableCell>
+  <TextField
+    inputRef={(el) =>
+      (inputRefs.current[actualIndex * 3 + 2] = el)
+    }
+    disabled={!disableScoreInputExam}
+    label="Exam"
+    variant="outlined"
+    fullWidth
+    margin="dense"
+    value={
+      values.students[actualIndex]?.score?.exam || ""
+    }
+    name={`students[${actualIndex}].score.exam`}
+    onChange={(e) =>
+      handleScoreChange(e, actualIndex * 3 + 3)
+    }
+    onBlur={handleBlur}
+    error={Boolean(
+      getIn(errors, `students[${actualIndex}].score.exam`) &&
+      getIn(touched, `students[${actualIndex}].score.exam`)
+    )}
+    helperText={
+      getIn(touched, `students[${actualIndex}].score.exam`) &&
+      getIn(errors, `students[${actualIndex}].score.exam`)
+    }
+    slotProps={{
+      input: { 
+        sx: { 
+          fontSize: 16, 
+          padding: 0,
+          '& input': {
+            padding: '15px 6px'
+          }
+        } 
+      },
+      inputLabel: { sx: { fontSize: 13 } },
+      formHelperText: { sx: { fontSize: 12 } },
+    }}
+  />
+</StyledTableCell>
       </StyledTableRow>
     );
   })}
