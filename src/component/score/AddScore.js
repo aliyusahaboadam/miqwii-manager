@@ -55,7 +55,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
+import { getSettingsState } from '../../redux/reducer/settingsSlice';
 
 
 
@@ -156,8 +156,8 @@ const TeacherSubject = () => {
     const [rowsPerPage, setRowsPerPage] = React.useState(100);
     const {subjectId, classId, className, subjectName } =  useParams();
 
-    const scoreState = useSelector((state) => state.scores);
-    const {scores,disableScoreInputFirstCA,  disableScoreInputSecondCA, disableScoreInputExam} = scoreState;
+    const settingsState = useSelector((state) => state.settings);
+    const {disableScoreInputFirstCA,  disableScoreInputSecondCA, disableScoreInputExam} = settingsState;
 
 
 
@@ -177,7 +177,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   
   const fetchData = () => {
     dispatch(getStudentsByClassId(classId));
-    dispatch(getScoreInputState());
+    dispatch(getSettingsState());
   }
 
   const rows = Array.isArray(studentsInClassByClassId) ? studentsInClassByClassId : [];
