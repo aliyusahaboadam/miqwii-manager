@@ -132,7 +132,8 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
 
   useEffect(() => {
-    fetchData();
+    fetchDashboardDetailsData();
+    fetchClassData();
   
   }, [location.pathname]);
 
@@ -142,12 +143,11 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
    const [isInitialLoad, setIsInitialLoad] = React.useState(true);
       
-        const fetchData = async () => {
+        const fetchClassData = async () => {
         try {
           setIsInitialLoad(true);
           await Promise.all([
-           dispatch(getAllClass()),
-      dispatch(getSessionDashboardDetails())
+           dispatch(getAllClass())
           ]);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -155,6 +155,15 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           setIsInitialLoad(false);
         }
       };
+
+
+
+
+        const fetchDashboardDetailsData = () => {
+      
+            dispatch(getSessionDashboardDetails())
+    
+      }
 
 
      
