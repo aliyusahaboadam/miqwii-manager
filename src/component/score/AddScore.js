@@ -36,7 +36,7 @@ import { useRef } from 'react';
 
 // Import for dashboard Below
 
-import React from "react";
+import React, { useMemo } from "react";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import navbar from '../style/dashboard/SchoolDashboard.module.css';
 import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
@@ -181,6 +181,16 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   }
 
   const rows = Array.isArray(studentsInClassByClassId) ? studentsInClassByClassId : [];
+
+
+
+  const rowIndexMap = useMemo(() => {
+  const map = {};
+    rows.forEach((row, index) => {
+      map[row.id] = index;
+    });
+    return map;
+  }, [rows]);
 
     const navigateToDashboard = (name) => {
       navigate(`/teacher/home`);
@@ -498,7 +508,10 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
   initialValues={initialValues}
   validationSchema={scoreRegistrationSchema}
   onSubmit={handleFormSubmit}
-  enableReinitialize
+   enableReinitialize
+  validateOnChange={false}
+  validateOnBlur={true}
+  
 >
   {(formik) => {
     const {
@@ -553,9 +566,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
       )
     : rows
   ).map((row, displayIndex) => {
-    const actualIndex = rows.findIndex(
-      (student) => student.id === row.id
-    );
+   const actualIndex = rowIndexMap[row.id];
 
     return (
       <StyledTableRow key={row.id}>
