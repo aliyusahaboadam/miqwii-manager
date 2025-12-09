@@ -131,6 +131,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           {
             fetchingStatus === "loading" ? (<Loading/>) : (
 
+              
                   <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
