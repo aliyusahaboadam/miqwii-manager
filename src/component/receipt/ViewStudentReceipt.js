@@ -78,10 +78,8 @@ const ViewStudentReceipt = () => {
   
 
     useEffect(() => {
-      
+      fetchCounterData();
        fetchData();
-     
-
     }, []);
 
 
@@ -102,10 +100,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       try {
         setIsInitialLoad(true);
         await Promise.all([
-         dispatch(maleStudentCount()),
-        dispatch(femaleStudentCount()),
-        dispatch(allStudentCount()),
-        dispatch(getAllClass()),
+        dispatch(getAllClass())
         ]);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -113,6 +108,17 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         setIsInitialLoad(false);
       }
     };
+
+
+
+       const fetchCounterData =  () => {
+   
+         dispatch(maleStudentCount())
+        dispatch(femaleStudentCount())
+        dispatch(allStudentCount())
+   
+    }
+
 
 
     const navigateToStudents = (name) => {

@@ -77,7 +77,8 @@ const ViewStudents = () => {
   
 
     useEffect(() => {
-  
+       
+      fetchCounterData();
        fetchData();
    
     }, []);
@@ -89,16 +90,23 @@ const ViewStudents = () => {
       try {
         setIsInitialLoad(true);
         await Promise.all([
-          dispatch(maleStudentCount()),
-        dispatch(femaleStudentCount()),
-        dispatch(allStudentCount()),
-        dispatch(getAllClass()),
+     
+        dispatch(getAllClass())
         ]);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
         setIsInitialLoad(false);
       }
+    };
+
+
+       const fetchCounterData = () => {
+      
+        dispatch(maleStudentCount())
+        dispatch(femaleStudentCount())
+        dispatch(allStudentCount())
+      
     };
 
 
