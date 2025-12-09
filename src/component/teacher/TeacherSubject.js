@@ -135,10 +135,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
   useEffect(() => {
     
-    fetchCounterData();
      fetchData();
     
-  
+    console.log(teacherSubjects);
   }, [params, location.pathname]);
 
   
@@ -150,21 +149,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       setIsInitialLoad(true);
       await Promise.all([
            dispatch(getTeacherSubjectsByClassId(classId)),
-
-      ]);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setIsInitialLoad(false);
-    }
-  };
-
-
-     const fetchCounterData = async () => {
-    try {
-      setIsInitialLoad(true);
-      await Promise.all([
-          
        dispatch(allStudentCountInClass(classId)),
         dispatch(maleStudentCountInClass(classId)),
          dispatch(femaleStudentCountInClass(classId))
@@ -175,7 +159,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       setIsInitialLoad(false);
     }
   };
-
 
   const rows = Array.isArray(teacherSubjects) ? teacherSubjects : [];
 
