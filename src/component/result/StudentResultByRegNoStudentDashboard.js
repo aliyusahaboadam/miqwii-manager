@@ -213,7 +213,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
   const fetchData = () => {
-        //  dispatch(getAllClass());
+  
       dispatch(getAllSession());
   }
 

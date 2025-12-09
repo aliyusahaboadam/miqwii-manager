@@ -33,6 +33,21 @@ export const getAllClass = createAsyncThunk(
 );
 
 
+
+export const getAllClassnameAndId = createAsyncThunk(
+  'class/getAllClassnameAndId ',
+  async (_,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + '/get-classname-and-id',  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
 export const getClassCount = createAsyncThunk(
   'class/getClassCount',
   async (_,  { rejectWithValue }) => {
@@ -271,6 +286,19 @@ const classSlice = createSlice({
                   state.classes = action.payload;
                 })
                 .addCase(getAllClass.rejected, (state) => {
+                  state.fetchingStatus = 'failed';
+                })
+
+
+                   // get classname and id
+                 .addCase(getAllClassnameAndId.pending, (state) => {
+                  state.fetchingStatus = 'loading';
+                })
+                .addCase(getAllClassnameAndId.fulfilled, (state, action) => {
+                  state.fetchingStatus = 'succeeded';
+                  state.classes = action.payload;
+                })
+                .addCase(getAllClassnameAndId.rejected, (state) => {
                   state.fetchingStatus = 'failed';
                 })
 

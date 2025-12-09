@@ -3,7 +3,7 @@ import { maleStudentCount, femaleStudentCount, allStudentCount } from '../../red
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getAllClass } from '../../redux/reducer/classSlice';
+import { getAllClass as getAllClassnameAndId } from '../../redux/reducer/classSlice';
 import Loading from '../Chunks/loading';
 import { IconButton } from "@mui/material";
 import { useState } from 'react';
@@ -78,7 +78,7 @@ const ViewStudentReceipt = () => {
   
 
     useEffect(() => {
-      fetchCounterData();
+     
        fetchData();
     }, []);
 
@@ -100,7 +100,12 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       try {
         setIsInitialLoad(true);
         await Promise.all([
-        dispatch(getAllClass())
+        dispatch(getAllClassnameAndId()),
+        
+         dispatch(maleStudentCount()),
+        dispatch(femaleStudentCount()),
+        dispatch(allStudentCount())
+   
         ]);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -111,13 +116,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
 
-       const fetchCounterData =  () => {
-   
-         dispatch(maleStudentCount())
-        dispatch(femaleStudentCount())
-        dispatch(allStudentCount())
-   
-    }
 
 
 
@@ -670,9 +668,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   
            
            {
-             isInitialLoad  ? (<CirculerProgressLoader/>) : (
-               
-               <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
+                 <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
   
               {
                 classes.map((class1, index) => (
@@ -701,7 +697,6 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
               }
           
             </div>
-             )
            }
   
            
