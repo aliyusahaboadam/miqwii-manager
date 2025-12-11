@@ -79,7 +79,7 @@ const getPositionRemark = (position, totalStudents) => {
 };
 
 
-const positioning = false;
+const positioning = useSelector((state) => state.settings.disablePositioning);
 
 
 console.log("Position: " + positioning);
