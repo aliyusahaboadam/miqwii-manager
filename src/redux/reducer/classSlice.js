@@ -48,6 +48,38 @@ export const getAllClassnameAndId = createAsyncThunk(
 );
 
 
+
+
+export const getAllClassnameAndSubjectCount = createAsyncThunk(
+  'class/getAllClassnameAndSubjectCount',
+  async (_,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + '/get-classname-and-subjectcount',  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
+
+
+export const getPrefixClassnameAndBasicDetails = createAsyncThunk(
+  'class/getPrefixClassnameAndBasicDetails',
+  async (prefix,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-prefix-classes-with-basic-datails/${prefix}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
 export const getClassCount = createAsyncThunk(
   'class/getClassCount',
   async (_,  { rejectWithValue }) => {
@@ -290,7 +322,7 @@ const classSlice = createSlice({
                 })
 
 
-                   // get classname and id
+              // get classname and id
                  .addCase(getAllClassnameAndId.pending, (state) => {
                   state.fetchingStatus = 'loading';
                 })
@@ -299,6 +331,38 @@ const classSlice = createSlice({
                   state.classes = action.payload;
                 })
                 .addCase(getAllClassnameAndId.rejected, (state) => {
+                  state.fetchingStatus = 'failed';
+                })
+
+
+
+
+                    // get classname with Students with Basic Details
+                 .addCase(getPrefixClassnameAndBasicDetails.pending, (state) => {
+                  state.fetchingStatus = 'loading';
+                  state.classNamesSpecific = []; // Clear old data immediately
+                })
+                .addCase(getPrefixClassnameAndBasicDetails.fulfilled, (state, action) => {
+                  state.fetchingStatus = 'succeeded';
+                  state.classNamesSpecific = action.payload;
+                })
+                .addCase(getPrefixClassnameAndBasicDetails.rejected, (state) => {
+                  state.fetchingStatus = 'failed';
+                })
+
+
+
+
+
+                // get classname and subject count
+                 .addCase(getAllClassnameAndSubjectCount.pending, (state) => {
+                  state.fetchingStatus = 'loading';
+                })
+                .addCase(getAllClassnameAndSubjectCount.fulfilled, (state, action) => {
+                  state.fetchingStatus = 'succeeded';
+                  state.classes = action.payload;
+                })
+                .addCase(getAllClassnameAndSubjectCount.rejected, (state) => {
                   state.fetchingStatus = 'failed';
                 })
 

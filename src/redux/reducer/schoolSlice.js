@@ -34,6 +34,21 @@ export const getAuthSchool = createAsyncThunk(
 );
 
 
+export const getSchoolWithBasicDetails = createAsyncThunk(
+  'class/getSchoolWithBasicDetails',
+  async (_,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-school-with-basic-details`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      console.log(JSON.stringify(response.data))
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
 export const getSchoolById = createAsyncThunk(
   'class/getAuthSchool',
   async (id,  { rejectWithValue }) => {
@@ -554,7 +569,7 @@ const schoolSlice = createSlice({
 
 
 
-             // Get All School With Details
+             // Get All School With Details (ADMIN)
           .addCase(getSchoolAlongWithDetails.pending, (state) => {
             state.fetchingStatus = 'loading';
           })
@@ -563,6 +578,20 @@ const schoolSlice = createSlice({
             state.schools = action.payload;
           })
           .addCase(getSchoolAlongWithDetails.rejected, (state) => {
+            state.fetchingStatus = 'failed';
+          })
+
+
+
+           // Get All School With Details
+          .addCase(getSchoolWithBasicDetails.pending, (state) => {
+            state.fetchingStatus = 'loading';
+          })
+          .addCase(getSchoolWithBasicDetails.fulfilled, (state, action) => {
+            state.fetchingStatus = 'succeeded';
+            state.school = action.payload;
+          })
+          .addCase(getSchoolWithBasicDetails.rejected, (state) => {
             state.fetchingStatus = 'failed';
           })
 

@@ -79,6 +79,23 @@ export const allStudentCountInClass = createAsyncThunk(
 );
 
 
+
+
+export const getStudentsWithBasicDetailsByClassId = createAsyncThunk(
+  'student/getStudentsWithBasicDetailsByClassId',
+  async (classId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/students-with-basic-details/${classId}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Something went wrong");
+    }
+  }
+);
+
+
 export const maleStudentCountInClass = createAsyncThunk(
   'student/maleStudentCountInClass',
   async (id, { rejectWithValue }) => {
@@ -290,6 +307,20 @@ const studentSlice = createSlice({
                       state.studentsInClassByClassId = action.payload;
                     })
                     .addCase(getStudentsByClassId.rejected, (state) => {
+                      state.fetchingStatus = 'failed';
+                    })
+
+
+                    // STudent with Basic Details 
+
+                     .addCase(getStudentsWithBasicDetailsByClassId.pending, (state) => {
+                      state.fetchingStatus = 'loading';
+                    })
+                    .addCase(getStudentsWithBasicDetailsByClassId.fulfilled, (state, action) => {
+                      state.fetchingStatus = 'succeeded';
+                      state.studentsInClassByClassId = action.payload;
+                    })
+                    .addCase(getStudentsWithBasicDetailsByClassId.rejected, (state) => {
                       state.fetchingStatus = 'failed';
                     })
 

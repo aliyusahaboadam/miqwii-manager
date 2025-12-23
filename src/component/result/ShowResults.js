@@ -20,7 +20,7 @@ import { getClassNamesStartingWith, getClassCount, getClassCountSpecific } from 
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveClass , resetStatus, deleteClass, getAllClass } from '../../redux/reducer/classSlice';
+import { saveClass , resetStatus, deleteClass, getAllClass, getAllClassnameAndId } from '../../redux/reducer/classSlice';
 import { getAllSession } from '../../redux/reducer/sessionSlice';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import StudentResults from './StudentResults';
@@ -147,7 +147,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         try {
           setIsInitialLoad(true);
           await Promise.all([
-           dispatch(getAllClass())
+           dispatch(getAllClassnameAndId())
           ]);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -160,8 +160,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
         const fetchDashboardDetailsData = () => {
-      
-            dispatch(getSessionDashboardDetails())
+       dispatch(getSessionDashboardDetails())
     
       }
 
@@ -740,7 +739,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                           {row.name}
                                         </StyledTableCell>
                                         <StyledTableCell align="left">
-                 {/*TEMPORARY RESULT DOWNLOAD OPERATION BEFORE UPGRADE*/}
+                
               
                        <StudentResults classId={row.id} />
 {/* 

@@ -3,7 +3,7 @@ import { maleStudentCount, femaleStudentCount, allStudentCount } from '../../red
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getAllClass } from '../../redux/reducer/classSlice';
+import { getAllClass, getAllClassnameAndSubjectCount } from '../../redux/reducer/classSlice';
 import Loading from '../Chunks/loading';
 import { useState } from 'react';
 import { IconButton }  from '@mui/material';
@@ -96,7 +96,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   try {
     setIsInitialLoad(true);
     await Promise.all([
-     dispatch(getAllClass())
+     dispatch(getAllClassnameAndSubjectCount())
     ]);
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -602,7 +602,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                 </svg>
           </span>
       
-          <span class={[dashboard['badge'], dashboard['']].join(' ')}>{class1.subjects.length}</span>
+          <span class={[dashboard['badge'], dashboard['']].join(' ')}>{class1.subjectCount}</span>
       
       
         </div>

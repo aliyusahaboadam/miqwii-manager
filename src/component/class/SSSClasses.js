@@ -15,7 +15,7 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import PropTypes from 'prop-types';
-import { getClassNamesStartingWith, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
+import { getPrefixClassnameAndBasicDetails ,getClassNamesStartingWith, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -133,7 +133,7 @@ const fetchData = async () => {
   try {
     setIsInitialLoad(true);
     await Promise.all([
-      dispatch(getClassNamesStartingWith('S')).unwrap(),
+      dispatch(getPrefixClassnameAndBasicDetails('S')).unwrap(),
       dispatch(getClassCount()).unwrap(),
       dispatch(getClassCountSpecific('S')).unwrap()
     ]);
@@ -744,14 +744,14 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                 ).map((row) => (
                                     <StyledTableRow key={row.id}>
                                       <StyledTableCell component="th" scope="row">
-                                        {row.className}
+                                        {row.name}
                                       </StyledTableCell>
                                        <StyledTableCell component="th" scope="row">
                                        {
                                         row === null ?  "" : <ClassScoreSheet row={row}  />
                                        }
                                       </StyledTableCell>
-                                      <StyledTableCell align="left">{row.numberOfStudent}</StyledTableCell>
+                                      <StyledTableCell align="left">{row.studentCount}</StyledTableCell>
                                       <StyledTableCell align="right">
                                       <div>
           

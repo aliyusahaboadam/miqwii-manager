@@ -49,7 +49,7 @@ const  ActionMenu = ({ row, onDelete, onEdit }) => {
       };
     
       const handleEdit = () => {
-        onEdit(row.className);
+        onEdit(row.name);
         handleClose();
       };
   

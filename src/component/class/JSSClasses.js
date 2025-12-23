@@ -25,7 +25,7 @@ import Loading from '../Chunks/loading';
 import { useLocation, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import CirculerProgressLoader from '../utility/CirculerProgressLoader';
-
+import { getPrefixClassnameAndBasicDetails } from '../../redux/reducer/classSlice';
 
 
 
@@ -143,7 +143,7 @@ const JSSClasses  = () => {
   try {
     setIsInitialLoad(true);
     await Promise.all([
-      dispatch(getClassNamesStartingWith('J')).unwrap(),
+      dispatch(getPrefixClassnameAndBasicDetails('J')).unwrap(),
       dispatch(getClassCount()).unwrap(),
       dispatch(getClassCountSpecific('J')).unwrap()
     ]);
@@ -738,14 +738,14 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                 ).map((row) => (
                                     <StyledTableRow key={row.id}>
                                       <StyledTableCell component="th" scope="row">
-                                        {row.className}
+                                        {row.name}
                                       </StyledTableCell>
                                        <StyledTableCell component="th" scope="row">
                                        {
                                         row === null ?  "" : <ClassScoreSheet row={row}  />
                                        }
                                       </StyledTableCell>
-                                      <StyledTableCell align="left">{row.numberOfStudent}</StyledTableCell>
+                                      <StyledTableCell align="left">{row.studentCount}</StyledTableCell>
                                       <StyledTableCell align="right">
                                       <div>
           
