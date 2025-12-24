@@ -32,51 +32,14 @@ export const allStudentCount = createAsyncThunk(
 );
 
 
-export const maleStudentCount = createAsyncThunk(
-  'student/maleStudentCount',
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + '/males-students-count',  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Something went wrong");
-    }
-  }
-);
-
-
-export const femaleStudentCount = createAsyncThunk(
-  'student/FemaleStudentCount',
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + '/females-students-count',  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Something went wrong");
-    }
-  }
-);
 
 
 
 
 
 
-export const allStudentCountInClass = createAsyncThunk(
-  'student/allStudentCountInClassInClass',
-  async (id, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/all-students-count-in-class/${id}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-      return response.data; // Return the saved user response
 
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Something went wrong");
-    }
-  }
-);
+
 
 
 
@@ -111,12 +74,15 @@ export const maleStudentCountInClass = createAsyncThunk(
 );
 
 
-export const femaleStudentCountInClass = createAsyncThunk(
-  'student/FemaleStudentCountInClass',
-  async (id, { rejectWithValue }) => {
+
+
+
+export const getStudentCountDetailsByClass = createAsyncThunk(
+  'student/getStudentCountDetailsByClass',
+  async (classId, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/females-students-count-in-class/${id}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      const response = await api.get(BASE_URL + `/student-count-details-by-class/${classId}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
      
       return response.data; // Return the saved user response
     } catch (error) {
@@ -156,6 +122,8 @@ export const getStudentByClass = createAsyncThunk(
 
 
 
+
+
 export const getStudentsByClassId = createAsyncThunk(
   'class/getStudentInClassId',
   async (classId,  { rejectWithValue }) => {
@@ -175,7 +143,22 @@ export const getAuthenticatedStudentById = createAsyncThunk(
   async (_,  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-authenticated-student-by-id`,{ headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      const response = await api.get(BASE_URL + `/get-authenticated-student-by-id`, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
+
+export const getStudentCountDetails = createAsyncThunk(
+  'student/getStudentCountDetails',
+  async (_,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/student-count-details`, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
@@ -234,14 +217,11 @@ const studentSlice = createSlice({
     initialState: {
         students: [],
         student: null,
+        studentCountDetails: null,
+        studentCountDetailsByClass: null,
         studentsInClass: [],
         studentsInClassByClassId: [],
         allStudent: 0,
-        maleStudent: 0,
-        femaleStudent: 0,
-        allStudentInClass: 0,
-        maleStudentInClass: 0,
-        femaleStudentInClass: 0,
         savingStatus: 'idle',
         fetchingStatus: 'idle',
         deletingStatus: 'idle',
@@ -338,6 +318,39 @@ const studentSlice = createSlice({
                           .addCase(getAuthenticatedStudentById.rejected, (state) => {
                             state.fetchingStatus = 'failed';
                           })
+
+
+
+
+                          // Get Student Count Details
+                        
+                          .addCase(getStudentCountDetails.pending, (state) => {
+                            state.fetchingStatus = 'loading';
+                          })
+                          .addCase(getStudentCountDetails.fulfilled, (state, action) => {
+                            state.fetchingStatus = 'succeeded';
+                            state.studentCountDetails = action.payload;
+                            
+                          })
+                          .addCase(getStudentCountDetails.rejected, (state) => {
+                            state.fetchingStatus = 'failed';
+                          })
+
+
+
+                          // Get Student Count Details
+                        
+                          .addCase(getStudentCountDetailsByClass.pending, (state) => {
+                            state.fetchingStatus = 'loading';
+                          })
+                          .addCase(getStudentCountDetailsByClass.fulfilled, (state, action) => {
+                            state.fetchingStatus = 'succeeded';
+                            state.studentCountDetailsByClass = action.payload;
+                            
+                          })
+                          .addCase(getStudentCountDetailsByClass.rejected, (state) => {
+                            state.fetchingStatus = 'failed';
+                          })
               
               
 
@@ -359,75 +372,14 @@ const studentSlice = createSlice({
                     })
 
 
-          // male Student Count
+       
 
-          .addCase(maleStudentCount.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(maleStudentCount.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.maleStudent = action.payload;
-          })
-          .addCase(maleStudentCount.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
-
-                     // Female Student Count
-
-                     .addCase(femaleStudentCount.pending, (state) => {
-                      state.fetchingStatus = 'loading';
-                    })
-                    .addCase(femaleStudentCount.fulfilled, (state, action) => {
-                      state.fetchingStatus = 'succeeded';
-                      state.femaleStudent = action.payload;
-                    })
-                    .addCase(femaleStudentCount.rejected, (state) => {
-                      state.fetchingStatus= 'failed';
-                    })
+              
 
 
 
 
 
-                    // All Student Count in class
-
-                    .addCase(allStudentCountInClass.pending, (state) => {
-                      state.fetchingStatus = 'loading';
-                    })
-                    .addCase(allStudentCountInClass.fulfilled, (state, action) => {
-                      state.fetchingStatus = 'succeeded';
-                      state.allStudentInClass = action.payload;
-                    })
-                    .addCase(allStudentCountInClass.rejected, (state) => {
-                      state.fetchingStatus = 'failed';
-                    })
-
-
-          // male Student Count in class
-
-          .addCase(maleStudentCountInClass.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(maleStudentCountInClass.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.maleStudentInClass = action.payload;
-          })
-          .addCase(maleStudentCountInClass.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
-
-                     // Female Student Count in class
-
-                     .addCase(femaleStudentCountInClass.pending, (state) => {
-                      state.fetchingStatus = 'loading';
-                    })
-                    .addCase(femaleStudentCountInClass.fulfilled, (state, action) => {
-                      state.fetchingStatus = 'succeeded';
-                      state.femaleStudentInClass = action.payload;
-                    })
-                    .addCase(femaleStudentCountInClass.rejected, (state) => {
-                      state.fetchingStatus= 'failed';
-                    })
 
 
 

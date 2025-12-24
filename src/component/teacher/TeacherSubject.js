@@ -1,5 +1,5 @@
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { maleStudentCountInClass, femaleStudentCountInClass, allStudentCountInClass, allStudentCount, maleStudentCount } from '../../redux/reducer/studentSlice';
+import { getStudentCountDetailsByClass, allStudentCount, maleStudentCount } from '../../redux/reducer/studentSlice';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -107,7 +107,7 @@ const TeacherSubject = () => {
 
 
     const studentsState = useSelector((state) => state.students);
-    const { allStudentInClass,  maleStudentInClass,  femaleStudentInClass, fetchingStatus} = studentsState;
+    const { studentCountDetailsByClass, fetchingStatus} = studentsState;
 
     const classState = useSelector((state) => state.classes);
     const { classes } = classState;
@@ -137,7 +137,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
      fetchData();
     
-    console.log(teacherSubjects);
   }, [params, location.pathname]);
 
   
@@ -149,9 +148,8 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       setIsInitialLoad(true);
       await Promise.all([
            dispatch(getTeacherSubjectsByClassId(classId)),
-       dispatch(allStudentCountInClass(classId)),
-        dispatch(maleStudentCountInClass(classId)),
-         dispatch(femaleStudentCountInClass(classId))
+       dispatch(getStudentCountDetailsByClass(classId))
+    
       ]);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -410,7 +408,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
   </svg>
   </span>
   
-  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{allStudentInClass}</span>
+  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{studentCountDetailsByClass?.totalCount}</span>
   
   
   </div>
@@ -435,7 +433,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
    </svg>
    </span>
   
-  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{maleStudentInClass}</span>
+  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{studentCountDetailsByClass?.maleCount}</span>
   
   
   </div>
@@ -460,7 +458,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
   </svg>
   </span>
   
-  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{femaleStudentInClass}</span>
+  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{studentCountDetailsByClass?.femaleCount}</span>
   
   
   </div>

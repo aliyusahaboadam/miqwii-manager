@@ -1,5 +1,4 @@
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { maleStudentCount, femaleStudentCount, allStudentCount } from '../../redux/reducer/studentSlice';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +16,7 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { getStudentCountDetails } from '../../redux/reducer/studentSlice';
 
 
 import { 
@@ -66,7 +66,7 @@ const ViewStudents = () => {
 
 
     const studentsState = useSelector((state) => state.students);
-    const { allStudent,  maleStudent,  femaleStudent, fetchingStatus} = studentsState;
+    const { studentCountDetails,  fetchingStatus} = studentsState;
 
     const classState = useSelector((state) => state.classes);
     const { classes } = classState;
@@ -90,9 +90,7 @@ const ViewStudents = () => {
       try {
         setIsInitialLoad(true);
         await Promise.all([
-         dispatch(maleStudentCount()),
-        dispatch(femaleStudentCount()),
-        dispatch(allStudentCount()),
+         dispatch(getStudentCountDetails()),
         dispatch(getAllClassnameAndId())
         ]);
       } catch (error) {
@@ -597,7 +595,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   </svg>
   </span>
   
-  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{allStudent}</span>
+  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{studentCountDetails?.totalCount}</span>
   
   
   </div>
@@ -621,7 +619,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   </svg>
   </span>
   
-  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{maleStudent}</span>
+  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{studentCountDetails?.maleCount}</span>
   
   
   </div>
@@ -646,7 +644,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   </svg>
   </span>
   
-  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{femaleStudent}</span>
+  <span class={[dashboard['badge'], dashboard['']].join(' ')}>{studentCountDetails?.femaleCount}</span>
   
   
   </div>
@@ -663,6 +661,8 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
            
   
          {
+
+          classes.length === 0 ? <CirculerProgressLoader/> :
              <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
   
               {

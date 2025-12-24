@@ -332,315 +332,359 @@ const handleClose = (event, reason) => {
         </Box>
 
         {/* Drawer Content */}
-        <List>
-
-
+         <List>
+    
+    
+              
+         {/* Dashboard Navbar Content */}
+            {/* Dashboard Navbar Content */}
+        <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-0')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-0' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
+    
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="../images/sprite.svg#dashboard"></use>
+              </svg>
+            <p className={navbar['collapsible__heading']}>Dashboard</p>
+          </div>
           
-     {/* Dashboard Navbar Content */}
-     <div   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-0' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#dashboard"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Dashboard</p>
-      </div>
-      
+            
+            <span onClick={() => toggleChevron('chevron-0')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="../images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
         
-        <span onClick={() => toggleChevron('chevron-0')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Logout</a>
-    </div>
-
- </div> 
-
-
+        <div className={navbar['collapsible__content--drawer']}>
+       <a href="#/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Home</a>
+        <a href="#/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Add Session</a>
+       <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Setup Session</a>
+        <a href="#/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
+    <a href="#/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Add School Logo</a>
+        </div>
+    
+     </div> 
+    
+    
+    
+              
+         
+    
+        {/* Student Navbar Content */}
+           <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
+    
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="../images/sprite.svg#student"></use>
+              </svg>
+            <p className={navbar['collapsible__heading']}>Students</p>
+          </div>
           
-     
-
-     {/* Student Navbar Content */}
-     <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#student"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Students</p>
-      </div>
-      
+            
+            <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="../images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
         
-        <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Student</a>
-    <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Students</a>
-    </div>
-
- </div>   
-
-   {/* Class Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header  className={navbar['collapsible__header']}>
-      <div  className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#class"></use>
-          </svg>
-        <p  className={navbar['collapsible__heading']}>Classes</p>
-      </div>
-      
+        <div className={navbar['collapsible__content--drawer']}>
+        <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Add Student</a>
+        <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>View Students</a>
+         <a href="#/school/student-activator" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Switch Students Account</a>
+        </div>
+    
+     </div>  
+    
+       {/* Class Navbar Content */}
+          <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header  className={navbar['collapsible__header']}>
+          <div  className={navbar['collapsible__icon']}>
+    
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="../images/sprite.svg#class"></use>
+              </svg>
+            <p  className={navbar['collapsible__heading']}>Classes</p>
+          </div>
+          
+            
+            <span onClick={() => toggleChevron('chevron-2')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="../images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
         
-        <span onClick={() => toggleChevron('chevron-2')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>JSS Classes</a>
-    <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>SSS Classes</a>
-    <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Primary Classes</a>
-<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
-    <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
-    <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
-    <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
-<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
-    </div>
-
- </div> 
-
-      {/* Subject Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-3')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-3' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#subject"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Subjects</p>
-      </div>
-      
+        <div className={navbar['collapsible__content--drawer']}>
+        <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>JSS Classes</a>
+        <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>SSS Classes</a>
+        <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Primary Classes</a>
+    <a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
+        <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
+        <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
+        <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
+    <a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
+        </div>
+    
+     </div> 
+    
+             {/* Subject Navbar Content */}
+          <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-3')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-3' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
+    
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="../images/sprite.svg#subject"></use>
+              </svg>
+            <p className={navbar['collapsible__heading']}>Subjects</p>
+          </div>
+          
+            
+            <span onClick={() => toggleChevron('chevron-3')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="../images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
         
-        <span onClick={() => toggleChevron('chevron-3')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
+        <div className={navbar['collapsible__content--drawer']}>
+            <a href="#/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>View Subjects</a>
         <a href="#/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Subjects</a>
-    <a href="#/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Subjects</a>
-    </div>
-
- </div>   
-
-
-      {/* Teacher Navbar Content */}
-      <div   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-4' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#teacher"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Teachers</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-4')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
+    onClick={(e) => e.stopPropagation()}>Add Subjects</a>
+        </div>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Logout</a>
-    </div>
-
- </div>
-
-
-
-
-      {/* Result Navbar Content */}
-      <div   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#result"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Results</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-6')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
+     </div>  
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Logout</a>
-    </div>
-
- </div>
-
-
-      {/* School Fee Navbar Content */}
-      <div   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-7' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#fee"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>School Fees</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-7')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Logout</a>
-    </div>
-
- </div>
-
-
-      {/* Subscription Navbar Content */}
-    <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-         <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#subscription"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Subscription</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-8')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
+        {/* Teacher Navbar Content */}
+          <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-4')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-4' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Make Payment</a>
-   <a href="#/payment/all-payments" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Payments History</a>
-    </div>
-
- </div>
-
-
-
-{/* Settings Navbar Content */}
- <div  style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-5')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-5' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#settings"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Settings</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="../images/sprite.svg#teacher"></use>
               </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Settings</a>
-     
-    </div>
-
- </div>
-
- {/* Profile Navbar Content */}
- <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-9')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-9' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#profile"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Profile</p>
-      </div>
-      
+            <p className={navbar['collapsible__heading']}>Teachers</p>
+          </div>
+          
+            
+            <span onClick={() => toggleChevron('chevron-4')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="../images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
         
-        <span onClick={() => toggleChevron('chevron-9')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Profile</a>
-    <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
-    </div>
-
- </div> 
-
-  </List>
+        <div className={navbar['collapsible__content--drawer']}>
+             <a href="#/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Add Teacher</a>
+         <a href="#/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>View Teachers</a>
+        </div>
+    
+     </div>
+    
+    
+          
+    
+    
+         {/* Result Navbar Content */}
+          <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-6')}    className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
+    
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="../images/sprite.svg#result"></use>
+              </svg>
+            <p className={navbar['collapsible__heading']}>Results</p>
+          </div>
+          
+            
+            <span onClick={() => toggleChevron('chevron-6')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="../images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
+        
+    
+        <div className={navbar['collapsible__content--drawer']}>
+        <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Generate Result</a>
+        <a href="#/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Search Result</a>
+        </div>
+    
+     </div>
+    
+    
+           {/* School Fee Navbar Content */}
+          <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-7')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-7' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
+    
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="/images/sprite.svg#fee"></use>
+              </svg>
+            <p className={navbar['collapsible__heading']}>School Fees</p>
+          </div>
+          
+            
+            <span onClick={() => toggleChevron('chevron-7')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="/images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
+        
+    
+        <div className={navbar['collapsible__content--drawer']}>
+         <a href="#/receipt/view-student-reciept" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>School Fees</a>
+        </div>
+    
+     </div>
+    
+    
+    
+           {/* Subscription Navbar Content */}
+           
+         
+    
+       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
+    
+             <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="../images/sprite.svg#subscription"></use>
+              </svg>
+            <p className={navbar['collapsible__heading']}>Subscription</p>
+          </div>
+          
+            
+            <span onClick={() => toggleChevron('chevron-8')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="../images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
+        
+    
+        <div className={navbar['collapsible__content--drawer']}>
+       <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Make Payment</a>
+       <a href="#/payment/all-payments" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Payments History</a>
+        </div>
+    
+     </div>
+    
+    
+    
+    
+      {/* Settings Navbar Content */}
+     <div  style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-5')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-5' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
+    
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="../images/sprite.svg#settings"></use>
+              </svg>
+            <p className={navbar['collapsible__heading']}>Settings</p>
+          </div>
+          
+            
+            <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="../images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
+        
+    
+        <div className={navbar['collapsible__content--drawer']}>
+         <a href="#/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Settings</a>
+         
+        </div>
+    
+     </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+     {/* Profile Navbar Content */}
+     <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-9')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-9' ?  'collapsible--expanded' : null]].join(' ')} >
+           <header className={navbar['collapsible__header']}>
+          <div className={navbar['collapsible__icon']}>
+    
+          <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="/images/sprite.svg#profile"></use>
+              </svg>
+            <p className={navbar['collapsible__heading']}>Profile</p>
+          </div>
+          
+            
+            <span onClick={() => toggleChevron('chevron-9')} className={navbar['icon-container']}>
+                <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                    <use href="/images/sprite.svg#chevron"></use>
+                  </svg>
+            </span>
+        </header>
+        
+    
+        <div className={navbar['collapsible__content--drawer']}>
+       <a href="#/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    onClick={(e) => e.stopPropagation()}>Profile</a>
+        <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
+        </div>
+    
+     </div> 
+    
+      </List>
       </Drawer>
 
       {/* Main Content */}

@@ -5,7 +5,7 @@ import { useDispatch, useSelector} from 'react-redux';
 import { getClassCountSpecificJSS, getClassCountSpecificSSS, getClassCountSpecificPRI, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { maleStudentCount, femaleStudentCount } from '../../redux/reducer/studentSlice';
+
 
 import { 
   getAllSchoolCount, 

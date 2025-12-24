@@ -1,5 +1,4 @@
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { maleStudentCount, femaleStudentCount, allStudentCount } from '../../redux/reducer/studentSlice';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

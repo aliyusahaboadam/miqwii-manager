@@ -5,7 +5,7 @@ import { useDispatch, useSelector} from 'react-redux';
 import { getClassCountSpecificJSS, getClassCountSpecificNur, getClassCountSpecificSSS, getClassCountSpecificPRI, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { maleStudentCount, femaleStudentCount } from '../../redux/reducer/studentSlice';
+import { getStudentCountDetails } from '../../redux/reducer/studentSlice';
 
 const SchoolDemographicsCharts = () => {
 
@@ -16,15 +16,14 @@ const SchoolDemographicsCharts = () => {
     const { classNamesSpecific,  classCount,  classCountSpecificJSS,classCountSpecificNur, classCountSpecificSSS, classCountSpecificPRI} = classState;
     
     const studentState = useSelector((state) => state.students);
-    const {maleStudent, femaleStudent } = studentState;
+    const {studentCountDetails } = studentState;
    const dispatch = useDispatch();
     
 
 
 
        useEffect(() => {
-            dispatch(femaleStudentCount());
-            dispatch(maleStudentCount())
+            dispatch(getStudentCountDetails());
             dispatch(getClassCountSpecificJSS('J'));
             dispatch(getClassCountSpecificSSS('S'));
             dispatch(getClassCountSpecificPRI('P'));
@@ -148,8 +147,8 @@ const SchoolDemographicsCharts = () => {
   };
   // Sample data for students by gender
   const studentGenderData = [
-    { name: 'Female Students', value: femaleStudent, color: '#007CC3' },
-    { name: 'Male Students', value: maleStudent, color: '#00529B' }
+    { name: 'Female Students', value: studentCountDetails?.femaleCount, color: '#007CC3' },
+    { name: 'Male Students', value: studentCountDetails?.maleCount, color: '#00529B' }
   ];
 
   // Sample data for teachers
