@@ -9,25 +9,30 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ClassScoreSheetTable } from './ClassScoreSheetTable';
+import { getStudentsWithBasicDetailsByClassId } from '../../redux/reducer/studentSlice';
+import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
+import { getSchoolWithBasicDetails } from '../../redux/reducer/schoolSlice';
 
 const SchoolFeeSheet = ({ rows }) => {
   const dispatch = useDispatch();
-  const scoreState = useSelector((state) => state.scores);
-  const { results, fetchingStatus } = scoreState;
+
+  const sessionState = useSelector((state) => state.sessions);
+  const { sessionDetails} = sessionState;
+
+  const schoolState = useSelector((state) => state.schools);
+  const { school } = schoolState;
+
   const location = useLocation();
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     fetchData();
-  }, [location.pathname]);
+  }, []);
 
   const fetchData = () => {
-   
-      // dispatch(getResultByClassId(classId))
-   
+       dispatch(getSessionDashboardDetails())
+       dispatch(getSchoolWithBasicDetails())   
   };
-
-  console.log(" result " + JSON.stringify(results));
 
   Font.register({
     family: 'Roboto',
@@ -74,17 +79,17 @@ const SchoolFeeSheet = ({ rows }) => {
   const MyDocument = () => (
     <Document>
       <Page size="A4" style={resultStyle.body}>
-        {/* <Text style={resultStyle.schoolName}>{rows[0]?.school.name || ""}</Text>
-        <Text style={resultStyle.address}>{rows[0]?.school.address || ""}</Text>
+        <Text style={resultStyle.schoolName}>{school?.name || ""}</Text>
+        <Text style={resultStyle.address}>{school?.address || ""}</Text>
         <Text style={resultStyle.boldMottoText}>
-          Motto: <Text style={resultStyle.motto}>{rows[0]?.school.motto || ""}</Text>
+          Motto: <Text style={resultStyle.motto}>{school?.motto || ""}</Text>
         </Text>
         <Text style={resultStyle.boldText}>
-          School Reg: No.: <Text style={resultStyle.address}>{rows[0]?.school.regNo || ""}</Text> Tel: <Text style={resultStyle.address}>{rows[0]?.school.contact || ""}</Text>
+          School Reg: No.: <Text style={resultStyle.address}>{school?.regNo || ""}</Text> Tel: <Text style={resultStyle.address}>{school?.contact || ""}</Text>
         </Text>
         <Text style={resultStyle.secondHeader}>
-          FEES SHEET FOR {rows[0]?.class1.name || ""} {rows[0]?.academicSession.term || ""} TERM {rows[0]?.academicSession.session || ""} ACADEMIC SESSION
-        </Text> */}
+                  FEE SHEET FOR {"..............." + "  " + sessionDetails?.term || ""} TERM {sessionDetails?.session || ""} ACADEMIC SESSION
+         </Text>
 
         <ClassScoreSheetTable columns={ScoreSheetColumns} data={rows} />
         

@@ -15,7 +15,6 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import PropTypes from 'prop-types';
-import { getStudentByClass } from '../../redux/reducer/studentSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
