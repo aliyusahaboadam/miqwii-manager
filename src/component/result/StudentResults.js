@@ -179,13 +179,31 @@ console.log("Position: " + positioning);
     { accessorKey: 'e', size: 20 }
   ];
 
+
+  // PERFORMANCE FIX: Pre-load and cache the logo as base64
+  const preloadImage = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error('Error preloading image:', error);
+      return null;
+    }
+  };
+
   const scoreKeyData = [
     { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' },
     { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
   ];
 
   // PDF Document Component
-  const MyDocument = ({ resultsData }) => {
+  const MyDocument = ({ resultsData, logoUrl }) => {
     const feeKeyData = [
       {
         nextSSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextSSSTermFee || "Unset"),
@@ -196,7 +214,7 @@ console.log("Position: " + positioning);
     ];
 
 
-    const logoUrl = `https://images-0.s3.us-west-2.amazonaws.com/${resultsData?.[0]?.school?.logo}`;
+    // const logoUrl = `https://images-0.s3.us-west-2.amazonaws.com/${resultsData?.[0]?.school?.logo}`;
 
     return (
       <Document>
@@ -353,8 +371,11 @@ console.log("Position: " + positioning);
         }
         
         console.log('Generating PDF for class:', fetchedResults[0]?.class1?.name);
+
+        const logoUrl = `https://images-0.s3.us-west-2.amazonaws.com/${fetchedResults?.[0]?.school?.logo}`;
         
-        const blob = await pdf(<MyDocument resultsData={fetchedResults} />).toBlob();
+        
+        const blob = await pdf(<MyDocument resultsData={fetchedResults} logoUrl={logoUrl} />).toBlob();
         const url = URL.createObjectURL(blob);
         
         const link = document.createElement('a');
@@ -401,8 +422,11 @@ console.log("Position: " + positioning);
         }
         
         console.log('Generating PDF for class:', fetchedResults[0]?.class1?.name);
+
+         const logoUrl = `https://images-0.s3.us-west-2.amazonaws.com/${fetchedResults?.[0]?.school?.logo}`;
+      
         
-        const blob = await pdf(<MyDocument resultsData={fetchedResults} />).toBlob();
+        const blob = await pdf(<MyDocument resultsData={fetchedResults} logoUrl={logoUrl} />).toBlob();
         const url = URL.createObjectURL(blob);
         
         window.open(url, '_blank');
