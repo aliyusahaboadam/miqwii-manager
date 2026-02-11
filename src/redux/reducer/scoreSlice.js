@@ -2,6 +2,7 @@ import { Construction } from '@mui/icons-material';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // import api from 'api';
 import api from '../../component/routing/Interceptor';
+import MasterSheet from '../../component/result/MasterSheet';
 
 const BASE_URL = `${process.env.REACT_APP_API_URL}/v1/api/score`;
 
@@ -99,6 +100,20 @@ export const getResultByClassId = createAsyncThunk(
 );
 
 
+export const getMasterSheetByClassId = createAsyncThunk(
+  'score/getMasterSheetByClassId',
+  async (id,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-mastersheet/${id}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
 export const getResultByAuthStudent = createAsyncThunk(
   'score/getResultByStudentId',
   async (_,  { rejectWithValue }) => {
@@ -170,6 +185,7 @@ const scoreSlice = createSlice({
         scores: [],
         studentScore: [],
         results: [],
+        masterSheet: [],
         savingStatus: 'idle',
         fetchingStatus: 'idle',
         deletingStatus: 'idle',
@@ -218,6 +234,22 @@ const scoreSlice = createSlice({
           .addCase(getResultByClassId.rejected, (state) => {
             state.fetchingStatus = 'failed';
           })
+
+
+
+               // get mastersheet by class id
+
+          .addCase(getMasterSheetByClassId.pending, (state) => {
+            state.fetchingStatus = 'loading';
+          })
+          .addCase(getMasterSheetByClassId.fulfilled, (state, action) => {
+            state.fetchingStatus = 'succeeded';
+            state.masterSheet = action.payload;
+          })
+          .addCase(getMasterSheetByClassId.rejected, (state) => {
+            state.fetchingStatus = 'failed';
+          })
+
 
 
 

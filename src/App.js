@@ -71,6 +71,8 @@ import StudentActivator from './component/school/StudentActivator';
 import AddNurClass from './component/class/AddNurClass';
 import NurseryClasses from './component/class/NurseryClasses';
 import AddNextTermFeeAndResumptionDate from './component/academicSession/AddNextFeeAndResumptionDate';
+import ShowMasterSheet from './component/result/ShowMasterSheet';
+
 
 
 function App() {
@@ -143,6 +145,7 @@ function App() {
          <Route exact path='/password/password-reset-teacher'  element={<TeacherResetPassword/>}/>
          {/*Result Releted*/}
          <Route exact path='/result/show-results'  element={ <ShowResults/> }/>
+          <Route exact path='/result/show-mastersheet'  element={ <ShowMasterSheet/> }/>
           <Route exact path='/result/student-result-by-regNo'  element={ <ShowResultByRegNo/> }/>
           <Route exact path='/result/student-search-by-regNo'  element={ <StudentResultByRegNoStudentDashboard/> }/>
           <Route exact path='/result/teacher-search-by-regNo'  element={ <StudentResultByRegNoTeacherDashboard/> }/> 

@@ -28,16 +28,7 @@ const store = configureStore({
      payments: paymentSlice,
      settings: settingsSlice
     },
-   // PERFORMANCE FIX: Disable the slow SerializableStateInvariantMiddleware
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: false,
-            // Alternative: If you want some checking, use this instead:
-            // serializableCheck: {
-            //     ignoredActions: ['scores/getResultByClassId/fulfilled'],
-            //     ignoredPaths: ['scores.results'],
-            // },
-        }),
+  
     devTools: composeWithDevTools(),
    
 

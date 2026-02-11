@@ -459,8 +459,11 @@ onClick={(e) => e.stopPropagation()}>View Teachers</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Generate Result</a>
+
+ <a href="#/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
     </div>
 
  </div>

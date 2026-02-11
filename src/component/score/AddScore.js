@@ -591,7 +591,8 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
     value={
       values.students[actualIndex]?.score?.firstTest || ""
     }
-    type="number"
+    type="text"
+    inputMode='numeric'
     name={`students[${actualIndex}].score.firstTest`}
     onChange={(e) =>
       handleScoreChange(e, actualIndex * 3 + 1)
@@ -632,7 +633,8 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
     variant="outlined"
     fullWidth
     margin="dense"
-    type="number"
+    type="text"
+    inputMode='numeric'
     value={
       values.students[actualIndex]?.score?.secondTest || ""
     }
@@ -679,7 +681,8 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
     value={
       values.students[actualIndex]?.score?.exam || ""
     }
-    type="number"
+    type="text"
+    inputMode='numeric'
     name={`students[${actualIndex}].score.exam`}
     onChange={(e) =>
       handleScoreChange(e, actualIndex * 3 + 3)

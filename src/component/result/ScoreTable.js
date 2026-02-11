@@ -50,7 +50,7 @@ export const ScoreTable = (params) => {
   const { columns, showCounter = true, counterHeader = "SN" } = params;
   
   const getValue = (col, piece) => {
-    let val = get(piece, col.accessorKey); // Change this line
+    let val = get(piece, col.accessorKey); 
     if (col.meta?.type === "float") {
       if (val) {
         val = parseFloat(val).toFixed(2);

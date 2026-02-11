@@ -20,11 +20,8 @@ import { getClassNamesStartingWith, getClassCount, getClassCountSpecific } from 
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { saveClass , resetStatus, deleteClass, getAllClass, getAllClassnameAndId } from '../../redux/reducer/classSlice';
-import { getAllSession } from '../../redux/reducer/sessionSlice';
-import { getResultByClassId } from '../../redux/reducer/scoreSlice';
+import {  getAllClassnameAndId } from '../../redux/reducer/classSlice';
 import StudentResults from './StudentResults';
-import ActionMenu from '../utility/ActionMenu';
 import Loading from '../Chunks/loading';
 import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
 import CirculerProgressLoader from '../utility/CirculerProgressLoader';
@@ -491,8 +488,11 @@ onClick={(e) => e.stopPropagation()}>View Teachers</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Generate Result</a>
+
+ <a href="#/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
     <a href="#/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Search Result</a>
     </div>

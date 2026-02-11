@@ -13,7 +13,7 @@ import { getStudentsWithBasicDetailsByClassId } from '../../redux/reducer/studen
 import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
 import { getSchoolWithBasicDetails } from '../../redux/reducer/schoolSlice';
 
-const SchoolFeeSheet = ({ rows }) => {
+const SchoolFeeSheet = ({ rows, className }) => {
   const dispatch = useDispatch();
 
   const sessionState = useSelector((state) => state.sessions);
@@ -88,7 +88,7 @@ const SchoolFeeSheet = ({ rows }) => {
           School Reg: No.: <Text style={resultStyle.address}>{school?.regNo || ""}</Text> Tel: <Text style={resultStyle.address}>{school?.contact || ""}</Text>
         </Text>
         <Text style={resultStyle.secondHeader}>
-                  FEE SHEET FOR {"..............." + "  " + sessionDetails?.term || ""} TERM {sessionDetails?.session || ""} ACADEMIC SESSION
+                  FEE SHEET FOR {className + "  " + sessionDetails?.term || ""} TERM {sessionDetails?.session || ""} ACADEMIC SESSION
          </Text>
 
         <ClassScoreSheetTable columns={ScoreSheetColumns} data={rows} />

@@ -504,8 +504,11 @@ onClick={(e) => e.stopPropagation()}>View Teachers</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Generate Result</a>
+
+ <a href="#/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
     <a href="#/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Search Result</a>
     </div>
@@ -1052,6 +1055,12 @@ const subjects = [
   { name: "Yoruba" },
   { name: "Igbo" },
   { name: "Music" },
+  { name: "Pre-Vocational" },
+  { name: "Quran" },
+  { name: "Social and Citiznship" },
+  { name: "Information" },
+   { name: "Drawing" },
+    { name: "Picture Reading" },
   
   // Additional Modern and Vocational Subjects
   { name: "Financial Literacy" },

@@ -483,8 +483,11 @@ onClick={(e) => e.stopPropagation()}>View Teachers</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Generate Result</a>
+
+ <a href="#/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
     <a href="#/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Search Result</a>
     </div>
@@ -708,7 +711,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
 {/* <div>{classNamesSpecific}</div> */}
 
-            <SchoolFeeSheet rows={rows} />
+            <SchoolFeeSheet rows={rows} className={className} />
             <TableContainer component={Paper} sx={{ marginTop: 1 }}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                       <TableHead>
