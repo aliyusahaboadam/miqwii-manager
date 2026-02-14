@@ -368,7 +368,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
                             
                             <div class={dashboard['card_button_and_icon']}>
                                   
-                            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.session || ""}</span>
+                          
                             
                             
                             <span class={dashboard['icon-container']}>
@@ -376,7 +376,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
                             <use href="../images/sprite.svg#session"></use>
                             </svg>
                             </span>
-                        
+                             <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.session || ""}</span>
                             
                             </div>
                             
