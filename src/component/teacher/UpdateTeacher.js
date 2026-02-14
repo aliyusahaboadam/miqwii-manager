@@ -18,7 +18,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Loading from '../Chunks/loading';
 import { getTeacherById, updateTeacher } from '../../redux/reducer/teacherSlice';
 import Autocomplete from '@mui/material/Autocomplete';
-import { getAllSubject, getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
+import {  getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
 import { Checkbox } from "@mui/material";
 
 

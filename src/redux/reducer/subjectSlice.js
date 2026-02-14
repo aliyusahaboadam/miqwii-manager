@@ -60,20 +60,6 @@ export const getTeacherSubjectsByClassId = createAsyncThunk(
   }
 );
 
-export const getAllSubject = createAsyncThunk(
-  'class/getAllSubject',
-  async (_,  { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-all`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-  
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
-    }
-  }
-);
-
 
 export const getAllSubjectWithClassname = createAsyncThunk(
   'class/getAllSubjectWithClassname',
@@ -166,18 +152,7 @@ const subjectSlice = createSlice({
 
 
 
-               // get all subject
-
-               .addCase(getAllSubject.pending, (state) => {
-                state.fetchingStatus = 'loading';
-              })
-              .addCase(getAllSubject.fulfilled, (state, action) => {
-                state.fetchingStatus = 'succeeded';
-                state.subjects = action.payload;
-              })
-              .addCase(getAllSubject.rejected, (state) => {
-                state.fetchingStatus = 'failed';
-              })
+              
 
 
                    // get Teacher subjects by class id

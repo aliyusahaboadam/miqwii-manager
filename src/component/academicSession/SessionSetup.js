@@ -149,6 +149,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
 
 
+console.log("________________________" + JSON.stringify(rows) ); 
 
 
   useEffect(() => {
@@ -795,10 +796,10 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                    
 
                       <Formik
-                                initialValues={{
-                                selectedId: rows.find((r) => r.current)?.id ?? null,
+                       initialValues={{
+                        selectedId: rows.find((r) => r.current)?.id ?? null,
                                   
-                                }}
+                        }}
                                 validationSchema={subjectRegistrationSchema}
                                 onSubmit={handleFormSubmit}
                               >

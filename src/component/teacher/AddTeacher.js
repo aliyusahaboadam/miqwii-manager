@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { saveTeacher, resetStatus } from '../../redux/reducer/teacherSlice';
 import { useEffect } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
-import { getAllSubject, getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
+import {  getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
 // Import for dashboard Below
 

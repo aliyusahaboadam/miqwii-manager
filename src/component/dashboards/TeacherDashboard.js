@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import Loading from '../Chunks/loading';
 import { getTeacherOwnedClass } from "../../redux/reducer/classSlice";
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
 
 import { 
   Drawer, 
@@ -43,6 +44,9 @@ const TeacherDashboard = () => {
   const teacherState = useSelector((state) => state.teachers);
   const { welcomeMessage, fetchingStatus } = teacherState;
 
+   const sessionState = useSelector((state) => state.sessions);
+    const { sessionDetails } = sessionState;
+
 
 const authenticated = false;
 const logout = () => {
@@ -55,6 +59,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
    useEffect(() => {
       dispatch(getWelcomeMessage());
       dispatch(getTeacherOwnedClass());
+      dispatch(getSessionDashboardDetails()); 
     }, []);
 
 
@@ -108,7 +113,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
             </IconButton>
           )}
           <Typography variant="h4" noWrap>
-          {welcomeMessage}
+         
           </Typography>
 
          
@@ -132,6 +137,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
           <div className={navbar['profile--selection__container']}>
+         
           <div className={navbar['profile']}>
            <a href="#/teacher/teacher-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
@@ -320,6 +326,120 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
             
             
               <div className={dashboard['secondary--container']}>
+
+
+          
+                
+                         <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
+                            <div class={dashboard['card_body']}>
+                            
+                            <div class={dashboard['card_button_and_icon']}>
+                            
+                            <span class={dashboard['icon-container']}>
+                            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
+                            <use href="../images/sprite.svg#sun"></use>
+                            </svg>
+                            </span>
+                
+                            <div  
+                            
+                            style={{
+                              fontSize: 23,
+                              color: '#9a99ac'
+                              }}>  
+                              {welcomeMessage}
+                              </div>
+                            
+                          
+                            </div>
+                            
+                            
+                            
+                           
+                            
+                            </div>
+                            
+                            </div>
+                
+                 <div class={[dashboard['grid'], dashboard['grid--1x2']].join(' ')}>
+                            
+                            <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
+                            <div class={dashboard['card_body']}>
+                            
+                            <div class={dashboard['card_button_and_icon']}>
+                                  
+                            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.session || ""}</span>
+                            
+                            
+                            <span class={dashboard['icon-container']}>
+                            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
+                            <use href="../images/sprite.svg#session"></use>
+                            </svg>
+                            </span>
+                        
+                            
+                            </div>
+                            
+
+                                   <div  
+                            
+                            style={{
+                              fontSize: 23,
+                              color: '#9a99ac'
+                              }}>  
+                              Current Session
+                              </div>
+                            
+                            
+                           
+                            
+                            </div>
+                            
+                            </div>
+                            
+                            
+                            
+                            
+                            <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
+                            <div class={dashboard['card_body']}>
+                            
+                            <div class={dashboard['card_button_and_icon']}>
+                            
+
+                             <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.term || ""}</span>
+
+                            <span class={dashboard['icon-container']}>
+                            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
+                            <use href="../images/sprite.svg#session"></use>
+                            </svg>
+                            </span>
+                            
+                           
+                            
+                            
+                            </div>
+                            
+                            
+                            <div  
+                            
+                            style={{
+                              fontSize: 23,
+                              color: '#9a99ac'
+                              }}>  
+                              Current Term
+                              </div>
+                            
+                            </div>
+                            
+                            </div>
+                          
+                            
+                            </div>
+              
+
+
+
+
                <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
               {
                 classesOwnedByTeacher.map((classDetails, index) => (
