@@ -107,11 +107,11 @@ const ShowResults  = () => {
 
 
   const classState = useSelector((state) => state.classes);
-  const { classes } = classState;
+  const { classes, fetchingStatus: classFetchingStatus } = classState;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const sessionState = useSelector((state) => state.sessions);
-  const { sessionDetails,  fetchingStatus } = sessionState;
+  const { sessionDetails,  fetchingStatus: sessionFetchingStatus } = sessionState;
 
   
  const [anchorEl, setAnchorEl] = React.useState(null);
@@ -138,19 +138,17 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
 
-   const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+ 
       
         const fetchClassData = async () => {
         try {
-          setIsInitialLoad(true);
+        
           await Promise.all([
            dispatch(getAllClassnameAndId())
           ]);
         } catch (error) {
           console.error('Error fetching data:', error);
-        } finally {
-          setIsInitialLoad(false);
-        }
+        } 
       };
 
 
@@ -174,10 +172,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
 
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
     };
@@ -196,7 +190,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         
        <>
          {
-          fetchingStatus === 'loading' ? (<Loading/>) : (
+          sessionFetchingStatus === 'loading' ? (<Loading/>) : (
                    <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -718,7 +712,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             
             
                       {
-                        isInitialLoad ? <CirculerProgressLoader/> : (
+                       classFetchingStatus === "loading"  ? <CirculerProgressLoader/> : (
 
 
                             <TableContainer component={Paper} sx={{ marginTop: 1 }}>

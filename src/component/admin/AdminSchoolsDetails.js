@@ -187,7 +187,7 @@ const [state, setState ] = useState({
             address: result.address,
             contact: result.contact,
             motto: result.motto,
-            email: result?.user?.email
+            email: result.email
             })
          });
         

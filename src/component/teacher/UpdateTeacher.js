@@ -204,12 +204,12 @@ const [state, setState ] = useState({
 
   useEffect(() => {
          fetchData();
-         fetchStudent()
+         fetchTeacher()
 
   }, [location.pathname]);
 
 
-   const   fetchStudent = async () => {
+   const   fetchTeacher = async () => {
         try {
           setIsLoading(true)
           await  dispatch(getTeacherById(id)).unwrap().then((result) => {

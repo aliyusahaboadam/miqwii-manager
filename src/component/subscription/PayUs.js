@@ -152,7 +152,7 @@ const PaystackPaymentButton = ({
     reference: generatePaymentReference(),
     email: values.email,
     amount: amount * 100,
-    callbackUrl: "https://localhost:3000/payment-success",
+    callbackUrl: "https://miqwii.com/#/school/home",
     metadata: {
     email: values.email,
     regNo: values.regNo,

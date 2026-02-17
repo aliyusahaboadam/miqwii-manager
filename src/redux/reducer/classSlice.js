@@ -35,7 +35,7 @@ export const getAllClass = createAsyncThunk(
 
 
 export const getAllClassnameAndId = createAsyncThunk(
-  'class/getAllClassnameAndId ',
+  'class/getAllClassnameAndId',
   async (_,  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');

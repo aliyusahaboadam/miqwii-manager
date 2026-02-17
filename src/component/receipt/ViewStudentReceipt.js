@@ -66,11 +66,11 @@ const ViewStudentReceipt = () => {
 
 
 
-    const studentsState = useSelector((state) => state.students);
-    const { studentCountDetails, fetchingStatus} = studentsState;
-
-    const classState = useSelector((state) => state.classes);
-    const { classes } = classState;
+   const studentsState = useSelector((state) => state.students);
+   const { studentCountDetails,  fetchingStatus: studentFetchingStatus} = studentsState;
+   
+   const classState = useSelector((state) => state.classes);
+   const { classes,  fetchingStatus: classFetchingStatus} = classState;
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -94,19 +94,15 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
 
-      const [isInitialLoad, setIsInitialLoad] = React.useState(true);
-    
       const fetchData = async () => {
       try {
-        setIsInitialLoad(true);
+
         await Promise.all([
         dispatch(getAllClassnameAndId()),
         dispatch(getStudentCountDetails())
         ]);
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setIsInitialLoad(false);
       }
     };
 
@@ -123,7 +119,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
         <>
           {
-            fetchingStatus === "loading" ? (<Loading/>) : (
+            studentFetchingStatus === "loading" ? (<Loading/>) : (
 
               
                   <ClickAwayListener onClickAway={handleClickAway}>
@@ -667,7 +663,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
            
            {
                 
-              classes.length === 0 ? <CirculerProgressLoader/> :    
+            classFetchingStatus === "loading" ? <CirculerProgressLoader/> :    
                 
                 <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
   

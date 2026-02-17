@@ -7,8 +7,6 @@ import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import { Alert, Snackbar } from "@mui/material";
 import { Formik } from 'formik';
-import { object, string, ref } from 'yup';
-import { getAuthSchool } from '../../redux/reducer/schoolSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { savePayment } from '../../redux/reducer/paymentSlice';
 import { useEffect } from 'react';
@@ -17,7 +15,7 @@ import Dialog from '@mui/material/Dialog';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PaystackButton } from "react-paystack"
 import Loading from '../Chunks/loading';
-import { getSchoolById } from '../../redux/reducer/schoolSlice';
+import { getSchoolForPaymentDisplayById } from '../../redux/reducer/schoolSlice';
 
 // Import for dashboard Below
 
@@ -235,10 +233,12 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
 
 const [state, setState ] = useState({
+    name: "",
     email: "",
     regNo: "",
     contact: "",
-    studentSize: ""
+    studentSize: "",
+    classSize: ""
    });
 
 //  FORM DATA DECLARATION
@@ -261,12 +261,14 @@ const publicKey = "pk_live_0f640f0bcc4c1a3353fa148f8aeac4cb28f44487";
 const   fetchSchool = async () => {
         try {
              setIsLoading(true)
-          await  dispatch(getSchoolById(id)).unwrap().then((result) => {
+          await  dispatch(getSchoolForPaymentDisplayById(id)).unwrap().then((result) => {
            setState({
-             email: result.user?.email,
+             name: result.name,
+             email: result.email,
              regNo: result.regNo,
              contact: result.contact,
-             studentSize: result.students.length,
+             studentSize: result.numberOfStudents,
+             classSize: result.numberOfClasses,
              paymentDate: generatePaymentDate()
             })
          });
@@ -299,7 +301,7 @@ const   fetchSchool = async () => {
     amount = 39000
   } else if (state.studentSize >=  1000) {
     amount = 43000
-  }
+  } 
 
 
     
@@ -398,6 +400,72 @@ const   fetchSchool = async () => {
       margin="normal"
       value={values.email}
       name="email"
+   
+
+      slotProps={{
+        input: {
+          style: { fontSize: 18 }, // font size for input text
+        },
+        inputLabel: {
+          style: { fontSize: 16 }, // font size for label text
+        }
+      }}
+      disabled
+    />
+
+
+
+
+
+     <TextField
+      label="School Size"
+      variant="outlined"
+      fullWidth
+      margin="normal"
+      value={state.studentSize}
+ 
+   
+
+      slotProps={{
+        input: {
+          style: { fontSize: 18 }, // font size for input text
+        },
+        inputLabel: {
+          style: { fontSize: 16 }, // font size for label text
+        }
+      }}
+      disabled
+    />
+
+
+     <TextField
+      label="Classes Size"
+      variant="outlined"
+      fullWidth
+      margin="normal"
+      value={state.classSize}
+      
+   
+
+      slotProps={{
+        input: {
+          style: { fontSize: 18 }, // font size for input text
+        },
+        inputLabel: {
+          style: { fontSize: 16 }, // font size for label text
+        }
+      }}
+      disabled
+    />
+
+
+     <TextField
+      label="School Name"
+      variant="outlined"
+      fullWidth
+      margin="normal"
+      value={state.name}
+  
    
 
       slotProps={{

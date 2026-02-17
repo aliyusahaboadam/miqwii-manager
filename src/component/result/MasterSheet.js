@@ -7,83 +7,13 @@ import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
-import { formatPosition } from '../utility/FormatPositon';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { getSettingsState } from '../../redux/reducer/settingsSlice';
 import { getMasterSheetByClassId } from '../../redux/reducer/scoreSlice';
 
 const MasterSheet = ({ classId }) => {
   const dispatch = useDispatch();
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const formatAmount = (amount) => {
-    return `N${new Intl.NumberFormat('en-NG').format(amount)}`;
-  };
-
-
-
-
-
-  useEffect(() => {
-       fetchData();
-    }, []);
-  
-    
-    const fetchData = () => {
-      dispatch(getSettingsState());
-    }
-
-  // Function to get remark based on position
-// Function to get remark based on position and class size
-const getPositionRemark = (position, totalStudents) => {
-  // Calculate percentile (what percentage of class is below this student)
-  const percentile = ((totalStudents - position) / totalStudents) * 100;
-  
-  // Handle edge cases
-  if (totalStudents === 1) {
-    return "Only student in class. Keep it up!"; // 38 chars
-  }
-  
-  // Top 5% - Outstanding
-  if (percentile >= 95) {
-    return "Outstanding! Keep up the excellent effort."; // 43 chars
-  }
-  
-  // Top 10% - Excellent
-  if (percentile >= 90) {
-    return "Excellent! You're among the very best."; // 39 chars
-  }
-  
-  // Top 20% - Very Good
-  if (percentile >= 80) {
-    return "Very good performance. Keep it up!"; // 35 chars
-  }
-  
-  // Top 40% - Good
-  if (percentile >= 60) {
-    return "Good effort. You can do better. Aim higher!"; // 44 chars
-  }
-  
-  // Top 60% - Fair
-  if (percentile >= 40) {
-    return "Fair performance. More effort is needed."; // 41 chars
-  }
-  
-  // Top 80% - Below Average
-  if (percentile >= 20) {
-    return "Put in more effort. Seek help when needed."; // 43 chars
-  }
-  
-  // Bottom 20% - Needs Improvement
-  return "Much improvement needed. Work harder!"; // 37 chars
-};
-
-
-const positioning = useSelector((state) => state.settings.disablePositioning);
-
-
-console.log("Position: " + positioning);
+ 
 
   Font.register({
     family: 'Roboto',

@@ -399,7 +399,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                               {index + 1}
                             </StyledTableCell>
                             <StyledTableCell component="th" scope="row">
-                              {row.schoolName}
+                              {row.name}
                             </StyledTableCell>
                             <StyledTableCell component="th" align="left">{row.contact}</StyledTableCell>
                             <StyledTableCell component="th" align="left">{row.numberOfStudents}</StyledTableCell>
