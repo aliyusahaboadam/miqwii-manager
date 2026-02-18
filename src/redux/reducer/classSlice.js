@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 // import api from 'api';
 import api from '../../component/routing/Interceptor';
 
@@ -31,6 +31,7 @@ export const getAllClass = createAsyncThunk(
     }
   }
 );
+
 
 
 
