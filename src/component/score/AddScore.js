@@ -1,56 +1,47 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { getAllClass } from '../../redux/reducer/classSlice';
-import Loading from '../Chunks/loading';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
+import { IconButton, Snackbar, TextField } from "@mui/material";
+import Dialog from '@mui/material/Dialog';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
+import TableFooter from '@mui/material/TableFooter';
 import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { Formik, getIn } from 'formik';
 import PropTypes from 'prop-types';
-import { IconButton, TextField } from "@mui/material";
-import { styled } from '@mui/material/styles';
-import { useParams, useLocation } from 'react-router-dom';
-import Paper from '@mui/material/Paper';
-import { getStudentsByClassId } from '../../redux/reducer/studentSlice';
-import { Formik } from 'formik';
-import { object, string, ref, array, number } from 'yup';
-import style from '../style/form/StudentRegistration.module.css';
-import { useState } from 'react';
-import { getIn } from 'formik';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { array, number, object } from 'yup';
 import { saveScore } from '../../redux/reducer/scoreSlice';
-import Dialog from '@mui/material/Dialog';
-import { Alert, Snackbar } from "@mui/material";
-import {getScoreInputState, getScoreByClassIdAndSubjectId } from '../../redux/reducer/scoreSlice';
-import { useRef } from 'react';
+import { getStudentsByClassId } from '../../redux/reducer/studentSlice';
+import Loading from '../Chunks/loading';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
 // Import for dashboard Below
 
-import React, { useMemo } from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React, { useMemo } from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
+import {
+  AppBar,
+  Box,
   CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -191,13 +182,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     return map;
   }, [rows]);
 
-    const navigateToDashboard = (name) => {
-      navigate(`/teacher/home`);
-    }
-
-     const navigateToAddScore = (subjectId) => {
-      navigate(`/score/add-score/${subjectId}/${classId}`);
-    }
+   
    
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -591,8 +576,8 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
     value={
       values.students[actualIndex]?.score?.firstTest || ""
     }
-    type="text"
-    inputMode="decimal"
+    type="tel"  // I Use Tell To Allow Leading Zeros
+    inputMode="numeric"  
     name={`students[${actualIndex}].score.firstTest`}
     onChange={(e) =>
       handleScoreChange(e, actualIndex * 3 + 1)
@@ -633,8 +618,8 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
     variant="outlined"
     fullWidth
     margin="dense"
-    type="text"
-    inputMode="decimal"
+    type="tel"
+    inputMode="numeric"
     value={
       values.students[actualIndex]?.score?.secondTest || ""
     }
@@ -681,8 +666,8 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
     value={
       values.students[actualIndex]?.score?.exam || ""
     }
-    type="text"
-    inputMode="decimal"
+    type="tel"
+    inputMode="numeric"
     name={`students[${actualIndex}].score.exam`}
     onChange={(e) =>
       handleScoreChange(e, actualIndex * 3 + 3)
