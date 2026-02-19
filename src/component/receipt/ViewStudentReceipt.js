@@ -91,20 +91,12 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
 
-      const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+
+      const fetchData =  () => {
     
-      const fetchData = async () => {
-      try {
-        setIsInitialLoad(true);
-        await Promise.all([
-        dispatch(getAllClassnameAndId()),
-        dispatch(getStudentCountDetails())
-        ]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsInitialLoad(false);
-      }
+        dispatch(getAllClassnameAndId());
+        dispatch(getStudentCountDetails());
+    
     };
 
 

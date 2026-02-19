@@ -1,56 +1,62 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import PropTypes from 'prop-types';
+import { memo, useEffect, useMemo, useState } from 'react';
 
-function CircularProgressWithLabel(props) {
+const containerStyles = {
+  position: 'relative',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center'
+};
+
+const labelBoxStyles = {
+  top: 0,
+  left: 0,
+  bottom: 0,
+  right: 0,
+  position: 'absolute',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const typographyStyles = {
+  color: 'text.secondary'
+};
+
+const CircularProgressWithLabel = memo(({ value, ...rest }) => {
+  // ✅ Memoize the percentage string to avoid recalculation
+  const percentage = useMemo(() => `${Math.round(value)}%`, [value]);
+
   return (
-    <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <CircularProgress size={60} variant="determinate" {...props} />
-      <Box
-        sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          position: 'absolute',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ color: 'text.secondary' }}
-        >
-          {`${Math.round(props.value)}%`}
+    <Box sx={containerStyles}>
+      <CircularProgress size={60} variant="determinate" value={value} {...rest} />
+      <Box sx={labelBoxStyles}>
+        <Typography variant="h6" component="div" sx={typographyStyles}>
+          {percentage}
         </Typography>
       </Box>
     </Box>
   );
-}
+});
+
+CircularProgressWithLabel.displayName = 'CircularProgressWithLabel';
 
 CircularProgressWithLabel.propTypes = {
-  /**
-   * The value of the progress indicator for the determinate variant.
-   * Value between 0 and 100.
-   * @default 0
-   */
   value: PropTypes.number.isRequired,
 };
 
 export default function CircularWithValueLabel() {
-  const [progress, setProgress] = React.useState(10);
+  const [progress, setProgress] = useState(10);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setInterval(() => {
-      setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+      setProgress((prev) => (prev >= 100 ? 0 : prev + 10));
     }, 800);
-    return () => {
-      clearInterval(timer);
-    };
+    
+    return () => clearInterval(timer);
   }, []);
 
   return <CircularProgressWithLabel value={progress} />;

@@ -1,34 +1,31 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { useEffect } from 'react';
+import { IconButton } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { getAllClass, getAllClassnameAndSubjectCount } from '../../redux/reducer/classSlice';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { getAllClassnameAndSubjectCount } from '../../redux/reducer/classSlice';
 import Loading from '../Chunks/loading';
-import { useState } from 'react';
-import { IconButton }  from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import CirculerProgressLoader from '../utility/CirculerProgressLoader';
 
 
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
+import {
+  AppBar,
+  Box,
   CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -76,7 +73,7 @@ const ViewSubjects = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-     const [isInitialLoad, setIsInitialLoad] = React.useState(true);
+
 
     const authenticated = false;
 const logout = () => {
@@ -91,17 +88,10 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
     }, [location.pathname]);
 
-   const fetchData = async () => {
-  try {
-    setIsInitialLoad(true);
-    await Promise.all([
-     dispatch(getAllClassnameAndSubjectCount())
-    ]);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  } finally {
-    setIsInitialLoad(false);
-  }
+   const fetchData = () => {
+ 
+     dispatch(getAllClassnameAndSubjectCount());
+  
 };
 
 
@@ -582,7 +572,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
          
          {
 
-          isInitialLoad ? (<CirculerProgressLoader/>) : (  
+          classes.length === 0 ? (<CirculerProgressLoader/>) : (  
           
           <div className={dashboard['secondary--container']}>
                <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
