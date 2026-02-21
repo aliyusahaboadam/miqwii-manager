@@ -1,46 +1,44 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import TextField from '@mui/material/TextField';
+import { IconButton, Snackbar } from "@mui/material";
+import Autocomplete from '@mui/material/Autocomplete';
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, array } from 'yup';
+import Dialog from '@mui/material/Dialog';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveSubject , resetStatus } from '../../redux/reducer/subjectSlice';
-import { getClassNames } from '../../redux/reducer/classSlice';
-import { useEffect } from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
-import {IconButton, InputAdornment } from "@mui/material";
-import Dialog from '@mui/material/Dialog';
 import { useLocation } from 'react-router-dom';
+import { array, object, string } from 'yup';
+import { getClassNames } from '../../redux/reducer/classSlice';
+import { saveSubject } from '../../redux/reducer/subjectSlice';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import style from '../style/form/StudentRegistration.module.css';
 
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
+import {
+  AppBar,
+  Box,
   CssBaseline,
+  Drawer,
+  List,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -1076,4 +1074,19 @@ const subjects = [
   { name: "Media Studies" },
   { name: "Digital Literacy" },
   { name: "Civic Leadership" },
+
+
+  { name: "Quran" },
+  { name: "Tafseer" },
+  { name: "Hadith" },
+  { name: "Fikhu" },
+  { name: "Tarik" },
+  { name: "Adab" },
+  { name: "Tahzeeb" },
+  { name: "Tajweed" },
+  { name: "Tauheed" },
+  { name: "AnNahwu Assarfu" },
+  { name: "AnNahwu-Assarfu" },
+  { name: "Alarabiya-Alurud" },
+  { name: "Alinshai-Alsulu" }
 ];
