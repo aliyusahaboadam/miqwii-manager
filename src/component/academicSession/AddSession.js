@@ -1,43 +1,40 @@
 
-import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
 import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, array, number } from 'yup';
+import MuiCard from '@mui/material/Card';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import { Formik } from 'formik';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveSession } from '../../redux/reducer/sessionSlice';
-import { getClassNames } from '../../redux/reducer/classSlice';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { object, string } from 'yup';
+import { saveSession } from '../../redux/reducer/sessionSlice';
+import style from '../style/form/StudentRegistration.module.css';
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer, 
-  IconButton, 
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
+import {
+  AppBar,
+  Box,
   CssBaseline,
-  TextField
+  Drawer,
+  IconButton,
+  List,
+  Toolbar,
+  Typography
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";

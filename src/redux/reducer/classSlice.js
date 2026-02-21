@@ -128,12 +128,12 @@ export const getClassNamesStartingWith = createAsyncThunk(
 
 
 
-export const getClassCountSpecificPRI = createAsyncThunk(
-  'class/getClassCountSpecificPRI',
+export const getClassChart = createAsyncThunk(
+  'class/getClassChart',
   async (prefix,  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-class-count-specific-for-chart/${prefix}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      const response = await api.get(BASE_URL + `/get-class-chart`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
@@ -142,47 +142,6 @@ export const getClassCountSpecificPRI = createAsyncThunk(
 );
 
 
-
-export const getClassCountSpecificNur = createAsyncThunk(
-  'class/getClassCountSpecificNur',
-  async (prefix,  { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-class-count-specific-for-chart/${prefix}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
-    }
-  }
-);
-
-
-export const getClassCountSpecificJSS = createAsyncThunk(
-  'class/getClassCountSpecificJSS',
-  async (prefix,  { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-class-count-specific-for-chart/${prefix}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
-    }
-  }
-);
-
-
-export const getClassCountSpecificSSS = createAsyncThunk(
-  'class/getClassCountSpecificSSS',
-   async (prefix,  { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-class-count-specific-for-chart/${prefix}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-      return response.data; // Return the saved user response
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
-    }
-  }
-);
 
 
 
@@ -277,10 +236,7 @@ const classSlice = createSlice({
         classes: [],
         classNames: [],
         classNamesSpecific: [],
-        classCountSpecificJSS: [],
-        classCountSpecificPRI: [],
-        classCountSpecificSSS: [],
-        classCountSpecificNur: [],
+        chartCounts: { PRI: [], NUR: [], JSS: [], SSS: [] },
         classesOwnedByTeacher: [],
         classCount: 0,
         classCountSpecific: 0,
@@ -396,57 +352,18 @@ const classSlice = createSlice({
 
 
 
-           .addCase(getClassCountSpecificPRI.pending, (state) => {
+           .addCase(getClassChart.pending, (state) => {
             state.fetchingStatus = 'loading';
           })
-          .addCase(getClassCountSpecificPRI.fulfilled, (state, action) => {
+          .addCase(getClassChart.fulfilled, (state, action) => {
             state.fetchingStatus = 'succeeded';
-            state.classCountSpecificPRI = action.payload;
+            state.chartCounts = action.payload;
           })
-          .addCase(getClassCountSpecificPRI.rejected, (state) => {
+          .addCase(getClassChart.rejected, (state) => {
             state.fetchingStatus = 'failed';
           })
 
 
-
-           .addCase(getClassCountSpecificNur.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(getClassCountSpecificNur.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.classCountSpecificNur = action.payload;
-          })
-          .addCase(getClassCountSpecificNur.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
-
-
-
-
-          .addCase(getClassCountSpecificJSS.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(getClassCountSpecificJSS.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.classCountSpecificJSS = action.payload;
-          })
-          .addCase(getClassCountSpecificJSS.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
-
-
-
-
-          .addCase(getClassCountSpecificSSS.pending, (state) => {
-            state.fetchingStatus = 'loading';
-          })
-          .addCase(getClassCountSpecificSSS.fulfilled, (state, action) => {
-            state.fetchingStatus = 'succeeded';
-            state.classCountSpecificSSS = action.payload;
-          })
-          .addCase(getClassCountSpecificSSS.rejected, (state) => {
-            state.fetchingStatus = 'failed';
-          })
 
 
           

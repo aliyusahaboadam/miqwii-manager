@@ -1086,7 +1086,7 @@ const subjects = [
   { name: "Tajweed" },
   { name: "Tauheed" },
   { name: "AnNahwu Assarfu" },
-  { name: "AnNahwu-Assarfu" },
+  { name: "Alinshai-Almusdalah" },
   { name: "Alarabiya-Alurud" },
-  { name: "Alinshai-Alsulu" }
+  { name: "Alinshai-Alsulu" },
 ];

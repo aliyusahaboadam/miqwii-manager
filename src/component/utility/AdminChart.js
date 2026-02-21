@@ -1,25 +1,21 @@
-import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { useDispatch, useSelector} from 'react-redux';
-import { getClassCountSpecificJSS, getClassCountSpecificSSS, getClassCountSpecificPRI, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  getAllSchoolCount, 
-  getAllStudentCount,
-  getAllTeachersCount,
-  getAllStudentCountMale,
-  getAllStudentCountFemale,
+import {
   getAllClassCountJss,
-  getAllClassCountPri,
-  getAllClassCountSss,
   getAllClassCountJssTeacher,
+  getAllClassCountPri,
   getAllClassCountPriTeachers,
-  getAllClassCountSssTeachers
-
+  getAllClassCountSss,
+  getAllClassCountSssTeachers,
+  getAllSchoolCount,
+  getAllStudentCount,
+  getAllStudentCountFemale,
+  getAllStudentCountMale,
+  getAllTeachersCount
 } from '../../redux/reducer/schoolSlice';
 
 

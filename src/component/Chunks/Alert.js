@@ -1,27 +1,12 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import React from 'react';
-import TextField from '@mui/material/TextField';
+import { Close as Cancel } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
-import { Alert as Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, array } from 'yup';
-import {IconButton, InputAdornment } from "@mui/material";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import StudentApi from '../proxy/StudentApi';
-import {Close as  Cancel } from "@mui/icons-material";
+import { styled } from '@mui/material/styles';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveSubject , resetStatus } from '../../redux/reducer/subjectSlice';
-import { getClassNames } from '../../redux/reducer/classSlice';
-import { useEffect } from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
+import { array, object, string } from 'yup';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',

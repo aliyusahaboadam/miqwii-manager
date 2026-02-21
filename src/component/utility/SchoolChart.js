@@ -1,20 +1,16 @@
-import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { useDispatch, useSelector} from 'react-redux';
-import { getClassCountSpecificJSS, getClassCountSpecificNur, getClassCountSpecificSSS, getClassCountSpecificPRI, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { getClassChart } from '../../redux/reducer/classSlice';
 import { getStudentCountDetails } from '../../redux/reducer/studentSlice';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
 const SchoolDemographicsCharts = () => {
 
 
    
 
-    const classState = useSelector((state) => state.classes);
-    const { classNamesSpecific,  classCount,  classCountSpecificJSS,classCountSpecificNur, classCountSpecificSSS, classCountSpecificPRI} = classState;
-    
+  
     const studentState = useSelector((state) => state.students);
     const {studentCountDetails } = studentState;
    const dispatch = useDispatch();
@@ -24,32 +20,22 @@ const SchoolDemographicsCharts = () => {
 
        useEffect(() => {
             dispatch(getStudentCountDetails());
-            dispatch(getClassCountSpecificJSS('J'));
-            dispatch(getClassCountSpecificSSS('S'));
-            dispatch(getClassCountSpecificPRI('P'));
-            dispatch(getClassCountSpecificPRI('N'));
+            dispatch(getClassChart());
         }, []);
       
-        // const fetchData = () => {
-        //     dispatch(getClassCount());
-        //     dispatch(getClassCountSpecificJSS('J'));
-        //     dispatch(getClassCountSpecificSSS('S'));
-        //     dispatch(getClassCountSpecificPRI('P'));
-        // }
+           const { chartCounts } = useSelector(state => state.classes);
 
+          // Class counts
+          const PRI = chartCounts.PRI?.length || 0;
+          const NUR = chartCounts.NUR?.length || 0;
+          const JSS = chartCounts.JSS?.length || 0;
+          const SSS = chartCounts.SSS?.length || 0;
 
-
-    const PRI = classCountSpecificPRI?.length || 0;
-    const JSS = classCountSpecificJSS?.length || 0;
-    const SSS = classCountSpecificSSS?.length || 0;
-    const NUR = classCountSpecificSSS?.length || 0;
-
-   
-
-    const PRI_TEACHERS = classCountSpecificPRI[0]?.teachers?.length || 0;
-    const JSS_TEACHERS  = classCountSpecificJSS[0]?.teachers?.length || 0;
-    const SSS_TEACHERS  = classCountSpecificSSS[0]?.teachers?.length || 0;
-    const NUR_TEACHERS  = classCountSpecificNur[0]?.teachers?.length || 0;
+          // Teacher counts
+          const PRI_TEACHERS = chartCounts.PRI?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
+          const NUR_TEACHERS = chartCounts.NUR?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
+          const JSS_TEACHERS = chartCounts.JSS?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
+          const SSS_TEACHERS = chartCounts.SSS?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
 
   const chartStyle =  {
 
