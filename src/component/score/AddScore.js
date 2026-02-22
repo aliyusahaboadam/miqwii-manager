@@ -512,20 +512,17 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
     if (!inputRefs.current) inputRefs.current = [];
 
     // --- AUTO MOVE HANDLER ---
-    const handleScoreChange = (e, nextIndex) => {
-      const value = e.target.value;
+ const handleScoreChange = (e, nextIndex) => {
+    const value = e.target.value;
+    if (value.length > 2) return;
 
-      // prevent more than 2 digits
-      if (value.length > 2) return;
-
-      // update formik
-      handleChange(e);
-
-      // auto move
-      if (value.length === 2 && inputRefs.current[nextIndex]) {
+    // ✅ Move focus FIRST before re-render
+    if (value.length === 2 && inputRefs.current[nextIndex]) {
         inputRefs.current[nextIndex].focus();
-      }
-    };
+    }
+
+    handleChange(e); // update formik after focus move
+};
 
     return (
       <>
@@ -543,162 +540,32 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
             </TableHead>
 
 <TableBody>
-  {(rowsPerPage > 0
-    ? rows.slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage
-      )
-    : rows
-  ).map((row, displayIndex) => {
-   const actualIndex = rowIndexMap[row.id];
 
-    return (
-      <StyledTableRow key={row.id}>
-        <StyledTableCell>{page * rowsPerPage + displayIndex + 1}</StyledTableCell>
+      {(rowsPerPage > 0 ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : rows)
+    .map((row, displayIndex) => {
+        const actualIndex = rowIndexMap[row.id];
+        return (
+            <MemoizedRow
+                key={row.id}
+                row={row}
+                actualIndex={actualIndex}
+                displayIndex={displayIndex}
+                values={values}
+                errors={errors}
+                touched={touched}
+                handleBlur={handleBlur}
+                handleScoreChange={handleScoreChange}
+                inputRefs={inputRefs}
+                disableScoreInputFirstCA={disableScoreInputFirstCA}
+                disableScoreInputSecondCA={disableScoreInputSecondCA}
+                disableScoreInputExam={disableScoreInputExam}
+                page={page}
+                rowsPerPage={rowsPerPage}
+            />
+        );
+})}
+   
 
-        <StyledTableCell>{row.regNo}</StyledTableCell>
-
-        <StyledTableCell>
-          {row.firstname + " " + row.surname + " " + row.lastname}
-        </StyledTableCell>
-
-       {/* --- FIRST CA --- */}
-<StyledTableCell>
-  <TextField
-    inputRef={(el) =>
-      (inputRefs.current[actualIndex * 3] = el)
-    }
-    disabled={!disableScoreInputFirstCA}
-    label="First CA"
-    variant="outlined"
-    fullWidth
-    margin="dense"
-    value={
-      values.students[actualIndex]?.score?.firstTest || ""
-    }
-    type="tel"  // I Use Tell To Allow Leading Zeros
-    inputMode="numeric"  
-    name={`students[${actualIndex}].score.firstTest`}
-    onChange={(e) =>
-      handleScoreChange(e, actualIndex * 3 + 1)
-    }
-    onBlur={handleBlur}
-    error={Boolean(
-      getIn(errors, `students[${actualIndex}].score.firstTest`) &&
-      getIn(touched, `students[${actualIndex}].score.firstTest`)
-    )}
-    helperText={
-      getIn(touched, `students[${actualIndex}].score.firstTest`) &&
-      getIn(errors, `students[${actualIndex}].score.firstTest`)
-    }
-    slotProps={{
-      input: { 
-        sx: { 
-          fontSize: 16, 
-          padding: 0,
-          '& input': {
-            padding: '15px 6px'
-          }
-        } 
-      },
-      inputLabel: { sx: { fontSize: 13 } },
-      formHelperText: { sx: { fontSize: 12 } },
-    }}
-  />
-</StyledTableCell>
-
-{/* --- SECOND CA --- */}
-<StyledTableCell>
-  <TextField
-    inputRef={(el) =>
-      (inputRefs.current[actualIndex * 3 + 1] = el)
-    }
-    disabled={!disableScoreInputSecondCA}
-    label="Second CA"
-    variant="outlined"
-    fullWidth
-    margin="dense"
-    type="tel"
-    inputMode="numeric"
-    value={
-      values.students[actualIndex]?.score?.secondTest || ""
-    }
-    name={`students[${actualIndex}].score.secondTest`}
-    onChange={(e) =>
-      handleScoreChange(e, actualIndex * 3 + 2)
-    }
-    onBlur={handleBlur}
-    error={Boolean(
-      getIn(errors, `students[${actualIndex}].score.secondTest`) &&
-      getIn(touched, `students[${actualIndex}].score.secondTest`)
-    )}
-    helperText={
-      getIn(touched, `students[${actualIndex}].score.secondTest`) &&
-      getIn(errors, `students[${actualIndex}].score.secondTest`)
-    }
-    slotProps={{
-      input: { 
-        sx: { 
-          fontSize: 16, 
-          padding: 0,
-          '& input': {
-              padding: '15px 6px'
-          }
-        } 
-      },
-      inputLabel: { sx: { fontSize: 13 } },
-      formHelperText: { sx: { fontSize: 12 } },
-    }}
-  />
-</StyledTableCell>
-
-{/* --- EXAM --- */}
-<StyledTableCell>
-  <TextField
-    inputRef={(el) =>
-      (inputRefs.current[actualIndex * 3 + 2] = el)
-    }
-    disabled={!disableScoreInputExam}
-    label="Exam"
-    variant="outlined"
-    fullWidth
-    margin="dense"
-    value={
-      values.students[actualIndex]?.score?.exam || ""
-    }
-    type="tel"
-    inputMode="numeric"
-    name={`students[${actualIndex}].score.exam`}
-    onChange={(e) =>
-      handleScoreChange(e, actualIndex * 3 + 3)
-    }
-    onBlur={handleBlur}
-    error={Boolean(
-      getIn(errors, `students[${actualIndex}].score.exam`) &&
-      getIn(touched, `students[${actualIndex}].score.exam`)
-    )}
-    helperText={
-      getIn(touched, `students[${actualIndex}].score.exam`) &&
-      getIn(errors, `students[${actualIndex}].score.exam`)
-    }
-    slotProps={{
-      input: { 
-        sx: { 
-          fontSize: 16, 
-          padding: 0,
-          '& input': {
-            padding: '15px 6px'
-          }
-        } 
-      },
-      inputLabel: { sx: { fontSize: 13 } },
-      formHelperText: { sx: { fontSize: 12 } },
-    }}
-  />
-</StyledTableCell>
-      </StyledTableRow>
-    );
-  })}
 </TableBody>
             {/* --- PAGINATION --- */}
             <TableFooter>
@@ -939,3 +806,152 @@ export default TeacherSubject;
     page: PropTypes.number.isRequired,
     rowsPerPage: PropTypes.number.isRequired,
   };
+
+
+
+  const MemoizedRow = React.memo(({ row, actualIndex, values, errors, touched, handleBlur, handleScoreChange, inputRefs, disableScoreInputFirstCA, disableScoreInputSecondCA, disableScoreInputExam, page, rowsPerPage, displayIndex }) => (
+      <StyledTableRow key={row.id}>
+        <StyledTableCell>{page * rowsPerPage + displayIndex + 1}</StyledTableCell>
+
+        <StyledTableCell>{row.regNo}</StyledTableCell>
+
+        <StyledTableCell>
+          {row.firstname + " " + row.surname + " " + row.lastname}
+        </StyledTableCell>
+
+       {/* --- FIRST CA --- */}
+<StyledTableCell>
+  <TextField
+    inputRef={(el) =>
+      (inputRefs.current[actualIndex * 3] = el)
+    }
+    disabled={!disableScoreInputFirstCA}
+    label="First CA"
+    variant="outlined"
+    fullWidth
+    margin="dense"
+    value={
+      values.students[actualIndex]?.score?.firstTest || ""
+    }
+    type="tel"  // I Use Tell To Allow Leading Zeros
+    inputMode="numeric"  
+    name={`students[${actualIndex}].score.firstTest`}
+    onChange={(e) =>
+      handleScoreChange(e, actualIndex * 3 + 1)
+    }
+    onBlur={handleBlur}
+    error={Boolean(
+      getIn(errors, `students[${actualIndex}].score.firstTest`) &&
+      getIn(touched, `students[${actualIndex}].score.firstTest`)
+    )}
+    helperText={
+      getIn(touched, `students[${actualIndex}].score.firstTest`) &&
+      getIn(errors, `students[${actualIndex}].score.firstTest`)
+    }
+    slotProps={{
+      input: { 
+        sx: { 
+          fontSize: 16, 
+          padding: 0,
+          '& input': {
+            padding: '15px 6px'
+          }
+        } 
+      },
+      inputLabel: { sx: { fontSize: 13 } },
+      formHelperText: { sx: { fontSize: 12 } },
+    }}
+  />
+</StyledTableCell>
+
+{/* --- SECOND CA --- */}
+<StyledTableCell>
+  <TextField
+    inputRef={(el) =>
+      (inputRefs.current[actualIndex * 3 + 1] = el)
+    }
+    disabled={!disableScoreInputSecondCA}
+    label="Second CA"
+    variant="outlined"
+    fullWidth
+    margin="dense"
+    type="tel"
+    inputMode="numeric"
+    value={
+      values.students[actualIndex]?.score?.secondTest || ""
+    }
+    name={`students[${actualIndex}].score.secondTest`}
+    onChange={(e) =>
+      handleScoreChange(e, actualIndex * 3 + 2)
+    }
+    onBlur={handleBlur}
+    error={Boolean(
+      getIn(errors, `students[${actualIndex}].score.secondTest`) &&
+      getIn(touched, `students[${actualIndex}].score.secondTest`)
+    )}
+    helperText={
+      getIn(touched, `students[${actualIndex}].score.secondTest`) &&
+      getIn(errors, `students[${actualIndex}].score.secondTest`)
+    }
+    slotProps={{
+      input: { 
+        sx: { 
+          fontSize: 16, 
+          padding: 0,
+          '& input': {
+              padding: '15px 6px'
+          }
+        } 
+      },
+      inputLabel: { sx: { fontSize: 13 } },
+      formHelperText: { sx: { fontSize: 12 } },
+    }}
+  />
+</StyledTableCell>
+
+{/* --- EXAM --- */}
+<StyledTableCell>
+  <TextField
+    inputRef={(el) =>
+      (inputRefs.current[actualIndex * 3 + 2] = el)
+    }
+    disabled={!disableScoreInputExam}
+    label="Exam"
+    variant="outlined"
+    fullWidth
+    margin="dense"
+    value={
+      values.students[actualIndex]?.score?.exam || ""
+    }
+    type="tel"
+    inputMode="numeric"
+    name={`students[${actualIndex}].score.exam`}
+    onChange={(e) =>
+      handleScoreChange(e, actualIndex * 3 + 3)
+    }
+    onBlur={handleBlur}
+    error={Boolean(
+      getIn(errors, `students[${actualIndex}].score.exam`) &&
+      getIn(touched, `students[${actualIndex}].score.exam`)
+    )}
+    helperText={
+      getIn(touched, `students[${actualIndex}].score.exam`) &&
+      getIn(errors, `students[${actualIndex}].score.exam`)
+    }
+    slotProps={{
+      input: { 
+        sx: { 
+          fontSize: 16, 
+          padding: 0,
+          '& input': {
+            padding: '15px 6px'
+          }
+        } 
+      },
+      inputLabel: { sx: { fontSize: 13 } },
+      formHelperText: { sx: { fontSize: 12 } },
+    }}
+  />
+</StyledTableCell>
+      </StyledTableRow>
+));
