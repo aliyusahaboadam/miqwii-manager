@@ -1,58 +1,49 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import { Dialog, IconButton, Snackbar } from "@mui/material";
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconButton } from "@mui/material";
-import Paper from '@mui/material/Paper';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
 import TableFooter from '@mui/material/TableFooter';
+import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getAllSession } from '../../redux/reducer/sessionSlice';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import style from '../style/form/StudentRegistration.module.css';
+import TableRow from '@mui/material/TableRow';
 import { Formik } from 'formik';
-import { object, string, array } from 'yup';
-import { Alert, Snackbar } from "@mui/material";
-import { setCurrentSession } from '../../redux/reducer/sessionSlice';
-import {  
-  Dialog
-} from '@mui/material';
-import ActionMenu from '../utility/ActionMenu';
+import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { object, string } from 'yup';
+import { getAllSession, setCurrentSession } from '../../redux/reducer/sessionSlice';
 import Loading from '../Chunks/loading';
-import { useLocation, useParams } from 'react-router-dom';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
+import {
+  AppBar,
+  Box,
   CssBaseline,
+  Drawer,
+  List,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -147,9 +138,6 @@ localStorage.removeItem('token');
 navigate("/school/login")
 localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
-
-
-console.log("________________________" + JSON.stringify(rows) ); 
 
 
   useEffect(() => {
@@ -694,31 +682,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   <div className={dashboard['secondary--container']}>
 
 
-        
-            <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-            
-            <div class={dashboard['card_button_and_icon']}>
-            
-            <span class={dashboard['icon-container']}>
-            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#school"></use>
-            </svg>
-            </span>
-
-            <div>{rows.find((r) => r.school.name)?.school.name ?? 0}</div>
-            
-          
-            </div>
-            
-            
-            
-           
-            
-            </div>
-            
-            </div>
-
+  
             <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
             
             <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
