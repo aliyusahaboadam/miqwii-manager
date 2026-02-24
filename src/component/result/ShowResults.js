@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getAllClassnameAndId } from '../../redux/reducer/classSlice';
 import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
+import { getSettingsState } from '../../redux/reducer/settingsSlice';
 import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import CirculerProgressLoader from '../utility/CirculerProgressLoader';
@@ -128,7 +129,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   useEffect(() => {
     fetchDashboardDetailsData();
     fetchClassData();
-  
+    dispatch(getSettingsState());
   }, [location.pathname]);
 
 
@@ -143,6 +144,8 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   
     
       };
+
+
 
 
 

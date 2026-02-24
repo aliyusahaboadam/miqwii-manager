@@ -1,174 +1,198 @@
-import {Document, Image, Page, pdf, View, StyleSheet, Font} from '@react-pdf/renderer';
-import { ScoreTable } from './ScoreTable';
-import { KeyTable } from './KeyTable';
-import { Text } from '@react-pdf/renderer';
-import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
-import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
-import { getResultByClassId } from '../../redux/reducer/scoreSlice';
-import { useDispatch } from 'react-redux';
+import { Document, Font, Image, Page, pdf, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getResultByClassId } from '../../redux/reducer/scoreSlice';
 import { formatPosition } from '../utility/FormatPositon';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { getSettingsState } from '../../redux/reducer/settingsSlice';
+import { KeyTable } from './KeyTable';
+import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
+import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
+import { ScoreTable } from './ScoreTable';
+
+// ✅ FIX 1: Register fonts ONCE outside the component (not on every render)
+Font.register({ family: 'Roboto', src: roboto });
+Font.register({ family: 'Oswald', src: Oswald });
+
+// ✅ FIX 2: Logo cache outside component so it persists across renders
+const logoCache = {};
+
+const preloadImage = async (url) => {
+  // Return cached version if available
+  if (logoCache[url]) return logoCache[url];
+  
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+    logoCache[url] = base64; // Cache it
+    return base64;
+  } catch (error) {
+    console.error('Error preloading image:', error);
+    return null;
+  }
+};
+
+// ✅ FIX 3: Move MyDocument OUTSIDE StudentResults so it's not recreated every render
+const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, getPositionRemark, ScoreColumns, ScoreKeyColumns, feesKeyColumns, scoreKeyData }) => {
+  const feeKeyData = [
+    {
+      nextSSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextSSSTermFee || "Unset"),
+      nextJSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextJSSTermFee || "Unset"),
+      nextPRITermFee: formatAmount(resultsData?.[0]?.academicSession?.nextPRITermFee || "Unset"),
+      nextNURTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextNURTermFee || "Unset")
+    }
+  ];
+
+  return (
+    <Document>
+      {resultsData.map((result, index) => {
+        const teacherRemark = getPositionRemark(result.position, result.numberOfStudentInClass);
+        const resumptionDate = result.academicSession.resumptionDate
+          ? new Date(result.academicSession.resumptionDate).toLocaleDateString('en-US', {
+              year: 'numeric', month: 'long', day: 'numeric'
+            })
+          : "Not Set";
+
+        return (
+          <Page key={index} size="A4" style={resultStyle.body}>
+            <View style={resultStyle.logoAndHeadingContainer}>
+              <View style={resultStyle.logo}>
+                <Image src={logoUrl} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              </View>
+              <View style={resultStyle.heading}>
+                <Text style={resultStyle.schoolName}>{result.school.name}</Text>
+                <Text style={resultStyle.address}>{result.school.address}</Text>
+                <Text style={resultStyle.boldMottoText}>
+                  Motto: <Text style={resultStyle.motto}>{result.school.motto}</Text>
+                </Text>
+                <Text style={resultStyle.boldText}>
+                  School Reg: No.: <Text style={resultStyle.address}>{result.school.regNo}</Text> Tel: <Text style={resultStyle.address}>{result.school.contact}</Text>
+                </Text>
+              </View>
+              <View style={resultStyle.logo}>
+                <Image src={logoUrl} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              </View>
+            </View>
+
+            <Text style={resultStyle.secondHeader}>
+              REPORT SHEET FOR {result.academicSession.term} TERM {result.academicSession.session} ACADEMIC SESSION
+            </Text>
+
+            <View style={resultStyle.detailsContainer}>
+              <View style={resultStyle.childContainer}>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Name: <Text style={resultStyle.detailsText}>{result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}</Text>
+                </Text>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Reg No: <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>
+                </Text>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Class: <Text style={resultStyle.detailsText}>{result.class1.name}</Text>
+                </Text>
+              </View>
+              <View style={resultStyle.childContainer}>
+                <Text style={resultStyle.boldTextSecondary}>
+                  {positioning ? 'Position:' : 'No. of Subjects:'}
+                  <Text style={resultStyle.detailsText}>
+                    {positioning ? formatPosition(result.position) : (result.scores.length || 'N/A')}
+                  </Text>
+                </Text>
+                <Text style={resultStyle.boldTextSecondary}>
+                  No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
+                </Text>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Student Average: <Text style={resultStyle.detailsText}>{result.overallAverage}</Text>
+                </Text>
+              </View>
+              <View style={resultStyle.childContainer}>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Term: <Text style={resultStyle.detailsText}>{result.academicSession.term}</Text>
+                </Text>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Lowest Average in Class: <Text style={resultStyle.detailsText}>{result.lowestAverage}</Text>
+                </Text>
+                <Text style={resultStyle.boldTextSecondary}>
+                  Highest Average in Class: <Text style={resultStyle.detailsText}>{result.highestAverage}</Text>
+                </Text>
+              </View>
+            </View>
+
+            <ScoreTable columns={ScoreColumns} data={result.scores} />
+
+            <View style={resultStyle.bottomSection}>
+              <View style={resultStyle.leftColumn}>
+                <View style={resultStyle.secondaryContainer}>
+                  <Text style={resultStyle.subtitle}>KEYS</Text>
+                  <KeyTable columns={ScoreKeyColumns} data={scoreKeyData} />
+                </View>
+                <View style={resultStyle.remarkContainer}>
+                  <Text style={resultStyle.subtitle}>CLASSROOM TEACHER'S REMARK</Text>
+                  <Text style={resultStyle.remarkText}>{teacherRemark}</Text>
+                </View>
+              </View>
+
+              <View style={resultStyle.rightColumn}>
+                <View style={resultStyle.secondaryContainer}>
+                  <Text style={resultStyle.subtitle}>SCHOOL NEXT TERM FEES</Text>
+                  <KeyTable columns={feesKeyColumns} data={feeKeyData} />
+                </View>
+                <View style={resultStyle.resumptionContainer}>
+                  <Text style={resultStyle.subtitle}>NEXT TERM RESUMPTION DATE</Text>
+                  <Text style={resultStyle.resumptionDate}>{resumptionDate}</Text>
+                </View>
+              </View>
+            </View>
+
+            <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
+          </Page>
+        );
+      })}
+    </Document>
+  );
+};
+
 
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
   const [isGenerating, setIsGenerating] = useState(false);
+  const positioning = useSelector((state) => state.settings.disablePositioning);
 
-  const formatAmount = (amount) => {
-    return `N${new Intl.NumberFormat('en-NG').format(amount)}`;
+  const formatAmount = (amount) => `N${new Intl.NumberFormat('en-NG').format(amount)}`;
+
+  const getPositionRemark = (position, totalStudents) => {
+    const percentile = ((totalStudents - position) / totalStudents) * 100;
+    if (totalStudents === 1) return "Only student in class. Keep it up!";
+    if (percentile >= 95) return "Outstanding! Keep up the excellent effort.";
+    if (percentile >= 90) return "Excellent! You're among the very best.";
+    if (percentile >= 80) return "Very good performance. Keep it up!";
+    if (percentile >= 60) return "Good effort. You can do better. Aim higher!";
+    if (percentile >= 40) return "Fair performance. More effort is needed.";
+    if (percentile >= 20) return "Put in more effort. Seek help when needed.";
+    return "Much improvement needed. Work harder!";
   };
 
-
-
-
-
-  useEffect(() => {
-       fetchData();
-    }, []);
-  
-    
-    const fetchData = () => {
-      dispatch(getSettingsState());
-    }
-
-  // Function to get remark based on position
-// Function to get remark based on position and class size
-const getPositionRemark = (position, totalStudents) => {
-  // Calculate percentile (what percentage of class is below this student)
-  const percentile = ((totalStudents - position) / totalStudents) * 100;
-  
-  // Handle edge cases
-  if (totalStudents === 1) {
-    return "Only student in class. Keep it up!"; // 38 chars
-  }
-  
-  // Top 5% - Outstanding
-  if (percentile >= 95) {
-    return "Outstanding! Keep up the excellent effort."; // 43 chars
-  }
-  
-  // Top 10% - Excellent
-  if (percentile >= 90) {
-    return "Excellent! You're among the very best."; // 39 chars
-  }
-  
-  // Top 20% - Very Good
-  if (percentile >= 80) {
-    return "Very good performance. Keep it up!"; // 35 chars
-  }
-  
-  // Top 40% - Good
-  if (percentile >= 60) {
-    return "Good effort. You can do better. Aim higher!"; // 44 chars
-  }
-  
-  // Top 60% - Fair
-  if (percentile >= 40) {
-    return "Fair performance. More effort is needed."; // 41 chars
-  }
-  
-  // Top 80% - Below Average
-  if (percentile >= 20) {
-    return "Put in more effort. Seek help when needed."; // 43 chars
-  }
-  
-  // Bottom 20% - Needs Improvement
-  return "Much improvement needed. Work harder!"; // 37 chars
-};
-
-
-const positioning = useSelector((state) => state.settings.disablePositioning);
-
-
-console.log("Position: " + positioning);
-
-  Font.register({
-    family: 'Roboto',
-    src: roboto,
-  });
-
-  Font.register({
-    family: 'Oswald',
-    src: Oswald,
-  });
-
   const ScoreColumns = [
-    { 
-      accessorKey: 'subjectName', 
-      header: () => 'Subject', 
-      size: 50
-    },
-    { 
-      accessorKey: 'max', 
-      header: () => 'Max', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'firstTest', 
-      header: () => 'CA1', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'secondTest', 
-      header: () => 'CA2', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'totalTest', 
-      header: () => 'Sum', 
-      size: 16,
-    },
-    { 
-      accessorKey: 'exam', 
-      header: () => 'Exam', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'totalExam', 
-      header: () => 'Total', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'positionPerSubjectFormatted', 
-      header: () => 'Pos', 
-      size: 16,
-    },
-    { 
-      accessorKey: 'grade', 
-      header: () => 'Grade', 
-      size: 16,
-    },
-    { 
-      accessorKey: 'remark', 
-      header: () => 'Remark', 
-      size: 30,
-    }
+    { accessorKey: 'subjectName', header: () => 'Subject', size: 50 },
+    { accessorKey: 'max', header: () => 'Max', size: 15 },
+    { accessorKey: 'firstTest', header: () => 'CA1', size: 15 },
+    { accessorKey: 'secondTest', header: () => 'CA2', size: 15 },
+    { accessorKey: 'totalTest', header: () => 'Sum', size: 16 },
+    { accessorKey: 'exam', header: () => 'Exam', size: 15 },
+    { accessorKey: 'totalExam', header: () => 'Total', size: 15 },
+    { accessorKey: 'positionPerSubjectFormatted', header: () => 'Pos', size: 16 },
+    { accessorKey: 'grade', header: () => 'Grade', size: 16 },
+    { accessorKey: 'remark', header: () => 'Remark', size: 30 }
   ];
 
   const feesKeyColumns = [
-    { 
-      accessorKey: 'nextSSSTermFee', 
-      header: () => 'SSS', 
-      size: 35, 
-      bold: false
-    },
-    { 
-      accessorKey: 'nextJSSTermFee', 
-      header: () => 'JSS', 
-      size: 35
-    },
-    { 
-      accessorKey: 'nextPRITermFee', 
-      header: () => 'Primary', 
-      size: 35 
-    },
-    { 
-      accessorKey: 'nextNURTermFee', 
-      header: () => 'Nursery', 
-      size: 35 
-    },
+    { accessorKey: 'nextSSSTermFee', header: () => 'SSS', size: 35, bold: false },
+    { accessorKey: 'nextJSSTermFee', header: () => 'JSS', size: 35 },
+    { accessorKey: 'nextPRITermFee', header: () => 'Primary', size: 35 },
+    { accessorKey: 'nextNURTermFee', header: () => 'Nursery', size: 35 }
   ];
 
   const ScoreKeyColumns = [
@@ -179,300 +203,102 @@ console.log("Position: " + positioning);
     { accessorKey: 'e', size: 20 }
   ];
 
-
-  // PERFORMANCE FIX: Pre-load and cache the logo as base64
-  const preloadImage = async (url) => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      console.error('Error preloading image:', error);
-      return null;
-    }
-  };
-
   const scoreKeyData = [
     { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' },
     { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
   ];
 
-  // PDF Document Component
-  const MyDocument = ({ resultsData, logoUrl }) => {
-    const feeKeyData = [
-      {
-        nextSSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextSSSTermFee || "Unset"),
-        nextJSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextJSSTermFee || "Unset"),
-        nextPRITermFee: formatAmount(resultsData?.[0]?.academicSession?.nextPRITermFee || "Unset"),
-        nextNURTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextNURTermFee || "Unset")
-      }
-    ];
+  // ✅ FIX 4: Shared PDF generation logic to avoid duplication
+  const generatePDF = async () => {
+    const resultAction = await dispatch(getResultByClassId(classId));
 
-
-    // const logoUrl = `https://images-0.s3.us-west-2.amazonaws.com/${resultsData?.[0]?.school?.logo}`;
-
-    return (
-      <Document>
-        {resultsData.map((result, index) => {
-          const teacherRemark = getPositionRemark(result.position, result.numberOfStudentInClass);
-          const resumptionDate = result.academicSession.resumptionDate 
-            ? new Date(result.academicSession.resumptionDate).toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })
-            : "Not Set";
-
-          return (
-            <Page key={index} size="A4" style={resultStyle.body}>
-              <View style={resultStyle.logoAndHeadingContainer}>
-                <View style={resultStyle.logo}>
-                  <Image 
-                    src={logoUrl} 
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain" 
-                    }} 
-                  />
-                </View>
-                <View style={resultStyle.heading}>
-                  <Text style={resultStyle.schoolName}>{result.school.name}</Text>
-                  <Text style={resultStyle.address}>{result.school.address}</Text>
-                  <Text style={resultStyle.boldMottoText}>
-                    Motto: <Text style={resultStyle.motto}>{result.school.motto}</Text>
-                  </Text>
-                  <Text style={resultStyle.boldText}>
-                    School Reg: No.: <Text style={resultStyle.address}>{result.school.regNo}</Text> Tel: <Text style={resultStyle.address}>{result.school.contact}</Text>
-                  </Text>
-                </View>
-                <View style={resultStyle.logo}>
-                  <Image 
-                    src={logoUrl} 
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain" 
-                    }} 
-                  />
-                </View>
-              </View>
-              
-              <Text style={resultStyle.secondHeader}>
-                REPORT SHEET FOR {result.academicSession.term} TERM {result.academicSession.session} ACADEMIC SESSION
-              </Text>
-              
-              <View style={resultStyle.detailsContainer}>
-                <View style={resultStyle.childContainer}>
-                  <Text style={resultStyle.boldTextSecondary}>
-                    Name: <Text style={resultStyle.detailsText}>{result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}</Text>
-                  </Text> 
-                  <Text style={resultStyle.boldTextSecondary}>
-                    Reg No: <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>
-                  </Text> 
-                  <Text style={resultStyle.boldTextSecondary}>
-                    Class: <Text style={resultStyle.detailsText}>{result.class1.name}</Text>
-                  </Text>
-                </View>
-                <View style={resultStyle.childContainer}>
-   <Text style={resultStyle.boldTextSecondary}>
-  {positioning ? 'Position:' : 'No. of Subjects:'} 
-  <Text style={resultStyle.detailsText}>
-    {positioning 
-      ? formatPosition(result.position)
-      : (result.scores.length || 'N/A')
+    if (!getResultByClassId.fulfilled.match(resultAction)) {
+      throw new Error('Failed to fetch results');
     }
-  </Text>
-</Text>
-                  <Text style={resultStyle.boldTextSecondary}>
-                    No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
-                  </Text> 
-                  <Text style={resultStyle.boldTextSecondary}>
-                    Student Average: <Text style={resultStyle.detailsText}>{result.overallAverage}</Text>
-                  </Text>
-                </View>
-                <View style={resultStyle.childContainer}>
-                  <Text style={resultStyle.boldTextSecondary}>
-                    Term: <Text style={resultStyle.detailsText}>{result.academicSession.term}</Text>
-                  </Text> 
-                  <Text style={resultStyle.boldTextSecondary}>
-                    Lowest Average in Class: <Text style={resultStyle.detailsText}>{result.lowestAverage}</Text>
-                  </Text> 
-                  <Text style={resultStyle.boldTextSecondary}>
-                    Highest Average in Class: <Text style={resultStyle.detailsText}>{result.highestAverage}</Text>
-                  </Text>
-                </View>
-              </View>
 
-              <ScoreTable columns={ScoreColumns} data={result.scores} />
-              
-              {/* Bottom Section with Keys and Remarks */}
-              <View style={resultStyle.bottomSection}>
-                {/* Left Column: Keys and Teacher Remark */}
-                <View style={resultStyle.leftColumn}>
-                  <View style={resultStyle.secondaryContainer}> 
-                    <Text style={resultStyle.subtitle}>KEYS</Text>
-                    <KeyTable columns={ScoreKeyColumns} data={scoreKeyData} />
-                  </View>
+    const fetchedResults = resultAction.payload;
 
-                  <View style={resultStyle.remarkContainer}> 
-                    <Text style={resultStyle.subtitle}>CLASSROOM TEACHER'S REMARK</Text>
-                    <Text style={resultStyle.remarkText}>{teacherRemark}</Text>
-                  </View>
-                </View>
+    if (!fetchedResults || fetchedResults.length === 0) {
+      throw new Error('No results found for this class.');
+    }
 
-                {/* Right Column: Next Term Fee and Resumption Date */}
-                <View style={resultStyle.rightColumn}>
-                  <View style={resultStyle.secondaryContainer}> 
-                    <Text style={resultStyle.subtitle}>SCHOOL NEXT TERM FEES</Text>
-                    <KeyTable columns={feesKeyColumns} data={feeKeyData} />
-                  </View>
+    const s3Url = `https://images-0.s3.us-west-2.amazonaws.com/${fetchedResults[0]?.school?.logo}`;
+    
+    // ✅ FIX 5: Use cached/preloaded base64 logo instead of fetching from S3 every time
+    const logoUrl = await preloadImage(s3Url);
 
-                  <View style={resultStyle.resumptionContainer}> 
-                    <Text style={resultStyle.subtitle}>NEXT TERM RESUMPTION DATE</Text>
-                    <Text style={resultStyle.resumptionDate}>{resumptionDate}</Text>
-                  </View>
-                </View>
-              </View>
-              
-              <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
-            </Page>
-          );
-        })}
-      </Document>
-    );
+    const blob = await pdf(
+      <MyDocument
+        resultsData={fetchedResults}
+        logoUrl={logoUrl}
+        positioning={positioning}
+        formatAmount={formatAmount}
+        getPositionRemark={getPositionRemark}
+        ScoreColumns={ScoreColumns}
+        ScoreKeyColumns={ScoreKeyColumns}
+        feesKeyColumns={feesKeyColumns}
+        scoreKeyData={scoreKeyData}
+      />
+    ).toBlob();
+
+    return { blob, className: fetchedResults[0]?.class1?.name };
   };
 
-  // Handle PDF Download
   const handleDownloadPDF = async () => {
     try {
       setIsGenerating(true);
-      
-      console.log('Fetching results for classId:', classId);
-      
-      const resultAction = await dispatch(getResultByClassId(classId));
-      
-      console.log('Result action:', resultAction);
-      
-      if (getResultByClassId.fulfilled.match(resultAction)) {
-        const fetchedResults = resultAction.payload;
-        
-        console.log('Fetched results:', fetchedResults);
-        
-        if (!fetchedResults || fetchedResults.length === 0) {
-          alert('No results found for this class.');
-          setIsGenerating(false);
-          return;
-        }
-        
-        console.log('Generating PDF for class:', fetchedResults[0]?.class1?.name);
-
-        const logoUrl = `https://images-0.s3.us-west-2.amazonaws.com/${fetchedResults?.[0]?.school?.logo}`;
-        
-        
-        const blob = await pdf(<MyDocument resultsData={fetchedResults} logoUrl={logoUrl} />).toBlob();
-        const url = URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `result-${fetchedResults[0]?.class1?.name || classId}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        URL.revokeObjectURL(url);
-      } else {
-        console.error('Failed to fetch results:', resultAction);
-        alert('Failed to fetch results. Please try again.');
-      }
-      
-      setIsGenerating(false);
+      const { blob, className } = await generatePDF();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `result-${className || classId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      alert(error.message || 'Error generating PDF. Please try again.');
+    } finally {
       setIsGenerating(false);
-      alert('Error generating PDF. Please try again.');
     }
   };
 
-  // Handle PDF View
   const handleViewPDF = async () => {
     try {
       setIsGenerating(true);
-      
-      console.log('Fetching results for classId:', classId);
-      
-      const resultAction = await dispatch(getResultByClassId(classId));
-      
-      console.log('Result action:', resultAction);
-      
-      if (getResultByClassId.fulfilled.match(resultAction)) {
-        const fetchedResults = resultAction.payload;
-        
-        console.log('Fetched results:', fetchedResults);
-        
-        if (!fetchedResults || fetchedResults.length === 0) {
-          alert('No results found for this class.');
-          setIsGenerating(false);
-          return;
-        }
-        
-        console.log('Generating PDF for class:', fetchedResults[0]?.class1?.name);
-
-         const logoUrl = `https://images-0.s3.us-west-2.amazonaws.com/${fetchedResults?.[0]?.school?.logo}`;
-      
-        
-        const blob = await pdf(<MyDocument resultsData={fetchedResults} logoUrl={logoUrl} />).toBlob();
-        const url = URL.createObjectURL(blob);
-        
-        window.open(url, '_blank');
-        
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-        }, 1000);
-      } else {
-        console.error('Failed to fetch results:', resultAction);
-        alert('Failed to fetch results. Please try again.');
-      }
-      
-      setIsGenerating(false);
+      const { blob } = await generatePDF();
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      alert(error.message || 'Error generating PDF. Please try again.');
+    } finally {
       setIsGenerating(false);
-      alert('Error generating PDF. Please try again.');
     }
   };
 
   return (
     <div style={{ display: 'flex', gap: '10px' }}>
-      <button 
-        onClick={handleDownloadPDF} 
+      <button
+        onClick={handleDownloadPDF}
         disabled={isGenerating}
         style={{
           padding: '10px 20px',
           backgroundColor: isGenerating ? '#ccc' : '#007bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
+          color: 'white', border: 'none', borderRadius: '4px',
           cursor: isGenerating ? 'not-allowed' : 'pointer'
         }}
       >
         {isGenerating ? 'Generating...' : 'Download Results'}
       </button>
-      
-      <button 
-        onClick={handleViewPDF} 
+
+      <button
+        onClick={handleViewPDF}
         disabled={isGenerating}
         style={{
           padding: '10px 20px',
           backgroundColor: isGenerating ? '#ccc' : '#28a745',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
+          color: 'white', border: 'none', borderRadius: '4px',
           cursor: isGenerating ? 'not-allowed' : 'pointer'
         }}
       >
