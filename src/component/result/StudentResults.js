@@ -222,7 +222,7 @@ const StudentResults = ({ classId }) => {
       throw new Error('No results found for this class.');
     }
 
-    const s3Url = `https://images-0.s3.us-west-2.amazonaws.com/${fetchedResults[0]?.school?.logo}`;
+    const s3Url = `https://d39kcxvd290stw.cloudfront.net/${fetchedResults[0]?.school?.logo}`;
     
     // ✅ FIX 5: Use cached/preloaded base64 logo instead of fetching from S3 every time
     const logoUrl = await preloadImage(s3Url);
