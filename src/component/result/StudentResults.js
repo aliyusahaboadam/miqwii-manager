@@ -160,6 +160,7 @@ const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
   const [isGenerating, setIsGenerating] = useState(false);
   const positioning = useSelector((state) => state.settings.disablePositioning);
+  const [progress, setProgress] = useState('');
 
   const formatAmount = (amount) => `N${new Intl.NumberFormat('en-NG').format(amount)}`;
 
@@ -210,13 +211,22 @@ const StudentResults = ({ classId }) => {
 
   // ✅ FIX 4: Shared PDF generation logic to avoid duplication
   const generatePDF = async () => {
-    const resultAction = await dispatch(getResultByClassId(classId));
 
+    const fetchStart = performance.now();
+
+     setProgress('Fetching results...');
+    const resultAction = await dispatch(getResultByClassId(classId));
+     const fetchEnd = performance.now();
+
+
+     console.log(`API Fetch Time: ${(fetchEnd - fetchStart).toFixed(2)}ms`);
     if (!getResultByClassId.fulfilled.match(resultAction)) {
       throw new Error('Failed to fetch results');
     }
 
     const fetchedResults = resultAction.payload;
+     // Add this line
+    console.log(`Number of results (pages): ${fetchedResults.length}`);
 
     if (!fetchedResults || fetchedResults.length === 0) {
       throw new Error('No results found for this class.');
@@ -225,8 +235,19 @@ const StudentResults = ({ classId }) => {
     const s3Url = `https://d39kcxvd290stw.cloudfront.net/${fetchedResults[0]?.school?.logo}`;
     
     // ✅ FIX 5: Use cached/preloaded base64 logo instead of fetching from S3 every time
-    const logoUrl = await preloadImage(s3Url);
 
+    const imageStart = performance.now();
+
+    setProgress('Loading school logo...');
+    const logoUrl = await preloadImage(s3Url);
+      const imageEnd = performance.now();
+    console.log(`Image Preload Time: ${(imageEnd - imageStart).toFixed(2)}ms`);
+
+
+     const pdfStart = performance.now();
+
+
+     setProgress(`Building PDF (${fetchedResults.length} pages)...`);
     const blob = await pdf(
       <MyDocument
         resultsData={fetchedResults}
@@ -241,6 +262,13 @@ const StudentResults = ({ classId }) => {
       />
     ).toBlob();
 
+
+    const pdfEnd = performance.now();
+    console.log(`PDF Generation Time: ${(pdfEnd - pdfStart).toFixed(2)}ms`);
+
+    console.log(`Total Time: ${(pdfEnd - fetchStart).toFixed(2)}ms`);
+
+     setProgress('Almost done...');
     return { blob, className: fetchedResults[0]?.class1?.name };
   };
 
@@ -289,7 +317,7 @@ const StudentResults = ({ classId }) => {
           cursor: isGenerating ? 'not-allowed' : 'pointer'
         }}
       >
-        {isGenerating ? 'Generating...' : 'Download Results'}
+        {isGenerating ? (progress || 'Generating...') : 'Download Results'}
       </button>
 
       <button
@@ -302,7 +330,7 @@ const StudentResults = ({ classId }) => {
           cursor: isGenerating ? 'not-allowed' : 'pointer'
         }}
       >
-        {isGenerating ? 'Generating...' : 'View Results'}
+        {isGenerating ? (progress || 'Generating...') : 'View Results'}
       </button>
     </div>
   );

@@ -1,11 +1,12 @@
-import React from 'react';
+import { Buffer } from 'buffer';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
+import App from './App';
+import './index.css';
 import store from './redux/store/store';
+import reportWebVitals from './reportWebVitals';
 // import "bootstrap/dist/css/bootstrap.min.css";
+window.Buffer = Buffer;
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
