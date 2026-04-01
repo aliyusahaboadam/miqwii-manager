@@ -1,396 +1,339 @@
-import {Document, Page, Image, pdf, View, StyleSheet, Font} from '@react-pdf/renderer';
-import { ScoreTable } from './ScoreTable';
-import { KeyTable } from './KeyTable';
-import { Text } from '@react-pdf/renderer';
-import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
-import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
-import { getResultByAuthStudent } from '../../redux/reducer/scoreSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { Document, Font, Image, Page, pdf, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { formatPosition } from '../utility/FormatPositon';
+import { getResultByAuthStudent } from '../../redux/reducer/scoreSlice';
 import { getSettingsState } from '../../redux/reducer/settingsSlice';
-
+import { formatPosition } from '../utility/FormatPositon';
+import { KeyTable } from './KeyTable';
+import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
+import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
+import { ScoreTable } from './ScoreTable';
+ 
+// ✅ Register fonts ONCE outside the component (not on every render)
+Font.register({ family: 'Roboto', src: roboto });
+Font.register({ family: 'Oswald', src: Oswald });
+ 
+// ✅ Logo cache outside component so it persists across renders
+const logoCache = {};
+ 
+const preloadImage = async (url) => {
+  if (logoCache[url]) return logoCache[url];
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+    logoCache[url] = base64;
+    return base64;
+  } catch (error) {
+    console.error('Error preloading image:', error);
+    return null;
+  }
+};
+ 
+// ✅ MyDocument outside component — receives a SINGLE result object (not an array)
+const MyDocument = ({
+  result,
+  logoUrl,
+  positioning,
+  formatAmount,
+  getPositionRemark,
+  ScoreColumns,
+  ScoreKeyColumns,
+  feesKeyColumns,
+  scoreKeyData,
+}) => {
+  const feeKeyData = [
+    {
+      nextSSSTermFee: formatAmount(result?.academicSession?.nextSSSTermFee || 'Unset'),
+      nextJSSTermFee: formatAmount(result?.academicSession?.nextJSSTermFee || 'Unset'),
+      nextPRITermFee: formatAmount(result?.academicSession?.nextPRITermFee || 'Unset'),
+      nextNURTermFee: formatAmount(result?.academicSession?.nextNURTermFee || 'Unset'),
+    },
+  ];
+ 
+  const teacherRemark = getPositionRemark(result.position, result.numberOfStudentInClass);
+  const resumptionDate = result.academicSession.resumptionDate
+    ? new Date(result.academicSession.resumptionDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : 'Not Set';
+ 
+  return (
+    <Document>
+      <Page size="A4" style={resultStyle.body}>
+        <View style={resultStyle.logoAndHeadingContainer}>
+          <View style={resultStyle.logo}>
+            <Image src={logoUrl} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          </View>
+          <View style={resultStyle.heading}>
+            <Text style={resultStyle.schoolName}>{result.school.name}</Text>
+            <Text style={resultStyle.address}>{result.school.address}</Text>
+            <Text style={resultStyle.boldMottoText}>
+              Motto: <Text style={resultStyle.motto}>{result.school.motto}</Text>
+            </Text>
+            <Text style={resultStyle.boldText}>
+              School Reg: No.: <Text style={resultStyle.address}>{result.school.regNo}</Text> Tel:{' '}
+              <Text style={resultStyle.address}>{result.school.contact}</Text>
+            </Text>
+          </View>
+          <View style={resultStyle.logo}>
+            <Image src={logoUrl} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          </View>
+        </View>
+ 
+        <Text style={resultStyle.secondHeader}>
+          REPORT SHEET FOR {result.academicSession.term} TERM {result.academicSession.session} ACADEMIC SESSION
+        </Text>
+ 
+        <View style={resultStyle.detailsContainer}>
+          <View style={resultStyle.childContainer}>
+            <Text style={resultStyle.boldTextSecondary}>
+              Name:{' '}
+              <Text style={resultStyle.detailsText}>
+                {result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}
+              </Text>
+            </Text>
+            <Text style={resultStyle.boldTextSecondary}>
+              Reg No: <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>
+            </Text>
+            <Text style={resultStyle.boldTextSecondary}>
+              Class: <Text style={resultStyle.detailsText}>{result.class1.name}</Text>
+            </Text>
+          </View>
+          <View style={resultStyle.childContainer}>
+            <Text style={resultStyle.boldTextSecondary}>
+              {positioning ? 'Position:' : 'No. of Subjects:'}
+              <Text style={resultStyle.detailsText}>
+                {positioning ? formatPosition(result.position) : result.scores.length || 'N/A'}
+              </Text>
+            </Text>
+            <Text style={resultStyle.boldTextSecondary}>
+              No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
+            </Text>
+            <Text style={resultStyle.boldTextSecondary}>
+              Student Average: <Text style={resultStyle.detailsText}>{result.overallAverage}</Text>
+            </Text>
+          </View>
+          <View style={resultStyle.childContainer}>
+            <Text style={resultStyle.boldTextSecondary}>
+              Term: <Text style={resultStyle.detailsText}>{result.academicSession.term}</Text>
+            </Text>
+            <Text style={resultStyle.boldTextSecondary}>
+              Lowest Average in Class: <Text style={resultStyle.detailsText}>{result.lowestAverage}</Text>
+            </Text>
+            <Text style={resultStyle.boldTextSecondary}>
+              Highest Average in Class: <Text style={resultStyle.detailsText}>{result.highestAverage}</Text>
+            </Text>
+          </View>
+        </View>
+ 
+        <ScoreTable columns={ScoreColumns} data={result.scores} />
+ 
+        <View style={resultStyle.bottomSection}>
+          <View style={resultStyle.leftColumn}>
+            <View style={resultStyle.secondaryContainer}>
+              <Text style={resultStyle.subtitle}>KEYS</Text>
+              <KeyTable columns={ScoreKeyColumns} data={scoreKeyData} />
+            </View>
+            <View style={resultStyle.remarkContainer}>
+              <Text style={resultStyle.subtitle}>CLASSROOM TEACHER'S REMARK</Text>
+              <Text style={resultStyle.remarkText}>{teacherRemark}</Text>
+            </View>
+          </View>
+ 
+          <View style={resultStyle.rightColumn}>
+            <View style={resultStyle.secondaryContainer}>
+              <Text style={resultStyle.subtitle}>SCHOOL NEXT TERM FEES</Text>
+              <KeyTable columns={feesKeyColumns} data={feeKeyData} />
+            </View>
+            <View style={resultStyle.resumptionContainer}>
+              <Text style={resultStyle.subtitle}>NEXT TERM RESUMPTION DATE</Text>
+              <Text style={resultStyle.resumptionDate}>{resumptionDate}</Text>
+            </View>
+          </View>
+        </View>
+ 
+        <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
+      </Page>
+    </Document>
+  );
+};
+ 
 const StudentResultById = () => {
   const dispatch = useDispatch();
-  const scoreState = useSelector((state) => state.scores);
-  const { results, fetchingStatus } = scoreState;
   const location = useLocation();
   const [isGenerating, setIsGenerating] = useState(false);
-
-  const formatAmount = (amount) => {
-    return `N${new Intl.NumberFormat('en-NG').format(amount)}`;
-  };
-
-
-  // Function to get remark based on position
-// Function to get remark based on position and class size
-const getPositionRemark = (position, totalStudents) => {
-  // Calculate percentile (what percentage of class is below this student)
-  const percentile = ((totalStudents - position) / totalStudents) * 100;
-  
-  // Handle edge cases
-  if (totalStudents === 1) {
-    return "Only student in class. Keep it up!"; // 38 chars
-  }
-  
-  // Top 5% - Outstanding
-  if (percentile >= 95) {
-    return "Outstanding! Keep up the excellent effort."; // 43 chars
-  }
-  
-  // Top 10% - Excellent
-  if (percentile >= 90) {
-    return "Excellent! You're among the very best."; // 39 chars
-  }
-  
-  // Top 20% - Very Good
-  if (percentile >= 80) {
-    return "Very good performance. Keep it up!"; // 35 chars
-  }
-  
-  // Top 40% - Good
-  if (percentile >= 60) {
-    return "Good effort. You can do better. Aim higher!"; // 44 chars
-  }
-  
-  // Top 60% - Fair
-  if (percentile >= 40) {
-    return "Fair performance. More effort is needed."; // 41 chars
-  }
-  
-  // Top 80% - Below Average
-  if (percentile >= 20) {
-    return "Put in more effort. Seek help when needed."; // 43 chars
-  }
-  
-  // Bottom 20% - Needs Improvement
-  return "Much improvement needed. Work harder!"; // 37 chars
-};
-
+  const [progress, setProgress] = useState('');
+  const positioning = useSelector((state) => state.settings.disablePositioning);
+ 
   useEffect(() => {
-    fetchData();
+    dispatch(getSettingsState());
   }, [location.pathname]);
-
-  const fetchData = () => {
-    
-      dispatch(getResultByAuthStudent());
-     dispatch(getSettingsState());
+ 
+  const formatAmount = (amount) => `N${new Intl.NumberFormat('en-NG').format(amount)}`;
+ 
+  const getPositionRemark = (position, totalStudents) => {
+    const percentile = ((totalStudents - position) / totalStudents) * 100;
+    if (totalStudents === 1) return 'Only student in class. Keep it up!';
+    if (percentile >= 95) return 'Outstanding! Keep up the excellent effort.';
+    if (percentile >= 90) return "Excellent! You're among the very best.";
+    if (percentile >= 80) return 'Very good performance. Keep it up!';
+    if (percentile >= 60) return 'Good effort. You can do better. Aim higher!';
+    if (percentile >= 40) return 'Fair performance. More effort is needed.';
+    if (percentile >= 20) return 'Put in more effort. Seek help when needed.';
+    return 'Much improvement needed. Work harder!';
   };
-
- const positioning = useSelector((state) => state.settings.disablePositioning);
-
-  Font.register({
-    family: 'Roboto',
-    src: roboto,
-  });
-
-  Font.register({
-    family: 'Oswald',
-    src: Oswald,
-  });
-
-   const ScoreColumns = [
-    { 
-      accessorKey: 'subjectName', 
-      header: () => 'Subject', 
-      size: 50
-    },
-    { 
-      accessorKey: 'max', 
-      header: () => 'Max', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'firstTest', 
-      header: () => 'CA1', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'secondTest', 
-      header: () => 'CA2', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'totalTest', 
-      header: () => 'Sum', 
-      size: 16,
-    },
-    { 
-      accessorKey: 'exam', 
-      header: () => 'Exam', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'totalExam', 
-      header: () => 'Total', 
-      size: 15,
-    },
-    { 
-      accessorKey: 'positionPerSubjectFormatted', 
-      header: () => 'Pos', 
-      size: 16,
-    },
-    { 
-      accessorKey: 'grade', 
-      header: () => 'Grade', 
-      size: 16,
-    },
-    { 
-      accessorKey: 'remark', 
-      header: () => 'Remark', 
-      size: 30,
-    }
+ 
+  const ScoreColumns = [
+    { accessorKey: 'subjectName', header: () => 'Subject', size: 50 },
+    { accessorKey: 'max', header: () => 'Max', size: 15 },
+    { accessorKey: 'firstTest', header: () => 'CA1', size: 15 },
+    { accessorKey: 'secondTest', header: () => 'CA2', size: 15 },
+    { accessorKey: 'totalTest', header: () => 'Sum', size: 16 },
+    { accessorKey: 'exam', header: () => 'Exam', size: 15 },
+    { accessorKey: 'totalExam', header: () => 'Total', size: 15 },
+    { accessorKey: 'positionPerSubjectFormatted', header: () => 'Pos', size: 16 },
+    { accessorKey: 'grade', header: () => 'Grade', size: 16 },
+    { accessorKey: 'remark', header: () => 'Remark', size: 30 },
   ];
-
+ 
   const ScoreKeyColumns = [
     { accessorKey: 'a', size: 35, bold: false },
     { accessorKey: 'b', size: 35 },
     { accessorKey: 'c', size: 20 },
     { accessorKey: 'd', size: 20 },
-    { accessorKey: 'e', size: 20 }
+    { accessorKey: 'e', size: 20 },
   ];
-
+ 
   const feesKeyColumns = [
-    { 
-      accessorKey: 'nextSSSTermFee', 
-      header: () => 'SSS Class', 
-      size: 35, 
-      bold: false
-    },
-    { 
-      accessorKey: 'nextJSSTermFee', 
-      header: () => 'JSS Class', 
-      size: 35
-    },
-    { 
-      accessorKey: 'nextPRITermFee', 
-      header: () => 'PRI Class', 
-      size: 35 
-    },
-
-     { 
-      accessorKey: 'nextNURTermFee', 
-      header: () => 'NUR Class', 
-      size: 35 
-    },
+    { accessorKey: 'nextSSSTermFee', header: () => 'SSS Class', size: 35, bold: false },
+    { accessorKey: 'nextJSSTermFee', header: () => 'JSS Class', size: 35 },
+    { accessorKey: 'nextPRITermFee', header: () => 'PRI Class', size: 35 },
+    { accessorKey: 'nextNURTermFee', header: () => 'NUR Class', size: 35 },
   ];
-
-  const feeKeyData = [
-   {
-        nextSSSTermFee: formatAmount(results?.[0]?.academicSession?.nextSSSTermFee || "Unset"),
-        nextJSSTermFee: formatAmount(results?.[0]?.academicSession?.nextJSSTermFee || "Unset"),
-        nextPRITermFee: formatAmount(results?.[0]?.academicSession?.nextPRITermFee || "Unset"),
-        nextNURTermFee: formatAmount(results?.[0]?.academicSession?.nextNURTermFee || "Unset")
-      }
-  ];
-
+ 
   const scoreKeyData = [
     { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' },
-    { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
+    { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' },
   ];
-
-  // PDF Document Component
-  const MyDocument = () => (
-    <Document>
-      {[results].map((result, index) => (
-        <Page key={index} size="A4" style={resultStyle.body}>
-          <View style={resultStyle.logoAndHeadingContainer}>
-            <View style={resultStyle.logo}>
-              <Image 
-                src={`https://images-0.s3.us-west-2.amazonaws.com/${result.school.logo}`} 
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain" 
-                }} 
-              />
-            </View>
-            <View style={resultStyle.heading}>
-              <Text style={resultStyle.schoolName}>{result.school.name}</Text>
-              <Text style={resultStyle.address}>{result.school.address}</Text>
-              <Text style={resultStyle.boldMottoText}>
-                Motto: <Text style={resultStyle.motto}>{result.school.motto}</Text>
-              </Text>
-              <Text style={resultStyle.boldText}>
-                School Reg: No.: <Text style={resultStyle.address}>{result.school.regNo}</Text> Tel: <Text style={resultStyle.address}>{result.school.contact}</Text>
-              </Text>
-            </View>
-            <View style={resultStyle.logo}>
-              <Image 
-                src={`https://images-0.s3.us-west-2.amazonaws.com/${result.school.logo}`} 
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain" 
-                }} 
-              />
-            </View>
-          </View>
-          
-          <Text style={resultStyle.secondHeader}>
-            REPORT SHEET FOR {result.academicSession.term} TERM {result.academicSession.session} ACADEMIC SESSION
-          </Text>
-          
-          <View style={resultStyle.detailsContainer}>
-            <View style={resultStyle.childContainer}>
-              <Text style={resultStyle.boldTextSecondary}>
-                Name: <Text style={resultStyle.detailsText}>{result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Reg No: <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Class: <Text style={resultStyle.detailsText}>{result.class1.name}</Text>
-              </Text>
-            </View>
-            <View style={resultStyle.childContainer}>
-              <Text style={resultStyle.boldTextSecondary}>
-  {positioning ? 'Position:' : 'No. of Subjects:'} 
-  <Text style={resultStyle.detailsText}>
-    {positioning 
-      ? formatPosition(result.position)
-      : (result.scores.length || 'N/A')
+ 
+  const generatePDF = async () => {
+    setProgress('Fetching result...');
+    const resultAction = await dispatch(getResultByAuthStudent());
+ 
+    if (!getResultByAuthStudent.fulfilled.match(resultAction)) {
+      throw new Error('Failed to fetch result');
     }
-  </Text>
-</Text>
-              <Text style={resultStyle.boldTextSecondary}>
-                No In Class: <Text style={resultStyle.detailsText}>{result.numberOfStudentInClass}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Student Average: <Text style={resultStyle.detailsText}>{result.overallAverage}</Text>
-              </Text>
-            </View>
-            <View style={resultStyle.childContainer}>
-              <Text style={resultStyle.boldTextSecondary}>
-                Term: <Text style={resultStyle.detailsText}>{result.academicSession.term}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Lowest Average in Class: <Text style={resultStyle.detailsText}>{result.lowestAverage}</Text>
-              </Text> 
-              <Text style={resultStyle.boldTextSecondary}>
-                Highest Average in Class: <Text style={resultStyle.detailsText}>{result.highestAverage}</Text>
-              </Text>
-            </View>
-          </View>
-
-          <ScoreTable columns={ScoreColumns} data={result.scores} />
-          
-            {/* Bottom Section with Keys and Remarks */}
-                       <View style={resultStyle.bottomSection}>
-                         {/* Left Column: Keys and Teacher Remark */}
-                         <View style={resultStyle.leftColumn}>
-                           <View style={resultStyle.secondaryContainer}> 
-                             <Text style={resultStyle.subtitle}>KEYS</Text>
-                             <KeyTable columns={ScoreKeyColumns} data={scoreKeyData} />
-                           </View>
-         
-                           <View style={resultStyle.remarkContainer}> 
-                             <Text style={resultStyle.subtitle}>CLASSROOM TEACHER'S REMARK</Text>
-                             <Text style={resultStyle.remarkText}>{getPositionRemark(result.position, result.numberOfStudentInClass)}</Text>
-                           </View>
-                         </View>
-         
-                         {/* Right Column: Next Term Fee and Resumption Date */}
-                         <View style={resultStyle.rightColumn}>
-                           <View style={resultStyle.secondaryContainer}> 
-                             <Text style={resultStyle.subtitle}>SCHOOL NEXT TERM FEES</Text>
-                             <KeyTable columns={feesKeyColumns} data={feeKeyData} />
-                           </View>
-         
-                           <View style={resultStyle.resumptionContainer}> 
-                             <Text style={resultStyle.subtitle}>NEXT TERM RESUMPTION DATE</Text>
-                             <Text style={resultStyle.resumptionDate}>{result.academicSession.resumptionDate 
-                                         ? new Date(result.academicSession.resumptionDate).toLocaleDateString('en-US', { 
-                                             year: 'numeric', 
-                                             month: 'long', 
-                                             day: 'numeric' 
-                                           })
-                                         : "Not Set"}</Text>
-                           </View>
-                         </View>
-                       </View>
-          
-          <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
-        </Page>
-      ))}
-    </Document>
-  );
-
-  // Handle PDF Download
+ 
+    // ✅ Single result object — not an array
+    const fetchedResult = resultAction.payload;
+ 
+    if (!fetchedResult || !fetchedResult.school) {
+      throw new Error('No result found.');
+    }
+ 
+    const s3Url = `https://d39kcxvd290stw.cloudfront.net/${fetchedResult.school.logo}`;
+ 
+    setProgress('Loading school logo...');
+    const logoUrl = await preloadImage(s3Url);
+ 
+    setProgress('Building PDF...');
+    const blob = await pdf(
+      <MyDocument
+        result={fetchedResult}
+        logoUrl={logoUrl}
+        positioning={positioning}
+        formatAmount={formatAmount}
+        getPositionRemark={getPositionRemark}
+        ScoreColumns={ScoreColumns}
+        ScoreKeyColumns={ScoreKeyColumns}
+        feesKeyColumns={feesKeyColumns}
+        scoreKeyData={scoreKeyData}
+      />
+    ).toBlob();
+ 
+    setProgress('Almost done...');
+    return { blob, studentName: fetchedResult.student?.firstname };
+  };
+ 
   const handleDownloadPDF = async () => {
     try {
       setIsGenerating(true);
-      const blob = await pdf(<MyDocument />).toBlob();
+      const { blob, studentName } = await generatePDF();
       const url = URL.createObjectURL(blob);
-      
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'result.pdf';
+      link.download = `result-${studentName || 'student'}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
       URL.revokeObjectURL(url);
-      setIsGenerating(false);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      alert(error.message || 'Error generating PDF. Please try again.');
+    } finally {
       setIsGenerating(false);
-      alert('Error generating PDF. Please try again.');
+      setProgress('');
     }
   };
-
-  // Handle PDF View
+ 
   const handleViewPDF = async () => {
     try {
       setIsGenerating(true);
-      const blob = await pdf(<MyDocument />).toBlob();
+      const { blob } = await generatePDF();
       const url = URL.createObjectURL(blob);
-      
       window.open(url, '_blank');
-      setIsGenerating(false);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      alert(error.message || 'Error generating PDF. Please try again.');
+    } finally {
       setIsGenerating(false);
-      alert('Error generating PDF. Please try again.');
+      setProgress('');
     }
   };
-
+ 
   return (
     <div style={{ display: 'flex', gap: '10px' }}>
-      <button 
-        onClick={handleDownloadPDF} 
-        disabled={isGenerating || !results || results.length === 0}
+      <button
+        onClick={handleDownloadPDF}
+        disabled={isGenerating}
         style={{
           padding: '10px 20px',
           backgroundColor: isGenerating ? '#ccc' : '#007bff',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: isGenerating ? 'not-allowed' : 'pointer'
+          cursor: isGenerating ? 'not-allowed' : 'pointer',
         }}
       >
-        {isGenerating ? 'Generating...' : 'Download Result'}
+        {isGenerating ? progress || 'Generating...' : 'Download Result'}
       </button>
-      
-      <button 
-        onClick={handleViewPDF} 
-        disabled={isGenerating || !results || results.length === 0}
+ 
+      <button
+        onClick={handleViewPDF}
+        disabled={isGenerating}
         style={{
           padding: '10px 20px',
           backgroundColor: isGenerating ? '#ccc' : '#28a745',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: isGenerating ? 'not-allowed' : 'pointer'
+          cursor: isGenerating ? 'not-allowed' : 'pointer',
         }}
       >
-        {isGenerating ? 'Generating...' : 'View Result'}
+        {isGenerating ? progress || 'Generating...' : 'View Result'}
       </button>
     </div>
   );
 };
-
+ 
 export default StudentResultById;
 
 const resultStyle = StyleSheet.create({

@@ -71,7 +71,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-const TeacherSubject = () => {
+const AddScore = () => {
 
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -740,7 +740,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
 
 }
 
-export default TeacherSubject;
+export default AddScore;
 
 
 
