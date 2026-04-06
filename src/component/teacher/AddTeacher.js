@@ -1,40 +1,27 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import TextField from '@mui/material/TextField';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import {IconButton, InputAdornment, Checkbox } from "@mui/material";
-import Dialog from '@mui/material/Dialog';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, array } from 'yup';
-import { getClassNames, classExists } from '../../redux/reducer/classSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { saveTeacher, resetStatus } from '../../redux/reducer/teacherSlice';
-import { useEffect } from 'react';
+import { Checkbox } from "@mui/material";
 import Autocomplete from '@mui/material/Autocomplete';
-import {  getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
+import MuiCard from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { array, object, string } from 'yup';
+import { classExists, getClassNames } from '../../redux/reducer/classSlice';
+import { getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
+import { saveTeacher } from '../../redux/reducer/teacherSlice';
+import style from '../style/form/StudentRegistration.module.css';
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import React from "react";
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+  Box,
+  CssBaseline
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -286,7 +273,18 @@ const handleClose = (event, reason) => {
                   touched,
                   handleBlur,
                   setFieldValue
-                }) => (
+                }) => { 
+                  
+                  
+                     const filteredSubjects = subjectWithClassname.filter(subject => {
+                      const match = subject.name.match(/\[(.+)\]$/);
+                      if (!match) return false;
+                      return values.classes.includes(match[1]);
+                    });
+                  
+                  
+                  
+                  return (
 
                   <Card>
       
@@ -392,18 +390,19 @@ const handleClose = (event, reason) => {
           options={['Select All', ...classNames]}
           getOptionLabel={(option) => option}
           value={values.classes || []}
-          onChange={(event, value, reason, details) => {
-            if (details?.option === 'Select All') {
-              if (value.length - 1 === classNames.length) {
-                setFieldValue("classes", []);
-              } else {
-                setFieldValue("classes", classNames);
-              }
-            } else {
-              const filteredValue = value.filter(item => item !== 'Select All');
-              setFieldValue("classes", filteredValue);
-            }
-          }}
+        onChange={(event, value, reason, details) => {
+  if (details?.option === 'Select All') {
+    if (value.length - 1 === classNames.length) {
+      setFieldValue("classes", []);
+    } else {
+      setFieldValue("classes", classNames);
+    }
+  } else {
+    const filteredValue = value.filter(item => item !== 'Select All');
+    setFieldValue("classes", filteredValue);
+  }
+  setFieldValue("subjects", []); // ✅ ADD THIS LINE
+}}
           renderOption={(props, option) => {
             if (option === 'Select All') {
               const allSelected = values.classes?.length === classNames.length;
@@ -485,24 +484,24 @@ const handleClose = (event, reason) => {
               multiple
               limitTags={1}
               id="subjects-autocomplete"
-              options={[
+               options={[
                 { id: 'select-all', name: '✓ Select All' },
-                ...subjectWithClassname
+                ...filteredSubjects  // ✅ use filteredSubjects here
               ]}
               getOptionLabel={(option) => option.name}
               value={values.subjects || []}
               onChange={(event, value, reason, details) => {
-                if (details?.option?.id === 'select-all') {
-                  if (value.length === subjectWithClassname.length) {
-                    setFieldValue("subjects", []);
-                  } else {
-                    setFieldValue("subjects", subjectWithClassname);
-                  }
-                } else {
-                  const filteredValue = value.filter(item => item.id !== 'select-all');
-                  setFieldValue("subjects", filteredValue);
-                }
-              }}
+            if (details?.option?.id === 'select-all') {
+              if (value.length === filteredSubjects.length) {
+                setFieldValue("subjects", []);
+              } else {
+                setFieldValue("subjects", filteredSubjects); // ✅
+              }
+            } else {
+              const filteredValue = value.filter(item => item.id !== 'select-all');
+              setFieldValue("subjects", filteredValue);
+            }
+          }}
               renderOption={(props, option) => {
                 if (option.id === 'select-all') {
                   const allSelected = values.subjects?.length === subjectWithClassname.length;
@@ -585,7 +584,7 @@ const handleClose = (event, reason) => {
              
     </Card>
 
-)}
+)}}
                    
        
        
@@ -594,7 +593,7 @@ const handleClose = (event, reason) => {
     
      <div className={style.footer__brand}>
               <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
 

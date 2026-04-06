@@ -1,45 +1,41 @@
+import { Checkbox, IconButton, Snackbar } from "@mui/material";
+import Autocomplete from '@mui/material/Autocomplete';
+import MuiCard from '@mui/material/Card';
+import Dialog from '@mui/material/Dialog';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { array, object, string } from 'yup';
+import { getClassNames } from '../../redux/reducer/classSlice';
+import { getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
+import { getTeacherById, updateTeacher } from '../../redux/reducer/teacherSlice';
+import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import TextField from '@mui/material/TextField';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, array } from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { saveStudent, resetStatus, getStudentById, updateStudent } from '../../redux/reducer/studentSlice';
-import { getClassNames, classExists } from '../../redux/reducer/classSlice';
-import { useEffect } from 'react';
-import {IconButton, InputAdornment } from "@mui/material";
-import Dialog from '@mui/material/Dialog';
-import { useParams, useNavigate } from 'react-router-dom';
-import Loading from '../Chunks/loading';
-import { getTeacherById, updateTeacher } from '../../redux/reducer/teacherSlice';
-import Autocomplete from '@mui/material/Autocomplete';
-import {  getAllSubjectWithClassname } from '../../redux/reducer/subjectSlice';
-import { Checkbox } from "@mui/material";
 
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
 import { useLocation } from 'react-router-dom';
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
+import {
+  AppBar,
+  Box,
   CssBaseline,
+  Drawer,
+  List,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -750,7 +746,17 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                   touched,
                   handleBlur,
                   setFieldValue
-                }) => (
+                }) => {
+                  
+
+
+                     const filteredSubjects = subjectWithClassname.filter(subject => {
+                      const match = subject.name.match(/\[(.+)\]$/);
+                      if (!match) return false;
+                      return values.classes.includes(match[1]);
+                    });
+                  
+                  return (
 
                   <Card>
       
@@ -862,17 +868,18 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   getOptionLabel={(option) => option}
   value={values.classes || []}
   onChange={(event, value, reason, details) => {
-    if (details?.option === 'Select All') {
-      if (value.length - 1 === classNames.length) {
-        setFieldValue("classes", []);
-      } else {
-        setFieldValue("classes", classNames);
-      }
+  if (details?.option === 'Select All') {
+    if (value.length - 1 === classNames.length) {
+      setFieldValue("classes", []);
     } else {
-      const filteredValue = value.filter(item => item !== 'Select All');
-      setFieldValue("classes", filteredValue);
+      setFieldValue("classes", classNames);
     }
-  }}
+  } else {
+    const filteredValue = value.filter(item => item !== 'Select All');
+    setFieldValue("classes", filteredValue);
+  }
+  setFieldValue("subjects", []); // ✅ ADD THIS LINE
+}}
   renderOption={(props, option) => {
     if (option === 'Select All') {
       const allSelected = values.classes?.length === classNames.length;
@@ -950,102 +957,102 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
 
 
-<Autocomplete
-  multiple
-  limitTags={1}
-  id="subjects-autocomplete"
-  options={[
-    { id: 'select-all', name: '✓ Select All' },
-    ...subjectWithClassname
-  ]}
-  getOptionLabel={(option) => option.name}
-  value={values.subjects || []}
-  onChange={(event, value, reason, details) => {
-    if (details?.option?.id === 'select-all') {
-      if (value.length === subjectWithClassname.length) {
-        setFieldValue("subjects", []);
-      } else {
-        setFieldValue("subjects", subjectWithClassname);
-      }
-    } else {
-      const filteredValue = value.filter(item => item.id !== 'select-all');
-      setFieldValue("subjects", filteredValue);
-    }
-  }}
-  renderOption={(props, option) => {
-    if (option.id === 'select-all') {
-      const allSelected = values.subjects?.length === subjectWithClassname.length;
-      return (
-        <li {...props} key={option.id}>
-          <Checkbox
-            checked={allSelected}
-            style={{ marginRight: 8 }}
-          />
-          {option.name}
-        </li>
-      );
-    }
-    return <li {...props} key={option.id}>{option.name}</li>;
-  }}
-  renderInput={(params) => (
-    <TextField
-     {...params} 
-     label="Subjects" 
-     placeholder="Subjects"
-     variant="filled"
-     fullWidth
-     margin='normal'
-     name='subjects'
-     error={touched.subjects && Boolean(errors.subjects)}
-     helperText={touched.subjects && errors.subjects}
-     
-    slotProps={{
-      formHelperText: {
-        sx: { fontSize: 15 },
-      },
-     
-      inputLabel: {
-        style: { fontSize: 16 },
-      }
-    }}
-
-     
-    />
-  )}
-
-  sx={{
-    "& .MuiAutocomplete-tag": {
-      fontSize: "14px",
-      backgroundColor: "#e0f7fa",
-    },
-    "& .MuiAutocomplete-option": {
-      fontSize: "16px",
-    },
-    
-  }}
-
-  slotProps={{
-    textField: {
-      InputLabelProps: {
-        style: { fontSize: "18px", color: "blue" },
-      },
-      inputProps: {
-        style: { fontSize: "16px" },
-      },
-    },
-    popper: {
-      sx: {
-        "& .MuiAutocomplete-option": {
-          fontSize: "16px",
-        },
-      },
-    },
-    tag: {
-      style: { fontSize: "14px", backgroundColor: "#e0f7fa" },
-    },
-  }}
-
-/>
+ <Autocomplete
+              multiple
+              limitTags={1}
+              id="subjects-autocomplete"
+               options={[
+                { id: 'select-all', name: '✓ Select All' },
+                ...filteredSubjects  // ✅ use filteredSubjects here
+              ]}
+              getOptionLabel={(option) => option.name}
+              value={values.subjects || []}
+              onChange={(event, value, reason, details) => {
+            if (details?.option?.id === 'select-all') {
+              if (value.length === filteredSubjects.length) {
+                setFieldValue("subjects", []);
+              } else {
+                setFieldValue("subjects", filteredSubjects); // ✅
+              }
+            } else {
+              const filteredValue = value.filter(item => item.id !== 'select-all');
+              setFieldValue("subjects", filteredValue);
+            }
+          }}
+              renderOption={(props, option) => {
+                if (option.id === 'select-all') {
+                  const allSelected = values.subjects?.length === subjectWithClassname.length;
+                  return (
+                    <li {...props} key={option.id}>
+                      <Checkbox
+                        checked={allSelected}
+                        style={{ marginRight: 8 }}
+                      />
+                      {option.name}
+                    </li>
+                  );
+                }
+                return <li {...props} key={option.id}>{option.name}</li>;
+              }}
+              renderInput={(params) => (
+                <TextField
+                 {...params} 
+                 label="Subjects" 
+                 placeholder="Subjects"
+                 variant="filled"
+                 fullWidth
+                 margin='normal'
+                 name='subjects'
+                 error={touched.subjects && Boolean(errors.subjects)}
+                 helperText={touched.subjects && errors.subjects}
+                 
+                slotProps={{
+                  formHelperText: {
+                    sx: { fontSize: 15 },
+                  },
+                 
+                  inputLabel: {
+                    style: { fontSize: 16 },
+                  }
+                }}
+        
+                 
+                />
+              )}
+            
+              sx={{
+                "& .MuiAutocomplete-tag": {
+                  fontSize: "14px",
+                  backgroundColor: "#e0f7fa",
+                },
+                "& .MuiAutocomplete-option": {
+                  fontSize: "16px",
+                },
+                
+              }}
+        
+              slotProps={{
+                textField: {
+                  InputLabelProps: {
+                    style: { fontSize: "18px", color: "blue" },
+                  },
+                  inputProps: {
+                    style: { fontSize: "16px" },
+                  },
+                },
+                popper: {
+                  sx: {
+                    "& .MuiAutocomplete-option": {
+                      fontSize: "16px",
+                    },
+                  },
+                },
+                tag: {
+                  style: { fontSize: "14px", backgroundColor: "#e0f7fa" },
+                },
+              }}
+            
+            />
 
 
              {/* {BUTTON } */}
@@ -1054,7 +1061,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
              
     </Card>
 
-)}
+)}}
                    
        
        
@@ -1063,7 +1070,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
 <div className={style.footer__brand}>
      <img src="/images/logo.png" alt=""/>
-     <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+     <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
 </div>
 
 {/*This Area is for Snackbar*/}

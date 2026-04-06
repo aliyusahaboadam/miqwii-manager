@@ -1,40 +1,28 @@
+import { IconButton, Snackbar } from "@mui/material";
+import MuiCard from '@mui/material/Card';
+import Dialog from '@mui/material/Dialog';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import { PaystackButton } from "react-paystack";
+import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { savePayment } from '../../redux/reducer/paymentSlice';
+import { getSchoolForPaymentDisplayById } from '../../redux/reducer/schoolSlice';
+import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import TextField from '@mui/material/TextField';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
-import { savePayment } from '../../redux/reducer/paymentSlice';
-import { useEffect } from 'react';
-import {IconButton, InputAdornment } from "@mui/material";
-import Dialog from '@mui/material/Dialog';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { PaystackButton } from "react-paystack"
-import Loading from '../Chunks/loading';
-import { getSchoolForPaymentDisplayById } from '../../redux/reducer/schoolSlice';
 
 // Import for dashboard Below
 
+import { Close as CloseIcon } from "@mui/icons-material";
 import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+    Typography
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -593,7 +581,7 @@ const   fetchSchool = async () => {
     
      <div className={style.footer__brand}>
               <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
 

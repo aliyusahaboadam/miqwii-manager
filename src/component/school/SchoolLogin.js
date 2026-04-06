@@ -1,21 +1,17 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import style from '../style/form/SchoolLogin.module.css';
-import { useState } from 'react';
-import React from 'react';
-import TextField from '@mui/material/TextField';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, IconButton, InputAdornment, Snackbar } from "@mui/material";
+import MuiCard from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
-import { object, string, ref } from 'yup';
-import { useNavigate } from 'react-router-dom'
-import {IconButton, InputAdornment } from "@mui/material";
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { object, string } from 'yup';
 import { loginRequest } from '../../redux/reducer/loginSlice';
-import { Helmet } from "react-helmet";
+import style from '../style/form/SchoolLogin.module.css';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -314,7 +310,7 @@ setDisplayText(role.find(role => role.id === id).text)
     
      <div className={style.footer__brand}>
               <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
             <Snackbar

@@ -1,27 +1,18 @@
+import { Close as Cancel } from "@mui/icons-material";
+import { Button, IconButton, Snackbar } from '@mui/material';
+import MuiCard from '@mui/material/Card';
+import Dialog from '@mui/material/Dialog';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { object, string } from 'yup';
+import { uploadLogo } from '../../redux/reducer/schoolSlice';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/SchoolRegistration.module.css';
-import { useState } from 'react';
-import React from 'react';
-import TextField from '@mui/material/TextField';
-import {Button} from '@mui/material';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { Alert, Snackbar } from "@mui/material";
-import {ErrorMessage, Formik } from 'formik';
-import { object, string, ref } from 'yup';
-import { useNavigate } from 'react-router-dom';
-import {IconButton, InputAdornment } from "@mui/material";
-import {  uploadLogo } from '../../redux/reducer/schoolSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import Dialog from '@mui/material/Dialog';
-import {Close as  Cancel } from "@mui/icons-material";
-import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
-import {  useParams} from 'react-router-dom';
-import Loading from '../Chunks/loading';
 
 
 
@@ -281,7 +272,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
      <div className={style.footer__brand}>
               <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
            <Snackbar

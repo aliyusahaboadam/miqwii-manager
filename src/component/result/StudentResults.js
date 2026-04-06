@@ -1,7 +1,8 @@
 import { Document, Font, Image, Page, pdf, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
+import { getSettingsState } from '../../redux/reducer/settingsSlice';
 import { formatPosition } from '../utility/FormatPositon';
 import { KeyTable } from './KeyTable';
 import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
@@ -159,8 +160,9 @@ const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, getPositi
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
   const [isGenerating, setIsGenerating] = useState(false);
-  const positioning = useSelector((state) => state.settings.disablePositioning);
   const [progress, setProgress] = useState('');
+
+
 
   const formatAmount = (amount) => `N${new Intl.NumberFormat('en-NG').format(amount)}`;
 
@@ -216,7 +218,8 @@ const StudentResults = ({ classId }) => {
 
      setProgress('Fetching results...');
     const resultAction = await dispatch(getResultByClassId(classId));
-     const fetchEnd = performance.now();
+    const positioningAction = await dispatch(getSettingsState());
+    const fetchEnd = performance.now();
 
 
      console.log(`API Fetch Time: ${(fetchEnd - fetchStart).toFixed(2)}ms`);
@@ -225,6 +228,7 @@ const StudentResults = ({ classId }) => {
     }
 
     const fetchedResults = resultAction.payload;
+    const positioning = positioningAction.payload.disabledPositioning;
      // Add this line
     console.log(`Number of results (pages): ${fetchedResults.length}`);
 

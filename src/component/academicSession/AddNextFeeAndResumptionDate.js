@@ -1,39 +1,36 @@
 
-import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
 import { Alert, Snackbar } from "@mui/material";
+import MuiCard from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
 import { Formik } from 'formik';
-import { object, string, array, number, date } from 'yup';
+import { useState } from 'react';
+import { date, number, object } from 'yup';
+import style from '../style/form/StudentRegistration.module.css';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { saveSession } from '../../redux/reducer/sessionSlice';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentSession } from '../../redux/reducer/sessionSlice';
-import { updateSession } from '../../redux/reducer/sessionSlice';
+import { getCurrentSession, updateSession } from '../../redux/reducer/sessionSlice';
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import { useEffect } from 'react';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React, { useEffect } from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
-import { 
-  Drawer, 
-  IconButton, 
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
-  TextField
+import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    IconButton,
+    List,
+    TextField,
+    Toolbar,
+    Typography
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -913,7 +910,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
     
      <div className={style.footer__brand}>
               <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
             <Snackbar

@@ -1,46 +1,42 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import TextField from '@mui/material/TextField';
+import { IconButton, Snackbar } from "@mui/material";
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, ref } from 'yup';
+import Dialog from '@mui/material/Dialog';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { saveStudent, resetStatus, getStudentById, updateStudent } from '../../redux/reducer/studentSlice';
-import { useEffect } from 'react';
-import {IconButton, InputAdornment } from "@mui/material";
-import Dialog from '@mui/material/Dialog';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { object, string } from 'yup';
+import { getStudentById, updateStudent } from '../../redux/reducer/studentSlice';
 import Loading from '../Chunks/loading';
-import { useLocation } from 'react-router-dom';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import style from '../style/form/StudentRegistration.module.css';
 
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -883,7 +879,7 @@ inputLabel: {
 
 <div className={style.footer__brand}>
      <img src="/images/logo.png" alt=""/>
-     <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+     <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
 </div>
 
 {/*This Area is for Snackbar*/}

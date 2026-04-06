@@ -1,7 +1,7 @@
-import NavBar from "../Chunks/NavBar";
-import home from "../style/Home.module.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavBar from "../Chunks/NavBar";
+import home from "../style/Home.module.css";
 
 
 
@@ -221,7 +221,7 @@ const ContactUs = () => {
           
                 <section className={home["footer__brand"]}>
                     <img src="/images/logo.png" alt=""/>
-                    <p className={home["footer__copyright"]}>Copyright 2025 MIQWII, All Rights Reserved To The Owners</p>
+                    <p className={home["footer__copyright"]}>Copyright 2026 Miqwii, All Rights Reserved To The Owners</p>
                 </section>
             </div>
         

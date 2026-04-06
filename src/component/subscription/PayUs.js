@@ -1,45 +1,41 @@
+import { IconButton, Snackbar } from "@mui/material";
+import MuiCard from '@mui/material/Card';
+import Dialog from '@mui/material/Dialog';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import { PaystackButton } from "react-paystack";
+import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { savePayment } from '../../redux/reducer/paymentSlice';
+import { getAuthSchool } from '../../redux/reducer/schoolSlice';
+import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import TextField from '@mui/material/TextField';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, ref } from 'yup';
-import { getAuthSchool } from '../../redux/reducer/schoolSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { savePayment } from '../../redux/reducer/paymentSlice';
-import { useEffect } from 'react';
-import {IconButton, InputAdornment } from "@mui/material";
-import Dialog from '@mui/material/Dialog';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { PaystackButton } from "react-paystack"
-import Loading from '../Chunks/loading';
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar,
+    Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useParams } from 'react-router-dom';
 
 
 
@@ -982,7 +978,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
     
      <div className={style.footer__brand}>
               <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
 

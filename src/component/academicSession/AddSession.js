@@ -27,14 +27,14 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-  AppBar,
-  Box,
-  CssBaseline,
-  Drawer,
-  IconButton,
-  List,
-  Toolbar,
-  Typography
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    IconButton,
+    List,
+    Toolbar,
+    Typography
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -782,7 +782,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
     
      <div className={style.footer__brand}>
               <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
             <Snackbar

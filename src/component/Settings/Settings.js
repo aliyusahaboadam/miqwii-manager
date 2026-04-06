@@ -1,42 +1,38 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import style from '../style/form/StudentRegistration.module.css';
+import { IconButton } from '@mui/material';
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch, { SwitchProps } from '@mui/material/Switch';
+import FormGroup from '@mui/material/FormGroup';
 import Stack from '@mui/material/Stack';
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {getSettingsState, changePositioningState ,changeInputStateSecondCA, changeInputStateFirstCA, changeInputStateExam} from '../../redux/reducer/settingsSlice';
-import { useState } from 'react';
-import { IconButton }  from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Switch from '@mui/material/Switch';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeInputStateExam, changeInputStateFirstCA, changeInputStateSecondCA, changePositioningState, getSettingsState } from '../../redux/reducer/settingsSlice';
+import style from '../style/form/StudentRegistration.module.css';
 
 
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -866,7 +862,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
     
      <div className={style.footer__brand}>
               <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2025 Miqwii, All Rights Reserved</p>
+              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
 
