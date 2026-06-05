@@ -1,6 +1,6 @@
-
-import { Alert, Snackbar } from "@mui/material";
+import { IconButton, Snackbar } from "@mui/material";
 import MuiCard from '@mui/material/Card';
+import Dialog from '@mui/material/Dialog';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import InputLabel from '@mui/material/InputLabel';
@@ -10,17 +10,21 @@ import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import { Formik } from 'formik';
 import { useState } from 'react';
+import { object, string } from 'yup';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import style from '../style/form/StudentRegistration.module.css';
+
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { object, string } from 'yup';
-import { saveSession } from '../../redux/reducer/sessionSlice';
-import style from '../style/form/StudentRegistration.module.css';
+import { saveClass } from '../../redux/reducer/classSlice';
+
 
 // Import for dashboard Below
 
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
-import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import React from "react";
 import navbar from '../style/dashboard/SchoolDashboard.module.css';
@@ -31,13 +35,14 @@ import {
     Box,
     CssBaseline,
     Drawer,
-    IconButton,
     List,
     Toolbar,
-    Typography
+    Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+
+
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -69,8 +74,8 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   position: 'relative',
-  minHeight: '100vh',
   width: '100%',
+  minHeight: '100vh',
   backgroundColor: 'rgba(10, 40, 89)',
   backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='251' height='251' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%230E387A' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%230E387A'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");`,
   backgroundSize: 'cover',
@@ -91,59 +96,68 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     backgroundSize: 'cover',
     ...theme.applyStyles('dark', {
       backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+        'radial-gradient(at 50% 50%,#002952, hsl(220, 30%, 5%))',
     }),
   },
 }));
 
 
-const AddSession = () => {
+
+const AddPreNurClass = () => {
 
 
-  const theme = useTheme();
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [anchorProfile, setAnchorProfile] = React.useState(null);
-  const [activeChevron, setActiveChevron] = useState(null);
-
-  const toggleChevron = (chevronId) => {
-    setActiveChevron((prev) => (prev === chevronId ? null : chevronId));
-  };
-
-  const toggleDrawer = () => {
-    setDrawerOpen(!isDrawerOpen);
-  };
-
-  const profilePopup  = (event) => {
-    setAnchorProfile(anchorProfile ? null : event.currentTarget);
-  };
-
-  const openProfile = Boolean(anchorProfile);
-  const idProfile = openProfile ? 'simple-popper' : undefined;
-
-  const handleClickAway = () => {
-      setAnchorProfile(null);
-  };
-
-
-  // ABOVE IS DRAWER LOGIC BELOW IS THE APP LOGIC.........................................................................................
-
-  const subjectRegistrationSchema = object({
-       session: string().required("Session required"),
-       term: string().required("Term required"),
+   const theme = useTheme();
+        const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
+        const [isDrawerOpen, setDrawerOpen] = useState(false);
+        const [anchorProfile, setAnchorProfile] = React.useState(null);
+        const [activeChevron, setActiveChevron] = useState(null);
       
+        const toggleChevron = (chevronId) => {
+          setActiveChevron((prev) => (prev === chevronId ? null : chevronId));
+        };
+      
+        const toggleDrawer = () => {
+          setDrawerOpen(!isDrawerOpen);
+        };
+      
+        const profilePopup  = (event) => {
+          setAnchorProfile(anchorProfile ? null : event.currentTarget);
+        };
+      
+        const openProfile = Boolean(anchorProfile);
+        const idProfile = openProfile ? 'simple-popper' : undefined;
+      
+        const handleClickAway = () => {
+            setAnchorProfile(null);
+        };
+      
+      
+        // ABOVE IS DRAWER LOGIC BELOW IS THE APP LOGIC.........................................................................................
+      
+    
 
+  const classRegistrationSchema = object({
+    
+   name: string().required("Class is required"),
+  
   });
+
+
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 1000); // Delay before showing content
+    return () => clearTimeout(timer);
+  }, []);
   
 
 
 const [open, setOpen] = useState(false); 
 const [alertType, setAlertType] = useState(""); 
 const [message, setMessage] = useState(""); 
-const studentState = useSelector((state) => state.students);
 const classState = useSelector((state) => state.classes);
-const { status: subjectStatus, error: subjectError } = studentState;
-const { classNames, fetchingStatus } = classState;
 const dispatch = useDispatch();
 const navigate = useNavigate();
 
@@ -156,38 +170,41 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
 
 
+
 const handleClose = (event, reason) => {
   if (reason === "clickaway") {
     return; // Prevent closing if the user clicks away
   }
   setOpen(false); // Close the Snackbar
 };
+        
 
 
-     const handleFormSubmit = async (values, { resetForm })  => {
-          console.log(values);
-           try {
-          const resultAction = await dispatch(saveSession(values)).unwrap();
+
+
+  const handleFormSubmit = async (values, { resetForm })  => {
+      console.log(values);
+     
+         try {
+         const result = await dispatch(saveClass(values)).unwrap();
+          console.log(result);
           setAlertType("success");
-          setMessage(resultAction.message);
-          navigate("/session/setup-session")
+          setMessage(result.message);
            } catch (error) {
-            setAlertType("error");
-            setMessage(error.message)
-            
-           }
+          console.log(error);
+          setAlertType("error");
+          setMessage(error.message); 
+         }
 
             setOpen(true);
             resetForm(); // This will reset the forto the initial values
     };
 
+   
                
   return (
   
-   
-
-
-    <ClickAwayListener onClickAway={handleClickAway}>
+ <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
 
@@ -199,9 +216,7 @@ const handleClose = (event, reason) => {
               <MenuIcon sx={{ color: "inherit", fontSize: 30 }} />
             </IconButton>
           )}
-          <Typography variant="h4" noWrap>
-          School Dashboards
-          </Typography>
+          
 
          
           <div>
@@ -326,35 +341,34 @@ onClick={(e) => e.stopPropagation()}>Add School Logo</a>
           
      
 
-     {/* Student Navbar Content */}
-     <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#student"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Students</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
+      {/* Student Navbar Content */}
+      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
+        <header className={navbar['collapsible__header']}>
+       <div className={navbar['collapsible__icon']}>
+ 
+       <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+             <use href="../images/sprite.svg#student"></use>
+           </svg>
+         <p className={navbar['collapsible__heading']}>Students</p>
+       </div>
+       
+         
+         <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
+             <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                 <use href="../images/sprite.svg#chevron"></use>
+               </svg>
+         </span>
+     </header>
+     
+ 
+     <div className={navbar['collapsible__content--drawer']}>
+     <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Student</a>
-    <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Students</a>
-    </div>
-
- </div>   
-
+     </div>
+ 
+  </div>   
 
    {/* Class Navbar Content */}
     <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
@@ -647,22 +661,22 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
            component="main"
            sx={{
              flexGrow: 1,
-             marginTop: 7,
-            
+             marginTop: 6,
+             fontSize: 20,
              transition: "margin-left 0.3s ease-in-out",
            }}
          >
 
 
-            <SignInContainer>
+ <SignInContainer>
 
              <Formik
                     initialValues={{
-                        session: "",
-                        term: 0,
-                   
+                  
+                      name: ""
+                      
                     }}
-                    validationSchema={subjectRegistrationSchema}
+                    validationSchema={classRegistrationSchema}
                     onSubmit={handleFormSubmit}
                   >
     
@@ -690,90 +704,57 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                  
              
                   {/*Card Header*/}
-                <p className={style['form-header']}>Add TERM</p>
+                <p className={style['form-header']}>Add Pre-Nursery Classes</p>
             
  
     {/*Input Field*/}
 
 
      <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-
-      <FormControl sx={{ m: 1, minWidth: "100%"}}>
-        <InputLabel  sx={{ fontSize: 18 }} >Select Year</InputLabel>
+     <FormControl sx={{ m: 1, minWidth: "100%"}}>
+        <InputLabel  sx={{ fontSize: 18 }} >Select Class</InputLabel>
           <Select
-          label="Session"
-          name='session'
+          label="class"
+          name='name'
           variant='filled'
-          onChange={(event) => setFieldValue("session", event.target.value)}
+          onChange={(event) => {setFieldValue("name", event.target.value)}}
           onBlur={handleBlur}
-          value={values.session}
+          value={values.name}
           sx={{ fontSize: 18 }}
-          error={touched.session && Boolean(errors.session)}
+          error={touched.gender && Boolean(errors.gender)}
 
         >
-          {
-
-             sessions.map(session => (
-
-                <MenuItem  sx={{ fontSize: 18 }} value={session}>{session}</MenuItem>
-
-              ))
-
-          }
-         
-         
           
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR1A"}>{"PRE-NUR1A"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR1B"}>{"PRE-NUR1B"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR1C"}>{"PRE-NUR1C"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR1D"}>{"PRE-NUR1D"}</MenuItem>
+
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR2A"}>{"PRE-NUR2A"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR2B"}>{"PRE-NUR2B"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR2C"}>{"PRE-NUR2C"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR2D"}>{"PRE-NUR2D"}</MenuItem>
+                
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR3A"}>{"PRE-NUR3A"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR3B"}>{"PRE-NUR3B"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR3C"}>{"PRE-NUR3C"}</MenuItem>
+                <MenuItem  sx={{ fontSize: 18 }} value={"PRE-NUR3D"}>{"PRE-NUR3D"}</MenuItem>
+
 
   
         </Select>
-        <FormHelperText sx={{ fontSize: 15 }}>{touched.score?.session && errors.score?.session}</FormHelperText>
+        <FormHelperText sx={{ fontSize: 15 }}>{touched.name && errors.name}</FormHelperText>
       </FormControl>
 
      </div>
 
-       <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-
-      <FormControl sx={{ m: 1, minWidth: "100%"}}>
-        <InputLabel  sx={{ fontSize: 18 }} >Select Term</InputLabel>
-          <Select
-          label="Term"
-          name='term'
-          variant='filled'
-          onChange={(event) => setFieldValue("term", event.target.value)}
-          onBlur={handleBlur}
-          value={values.term}
-          sx={{ fontSize: 18 }}
-          error={touched.term && Boolean(errors.term)}
-
-        >
-          {
-
-              terms.map(term => (
-
-                <MenuItem  sx={{ fontSize: 18 }} value={term}>{term}</MenuItem>
-
-              ))
-
-          }
-         
-         
-          
-
-  
-        </Select>
-        <FormHelperText sx={{ fontSize: 15 }}>{touched.score?.term && errors.score?.term}</FormHelperText>
-      </FormControl>
-
-     </div>
-
-    
-
-
+     
 
              {/* {BUTTON } */}
 
-             <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Submitting...' : 'Add'}</button>
-    </Card>
+             <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Submitting...' : 'Add Pre-Nursery Class'}</button>
+             <span className={style['form-link']} >Let us know your Pre-Nursery classes</span>
+             </Card>
 
 )}
                    
@@ -787,47 +768,124 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
               <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
        </div>
 
-            <Snackbar
-               open={open}
-               autoHideDuration={3000} // Automatically hide after 1 second
-               onClose={handleClose}
-               anchorOrigin={{ vertical: "top", horizontal: "center" }} // Position at the top center
-             >
-               <Alert onClose={handleClose} severity={alertType} sx={{ width: "100%", 
-                   fontSize: "2rem", 
-                   padding: "16px", 
-                   textAlign: "center"}} >
-                 {message}
-               </Alert>
-             </Snackbar>
 
-   </SignInContainer>
+
+   </SignInContainer>   
+
+            
        
       </Box>
+      {/*This Area is for Snackbar*/}
+        
+                    <Snackbar
+                       open={open}
+                       autoHideDuration={3000} // Automatically hide after 1 second
+                       onClose={handleClose}
+                       anchorOrigin={{ vertical: "center", horizontal: "center" }} // Position at the top center
+                     >
+        
+        
+        
+        
+              <div>
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                BackdropProps={{
+                  sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" }, // Darker overlay
+                }}
+        
+                sx={{
+                  "& .MuiDialog-paper": {
+                    width: '100%',
+                    borderRadius: "15px", // Optional: Rounded corners
+                  },
+                }}
+              
+              >
+        
+                {
+        
+                  alertType === 'success' ? 
+        
+                  <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-success']].join(' ')}>
+                  <div class={dashboard['card_body']}>
+        
+                               
+                     <span class={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
+                          
+                          <IconButton onClick={handleClose}>
+                            <CloseIcon sx={{ fontSize: 30, color: '#0e387a' }} />
+                          </IconButton>
+                 </span>
+        
+                  <span class={dashboard['icon-container']}>
+                          <svg class={[dashboard['icon--big'], dashboard['icon--success']].join(' ')}>
+                              <use href="../images/sprite.svg#success-icon"></use>
+                            </svg>
+                      </span>
+        
+                  <Typography sx={{ fontSize: 21}}>
+                    <p class={dashboard['alert-message']}>{message}</p>
+                 </Typography>
+                   
+                  </div>
+                   <Typography sx={{ fontSize: 20}}>
+                 <p class={dashboard['card_footer']}>success</p>
+                </Typography>
+                </div>
+        
+                : 
+        
+                <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-error']].join(' ')}>
+                <div class={dashboard['card_body']}>
+        
+        
+                   <span class={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
+                        
+                             <IconButton onClick={handleClose}>
+                               <CloseIcon sx={{ fontSize: 30 }} />
+                             </IconButton>
+                    </span>
+        
+        
+                <span class={dashboard['icon-container']}>
+                        <svg class={[dashboard['icon--big'], dashboard['icon--error']].join(' ')}>
+                            <use href="../images/sprite.svg#error-icon"></use>
+                          </svg>
+                    </span>
+                 <Typography sx={{ fontSize: 21}}>
+                    <p class={dashboard['alert-message']}>{message}</p>
+                 </Typography>
+                </div>
+                <Typography sx={{ fontSize: 20}}>
+                 <p class={dashboard['card_footer']}>error</p>
+                </Typography>
+                
+              </div>
+        
+        
+                }
+              
+        
+         
+                    
+                   
+              </Dialog>
+        
+              </div>
+        
+              
+                     </Snackbar>
     </Box>
-    </ClickAwayListener>
+
+     
+    </ClickAwayListener>  
    
   );
 };
 
-export default AddSession;
+export default AddPreNurClass;
 
 
-const sessions = [
-  "2025/2026",
-  "2026/2027",
-   "2027/2028",
-  "2028/2029",
- "2029/2030",
 
-  
-];
-
-
-const terms = [
-
-  "1st",
-  "2nd",
-  "3rd",
-
-];

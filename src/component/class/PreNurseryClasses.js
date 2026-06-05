@@ -36,12 +36,12 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-  AppBar,
-  Box,
-  CssBaseline,
-  Drawer,
-  List,
-  Toolbar
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -70,7 +70,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 
 
-const NurseryClasses  = () => {
+const PreNurseryClasses  = () => {
 
 
   const theme = useTheme();
@@ -135,9 +135,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   try {
     setIsInitialLoad(true);
     await Promise.all([
-      dispatch(getPrefixClassnameAndBasicDetails('N')).unwrap(),
+      dispatch(getPrefixClassnameAndBasicDetails('PRE')).unwrap(),
       dispatch(getClassCount()).unwrap(),
-      dispatch(getClassCountSpecific('N')).unwrap()
+      dispatch(getClassCountSpecific('PRE')).unwrap()
     ]);
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -173,8 +173,8 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       setAnchorEl(null);
     };
 
-    const navigateToAddNurClasses = () => {
-      navigate('/class/add-nur-class')
+    const navigateToAddPreNurClasses = () => {
+      navigate('/class/add-pre-nur-class')
     }
 
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -661,7 +661,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             
             
             
-            Available Nursery Classes
+            Available Pre-Nursery Classes
             
             </div>
             
@@ -703,11 +703,11 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             
             
                  <div class={dashboard['card--small-head']}>
-                  Add Nursery Classes
+                  Add Pre-Nursery Classes
                  </div>
             
                          
-                <button onClick={navigateToAddNurClasses}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Nursery Class</button>
+                <button onClick={navigateToAddPreNurClasses}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Pre-Nursery Class</button>
             
             
               </div>
@@ -726,7 +726,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                                       <Table sx={{ minWidth: 650 }} aria-label="simple table">
                                                      <TableHead>
                                                        <TableRow>
-                                                         <StyledTableCell>Nursery Classes</StyledTableCell>
+                                                         <StyledTableCell>Pre-Nursery Classes</StyledTableCell>
                                                          <StyledTableCell>Score Sheet</StyledTableCell>
                                                          <StyledTableCell align="left">No. of student</StyledTableCell>
                                                          <StyledTableCell align="right">Action&nbsp;</StyledTableCell>
@@ -820,7 +820,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
     );
 }
 
-export default NurseryClasses;
+export default PreNurseryClasses;
 
 
 

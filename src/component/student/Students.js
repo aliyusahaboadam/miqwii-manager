@@ -1,49 +1,45 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import { IconButton } from "@mui/material";
+import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { IconButton } from "@mui/material";
-import Paper from '@mui/material/Paper';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
 import TableFooter from '@mui/material/TableFooter';
+import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
 import PropTypes from 'prop-types';
-import { getStudentByClass } from '../../redux/reducer/studentSlice';
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import { deleteStudent } from '../../redux/reducer/studentSlice';
-import StudentActionMenu from '../utility/StudentActionMenu';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { deleteStudent, getStudentByClass } from '../../redux/reducer/studentSlice';
 import Loading from '../Chunks/loading';
-import { useLocation } from 'react-router-dom';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import StudentActionMenu from '../utility/StudentActionMenu';
 
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -358,45 +354,49 @@ onClick={(e) => e.stopPropagation()}>Switch Students Account</a>
     </div>  
    
       {/* Class Navbar Content */}
-         <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
-          <header  className={navbar['collapsible__header']}>
-         <div  className={navbar['collapsible__icon']}>
-   
-         <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-               <use href="../images/sprite.svg#class"></use>
-             </svg>
-           <p  className={navbar['collapsible__heading']}>Classes</p>
-         </div>
-         
-           
-           <span onClick={() => toggleChevron('chevron-2')} className={navbar['icon-container']}>
-               <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                   <use href="../images/sprite.svg#chevron"></use>
-                 </svg>
-           </span>
-       </header>
-       
-   
-       <div className={navbar['collapsible__content--drawer']}>
-       <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
+       <header  className={navbar['collapsible__header']}>
+      <div  className={navbar['collapsible__icon']}>
+
+      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+            <use href="../images/sprite.svg#class"></use>
+          </svg>
+        <p  className={navbar['collapsible__heading']}>Classes</p>
+      </div>
+      
+        
+        <span onClick={() => toggleChevron('chevron-2')} className={navbar['icon-container']}>
+            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                <use href="../images/sprite.svg#chevron"></use>
+              </svg>
+        </span>
+    </header>
+    
+
+    <div className={navbar['collapsible__content--drawer']}>
+    <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>JSS Classes</a>
-       <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>SSS Classes</a>
-       <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Primary Classes</a>
 <a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
-       <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+<a href="#/class/pre-nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Pre-Nursery Classes</a>
+    <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
-       <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
-       <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
 <a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
-       </div>
-   
-    </div> 
+onClick={(e) => e.stopPropagation()}>Add Nursery Class</a>
+<a href="#/class/add-pre-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Pre-Nursery Class</a>
+    </div>
+
+ </div> 
    
             {/* Subject Navbar Content */}
          <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-3')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-3' ?  'collapsible--expanded' : null]].join(' ')} >

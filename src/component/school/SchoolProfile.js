@@ -1,42 +1,37 @@
+import { IconButton, Snackbar } from "@mui/material";
+import MuiCard from '@mui/material/Card';
+import Dialog from '@mui/material/Dialog';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getAuthSchool } from '../../redux/reducer/schoolSlice';
+import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import TextField from '@mui/material/TextField';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, ref } from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import {IconButton, InputAdornment } from "@mui/material";
-import Dialog from '@mui/material/Dialog';
-import { useParams, useNavigate } from 'react-router-dom';
-import Loading from '../Chunks/loading';
-import { getAuthSchool } from '../../redux/reducer/schoolSlice';
 
  // Import for dashboard Below
  
- import React from "react";
- import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
- import navbar from '../style/dashboard/SchoolDashboard.module.css';
- import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
- import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
  import { ClickAwayListener } from '@mui/base/ClickAwayListener';
- import { useLocation } from 'react-router-dom';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import { useLocation } from 'react-router-dom';
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
  
- import { 
-   Drawer,  
-   List, 
-   Toolbar, 
-   AppBar, 
-   Box, 
-   Typography, 
-   CssBaseline,
- } from "@mui/material";
- import { useTheme } from "@mui/material/styles";
- import useMediaQuery from "@mui/material/useMediaQuery";
+ import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar,
+    Typography,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
  
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -381,7 +376,7 @@ onClick={(e) => e.stopPropagation()}>View Students</a>
  </div>   
 
    {/* Class Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
+    <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
        <header  className={navbar['collapsible__header']}>
       <div  className={navbar['collapsible__icon']}>
 
@@ -409,6 +404,8 @@ onClick={(e) => e.stopPropagation()}>SSS Classes</a>
 onClick={(e) => e.stopPropagation()}>Primary Classes</a>
 <a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
+<a href="#/class/pre-nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Pre-Nursery Classes</a>
     <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
     <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
@@ -416,12 +413,12 @@ onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
     <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
 <a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
+onClick={(e) => e.stopPropagation()}>Add Nursery Class</a>
+<a href="#/class/add-pre-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Add Pre-Nursery Class</a>
     </div>
 
- </div> 
-
-      {/* Subject Navbar Content */}
+ </div>       {/* Subject Navbar Content */}
       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-3')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-3' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>

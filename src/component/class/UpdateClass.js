@@ -248,7 +248,7 @@ const handleClose = (event, reason) => {
         {/* {BUTTON } */}
 
         <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Submitting...' : 'Update Class'}</button>
-        <span className={style['form-link']} >Class name  must start with this convention JSS, SSS, PRI, NUR </span>
+        <span className={style['form-link']} >Class name  must start with this convention JSS, SSS, PRE, JIS, SIS, PRI, NUR </span>
         </Card>
 
 )}

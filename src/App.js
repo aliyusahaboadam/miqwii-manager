@@ -1,77 +1,71 @@
-import logo from './logo.svg';
+import { Route, HashRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import StudentResult from './PDFViewer/StudentResult';
-import SchoolLogin from './component/school/SchoolLogin';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import SchoolRegistration from './component/school/SchoolRegistration';
-import SchoolDashboard from './component/dashboards/SchoolDashboard';
-import AddStudent from './component/student/AddStudent';
-import PrivateRoute from './component/routing/PrivateRoute';
-import AddTeacher from './component/teacher/AddTeacher';
+import Settings from './component/Settings/Settings';
+import AddNextTermFeeAndResumptionDate from './component/academicSession/AddNextFeeAndResumptionDate';
+import AddSession from './component/academicSession/AddSession';
+import SessionSetup from './component/academicSession/SessionSetup';
+import AdminProfile from './component/admin/AdminProfile';
+import AdminSchoolsDetails from './component/admin/AdminSchoolsDetails';
+import SchoolActivator from './component/admin/SchoolActivator';
+import SchoolsAdmin from './component/admin/SchoolsAdmin';
+import UpdateSchool from './component/admin/UpdateSchool';
 import AddJSSClass from './component/class/AddJSSClass';
+import AddNurClass from './component/class/AddNurClass';
+import AddPreNurClass from './component/class/AddPreNurClass';
+import AddPriClass from './component/class/AddPriClass';
 import AddSSSClass from './component/class/AddSSSClass';
 import DeleteClass from './component/class/DeleteClass';
-import AddPriClass from './component/class/AddPriClass';
 import JSSClasses from './component/class/JSSClasses';
+import NurseryClasses from './component/class/NurseryClasses';
+import PreNurseryClasses from './component/class/PreNurseryClasses';
 import PrimaryClasses from './component/class/PrimaryClasses';
 import SSSClasses from './component/class/SSSClasses';
 import UpdateClass from './component/class/UpdateClass';
-import Testing from './component/Chunks/testing';
-import ViewStudents from './component/student/ViewStudents';
-import Students from './component/student/Students';
-import UpdateStudent from './component/student/UpdateStudent';
-import StudentDetails from './component/student/StudentDetails';
-import AddSubjects from './component/subject/AddSubjects';
-import ViewSubjects from './component/subject/ViewSubjects';
-import Subjects from './component/subject/Subjects';
-import UpdateSubject from './component/subject/UpdateSubject';
-import Teachers from './component/teacher/Teachers';
-import UpdateTeacher from './component/teacher/UpdateTeacher';
-import TeacherDetails from './component/teacher/TeacherDetails';
-import AddScore from './component/score/AddScore';
-import AddSession from './component/academicSession/AddSession';
-import SessionSetup from './component/academicSession/SessionSetup';
-import TeacherDashboard from './component/dashboards/TeacherDashboard';
 import AdminDashboard from './component/dashboards/AdminDashboard';
+import SchoolDashboard from './component/dashboards/SchoolDashboard';
 import StudentDashboard from './component/dashboards/StudentDashboard';
-import TeacherSubject from './component/teacher/TeacherSubject';
-import Settings from './component/Settings/Settings';
-import PasswordRequest from './component/school/PasswordRequest';
-import ResetPassword from './component/school/ResetPassword';
-import TeacherProfile from './component/teacher/TeacherProfile';
-import VerifierPage from './component/school/VerifierPage';
-import StudentResults from './component/result/StudentResults';
-import ShowResults from './component/result/ShowResults';
-import NavBar from './component/Chunks/NavBar';
-import ViewStudentReceipt from './component/receipt/ViewStudentReceipt';
-import StudentReceipt from './component/receipt/StudentReceipt';
-import PayUS from './component/subscription/PayUs';
-import Home from './component/home/Home';
-import Payments from './component/subscription/Payments';
-import ShowResultByRegNo from './component/result/ShowResultByRegNo';
-import StudentProfile from './component/student/StudentProfile';
-import SchoolProfile from './component/school/SchoolProfile';
-import SchoolsAdmin from './component/admin/SchoolsAdmin';
-import AdminSchoolsDetails from './component/admin/AdminSchoolsDetails';
-import UpdateSchool from './component/admin/UpdateSchool';
-import SchoolActivator from './component/admin/SchoolActivator';
-import PayUSOutside from './component/subscription/PayUsOutside';
-import Services from './component/home/Services';
-import ContactUs from './component/home/ContactUs';
+import TeacherDashboard from './component/dashboards/TeacherDashboard';
 import AboutUs from './component/home/AboutUs';
-import StudentResetPassword from './component/student/StudentResetPassword';
-import TeacherResetPassword from './component/teacher/TeacherResetPassword';
+import ContactUs from './component/home/ContactUs';
+import Home from './component/home/Home';
+import Services from './component/home/Services';
+import StudentReceipt from './component/receipt/StudentReceipt';
+import ViewStudentReceipt from './component/receipt/ViewStudentReceipt';
+import ShowMasterSheet from './component/result/ShowMasterSheet';
+import ShowResultByRegNo from './component/result/ShowResultByRegNo';
+import ShowResults from './component/result/ShowResults';
 import StudentResultByRegNoStudentDashboard from './component/result/StudentResultByRegNoStudentDashboard';
 import StudentResultByRegNoTeacherDashboard from './component/result/StudentResultByRegNoTeacherDashboard';
-import AdminProfile from './component/admin/AdminProfile';
-import UploadSchoolLogo from './component/school/UploadSchoolLogo';
+import PasswordRequest from './component/school/PasswordRequest';
+import ResetPassword from './component/school/ResetPassword';
+import SchoolLogin from './component/school/SchoolLogin';
+import SchoolProfile from './component/school/SchoolProfile';
+import SchoolRegistration from './component/school/SchoolRegistration';
 import StudentActivator from './component/school/StudentActivator';
-import AddNurClass from './component/class/AddNurClass';
-import NurseryClasses from './component/class/NurseryClasses';
-import AddNextTermFeeAndResumptionDate from './component/academicSession/AddNextFeeAndResumptionDate';
-import ShowMasterSheet from './component/result/ShowMasterSheet';
+import UploadSchoolLogo from './component/school/UploadSchoolLogo';
+import VerifierPage from './component/school/VerifierPage';
+import AddScore from './component/score/AddScore';
+import AddStudent from './component/student/AddStudent';
+import StudentDetails from './component/student/StudentDetails';
+import StudentProfile from './component/student/StudentProfile';
+import StudentResetPassword from './component/student/StudentResetPassword';
+import Students from './component/student/Students';
+import UpdateStudent from './component/student/UpdateStudent';
+import ViewStudents from './component/student/ViewStudents';
+import AddSubjects from './component/subject/AddSubjects';
+import Subjects from './component/subject/Subjects';
+import UpdateSubject from './component/subject/UpdateSubject';
+import ViewSubjects from './component/subject/ViewSubjects';
+import PayUS from './component/subscription/PayUs';
+import PayUSOutside from './component/subscription/PayUsOutside';
+import Payments from './component/subscription/Payments';
+import AddTeacher from './component/teacher/AddTeacher';
+import TeacherDetails from './component/teacher/TeacherDetails';
+import TeacherProfile from './component/teacher/TeacherProfile';
+import TeacherResetPassword from './component/teacher/TeacherResetPassword';
+import TeacherSubject from './component/teacher/TeacherSubject';
+import Teachers from './component/teacher/Teachers';
+import UpdateTeacher from './component/teacher/UpdateTeacher';
 
 
 
@@ -104,11 +98,14 @@ function App() {
          <Route exact path='/class/sss-classes'  element={ <SSSClasses/> }/>
          <Route exact path='/class/primary-classes'  element={ <PrimaryClasses/> }/>
          <Route exact path='/class/nursery-classes'  element={ <NurseryClasses/> }/>
+          <Route exact path='/class/pre-nursery-classes'  element={ <PreNurseryClasses/> }/>
+         
 
         <Route exact path='/class/add-jss-class'  element={ <AddJSSClass/> }/>
         <Route exact path='/class/add-sss-class'  element={ <AddSSSClass/> }/>
         <Route exact path='/class/add-pri-class'  element={ <AddPriClass/> }/>
         <Route exact path='/class/add-nur-class'  element={ <AddNurClass/> }/>
+        <Route exact path='/class/add-pre-nur-class'  element={ <AddPreNurClass/> }/>
         <Route exact path='/class/delete-class'  element={ <DeleteClass/> }/>
         <Route exact path='/class/update-class/:className'  element={ <UpdateClass/> }/>
               {/*Subject Releted*/}
