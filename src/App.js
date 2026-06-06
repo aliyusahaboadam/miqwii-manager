@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Route, HashRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import Settings from './component/Settings/Settings';
