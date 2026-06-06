@@ -71,6 +71,26 @@ import UpdateTeacher from './component/teacher/UpdateTeacher';
 
 function App() {
 
+
+
+  useEffect(() => {
+  const checkVersion = async () => {
+    const res = await fetch('/version.json?t=' + Date.now()); // bypass cache
+    const { version } = await res.json();
+    const stored = localStorage.getItem('app_version');
+    if (stored && stored !== version) {
+      localStorage.setItem('app_version', version);
+      window.location.reload();
+    } else {
+      localStorage.setItem('app_version', version);
+    }
+  };
+
+  checkVersion();
+  const interval = setInterval(checkVersion, 5 * 60 * 1000); // check every 5 mins
+  return () => clearInterval(interval);
+}, []);
+
   
   
   return (
