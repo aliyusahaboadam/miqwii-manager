@@ -134,9 +134,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   try {
     setIsInitialLoad(true);
     await Promise.all([
-      dispatch(getPrefixClassnameAndBasicDetails('P')).unwrap(),
+      dispatch(getPrefixClassnameAndBasicDetails('PRI')).unwrap(),
       dispatch(getClassCount()).unwrap(),
-      dispatch(getClassCountSpecific('P')).unwrap()
+      dispatch(getClassCountSpecific('PRI')).unwrap()
     ]);
   } catch (error) {
     console.error('Error fetching data:', error);
