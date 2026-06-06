@@ -30,12 +30,14 @@ const SchoolDemographicsCharts = () => {
           const NUR = chartCounts.NUR?.length || 0;
           const JSS = chartCounts.JSS?.length || 0;
           const SSS = chartCounts.SSS?.length || 0;
+          const PRE = chartCounts.PRE?.length || 0;
 
           // Teacher counts
           const PRI_TEACHERS = chartCounts.PRI?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
           const NUR_TEACHERS = chartCounts.NUR?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
           const JSS_TEACHERS = chartCounts.JSS?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
           const SSS_TEACHERS = chartCounts.SSS?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
+          const PRE_TEACHERS = chartCounts.PRE?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
 
   const chartStyle =  {
 
@@ -142,7 +144,8 @@ const SchoolDemographicsCharts = () => {
     { name: 'Primary Teachers',value: PRI_TEACHERS, color: '#00008B' },
     { name: 'JSS Teachers', value: JSS_TEACHERS, color: '#1F75FE' },
     { name: 'SSS Teachers',value:  SSS_TEACHERS, color: '#74BBFB' },
-    { name: 'Nursery Teachers',value:  NUR_TEACHERS, color: '#5788b3ff' }
+    { name: 'Nursery Teachers',value:  NUR_TEACHERS, color: '#5788b3ff' },
+    { name: 'Pre-Nursery Teachers',value:  PRE_TEACHERS, color: 'rgb(14, 79, 136)' }
   ];
 
   // Sample data for classes
@@ -150,7 +153,8 @@ const SchoolDemographicsCharts = () => {
     { name: 'Primary Classes', value: PRI, color: '#7D77DE' },
     { name: 'Nursery Classes', value: NUR , color: '#1432dcff' },
     { name: 'JSS Classes', value: JSS, color: '#013375' },
-    { name: 'SSS Classes', value: SSS , color: '#0167AD' }
+    { name: 'SSS Classes', value: SSS , color: '#0167AD' },
+    { name: 'Pre-Nursery Classes', value: PRE , color: 'rgb(69, 78, 128)' },
   ];
 
   const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
@@ -233,7 +237,7 @@ const SchoolDemographicsCharts = () => {
             </PieChart>
           </ResponsiveContainer>
           <div style={chartStyle.chartTotal}>
-            <p>Teacher in Class: {teacherData.reduce((sum, item) => sum + item.value, 0)}</p>
+            <p>Class Teachers: {teacherData.reduce((sum, item) => sum + item.value, 0)}</p>
           </div>
         </div>
 
