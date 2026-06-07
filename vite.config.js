@@ -3,9 +3,9 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react()],
-   build: {
-    outDir: 'build', // CRA's default build output
-  },
+  build: {
+  outDir: 'dist'
+},
   server: {
     port: 3000
   }
