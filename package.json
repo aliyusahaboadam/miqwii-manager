@@ -1,4 +1,5 @@
 {
+  "homepage": "https://miqwii.com",
   "name": "miqwii-manager",
   "version": "0.1.0",
   "private": true,
@@ -36,6 +37,8 @@
     "yup": "^1.6.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
