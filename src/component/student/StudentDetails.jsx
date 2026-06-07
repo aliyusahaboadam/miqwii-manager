@@ -1,69 +1,38 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import { IconButton, Stack } from "@mui/material";
 import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconButton } from "@mui/material";
-import Paper from '@mui/material/Paper';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import PropTypes from 'prop-types';
-import { getClassNamesStartingWith, getClassCount, getClassCountSpecific } from '../../redux/reducer/classSlice';
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { saveClass , resetStatus, deleteClass } from '../../redux/reducer/classSlice';
-import { getAllSession } from '../../redux/reducer/sessionSlice';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import style from '../style/form/StudentRegistration.module.css';
-import { Formik } from 'formik';
-import { object, string, array } from 'yup';
-import { Alert, Snackbar } from "@mui/material";
-import { setCurrentSession } from '../../redux/reducer/sessionSlice';
-import {  
-  Dialog
-} from '@mui/material';
-import ActionMenu from '../utility/ActionMenu';
-import Loading from '../Chunks/loading';
-import {useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { object, string } from 'yup';
 import { getStudentById } from '../../redux/reducer/studentSlice';
-import {Stack} from '@mui/material';
+import Loading from '../Chunks/loading';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import style from '../style/form/StudentRegistration.module.css';
 
  
 
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
 import { useLocation } from 'react-router-dom';
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
+import {
+  AppBar,
+  Box,
   CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
+import MuiCard from '@mui/material/Card';
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import MuiCard from '@mui/material/Card';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({

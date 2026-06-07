@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 // import api from 'api';
 import api from '../../component/routing/Interceptor';
 
-const BASE_URL = `${process.env.REACT_APP_API_URL}/v1/api/class`;
+const BASE_URL = `${import.meta.env.VITE_API_URL}/v1/api/class`;
 
 export const getClassNames = createAsyncThunk(
   'class/getClassNames',
@@ -249,7 +249,12 @@ const classSlice = createSlice({
         updateStatus: 'idle',
         error: null,
     },
-    reducers: {},
+     reducers: {
+      resetStatus (state) {
+        state.status = 'idle';
+        state.error = null;
+      },
+    },
     extraReducers: (builder) => {
         builder
 

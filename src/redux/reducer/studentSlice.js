@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 // import api from 'api';
 import api from '../../component/routing/Interceptor';
 
-const BASE_URL = `${process.env.REACT_APP_API_URL}/v1/api/student`;
+const BASE_URL = `${import.meta.env.VITE_API_URL}/v1/api/student`;
 
 export const saveStudent = createAsyncThunk(
   'student/saveStudent',

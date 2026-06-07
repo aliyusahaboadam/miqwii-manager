@@ -1,8 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../component/routing/Interceptor';
 // import api from 'api';
 
-const BASE_URL = `${process.env.REACT_APP_API_URL}/v1/api/password`;
+const BASE_URL = `${import.meta.env.VITE_API_URL}/v1/api/password`;
 
 export const sendPasswordRequest = createAsyncThunk(
   'teacher/sendPasswordRequest',

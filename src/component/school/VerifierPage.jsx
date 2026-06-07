@@ -1,29 +1,13 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import React from 'react';
-import TextField from '@mui/material/TextField';
+import { Snackbar } from "@mui/material";
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, ref } from 'yup';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import { useDispatch, useSelector } from 'react-redux';
-import { saveStudent, resetStatus } from '../../redux/reducer/studentSlice';
-import { getClassNames, classExists } from '../../redux/reducer/classSlice';
-import { useEffect } from 'react';
-import {Close as  Cancel } from "@mui/icons-material";
-import {IconButton, InputAdornment } from "@mui/material";
 import Dialog from '@mui/material/Dialog';
-import { useLocation } from 'react-router-dom';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getVerificationStatus } from '../../redux/reducer/loginSlice';
-import { useNavigate } from 'react-router-dom';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',

@@ -1,10 +1,8 @@
-import { Construction } from '@mui/icons-material';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 // import api from 'api';
 import api from '../../component/routing/Interceptor';
-import MasterSheet from '../../component/result/MasterSheet';
 
-const BASE_URL = `${process.env.REACT_APP_API_URL}/v1/api/score`;
+const BASE_URL = `${import.meta.env.VITE_API_URL}/v1/api/score`;
 
 export const saveScore = createAsyncThunk(
   'score/saveScore',
