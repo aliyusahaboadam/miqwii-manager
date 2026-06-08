@@ -21,6 +21,7 @@
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",
     "formik": "^2.4.6",
+    "lightningcss-win32-x64-msvc": "^1.32.0",
     "lodash": "^4.17.21",
     "pdfmake": "^0.3.5",
     "react": "^18.3.1",
@@ -62,6 +63,7 @@
     ]
   },
   "devDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "^1.1.0",
     "@vitejs/plugin-react": "^6.0.2",
     "ajv": "^8.17.1",
     "esbuild": "^0.28.0",
