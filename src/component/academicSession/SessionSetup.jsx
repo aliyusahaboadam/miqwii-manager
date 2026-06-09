@@ -251,7 +251,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
           <div className={navbar['profile--selection__container']}>
           <div className={navbar['profile']}>
-           <a href="#/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+           <a href="/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
           <div className={navbar['logout']}>
            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -333,15 +333,15 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="#/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Session</a>
-   <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
-    <a href="#/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
-<a href="#/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+<a href="/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add School Logo</a>
     </div>
 
@@ -373,9 +373,9 @@ onClick={(e) => e.stopPropagation()}>Add School Logo</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Student</a>
-    <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Students</a>
     </div>
 
@@ -402,25 +402,25 @@ onClick={(e) => e.stopPropagation()}>View Students</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>JSS Classes</a>
-    <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>SSS Classes</a>
-    <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Primary Classes</a>
-<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+<a href="/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
-<a href="#/class/pre-nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+<a href="/class/pre-nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Pre-Nursery Classes</a>
-    <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
-    <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
-    <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
-<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+<a href="/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Nursery Class</a>
-<a href="#/class/add-pre-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+<a href="/class/add-pre-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Pre-Nursery Class</a>
     </div>
 
@@ -445,9 +445,9 @@ onClick={(e) => e.stopPropagation()}>Add Pre-Nursery Class</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-        <a href="#/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+        <a href="/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Subjects</a>
-    <a href="#/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Subjects</a>
     </div>
 
@@ -475,9 +475,9 @@ onClick={(e) => e.stopPropagation()}>Add Subjects</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-         <a href="#/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
+         <a href="/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Teacher</a>
-     <a href="#/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Teachers</a>
     </div>
 
@@ -508,12 +508,12 @@ onClick={(e) => e.stopPropagation()}>View Teachers</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Generate Result</a>
 
- <a href="#/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
+ <a href="/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
-    <a href="#/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Search Result</a>
     </div>
 
@@ -541,7 +541,7 @@ onClick={(e) => e.stopPropagation()}>Search Result</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/receipt/view-student-reciept" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="/receipt/view-student-reciept" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>School Fees</a>
     </div>
 
@@ -574,9 +574,9 @@ onClick={(e) => e.stopPropagation()}>School Fees</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Make Payment</a>
-   <a href="#/payment/all-payments" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/payment/all-payments" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Payments History</a>
     </div>
 
@@ -606,7 +606,7 @@ onClick={(e) => e.stopPropagation()}>Payments History</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Settings</a>
      
     </div>
@@ -657,7 +657,7 @@ onClick={(e) => e.stopPropagation()}>Settings</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Profile</a>
     <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
     </div>

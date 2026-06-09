@@ -1,31 +1,27 @@
-import React, { useState } from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import { getWelcomeMessage } from "../../redux/reducer/teacherSlice";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import Loading from '../Chunks/loading';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { getTeacherOwnedClass } from "../../redux/reducer/classSlice";
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
+import { getWelcomeMessage } from "../../redux/reducer/teacherSlice";
+import Loading from '../Chunks/loading';
+import { default as dashboard, default as navbar } from '../style/dashboard/SchoolDashboard.module.css';
 
-import { 
-  Drawer, 
-  IconButton, 
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    IconButton,
+    List,
+    Toolbar,
+    Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import zIndex from "@mui/material/styles/zIndex";
 import { useNavigate } from "react-router-dom";
 
 const TeacherDashboard = () => {
@@ -139,7 +135,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           <div className={navbar['profile--selection__container']}>
          
           <div className={navbar['profile']}>
-           <a href="#/teacher/teacher-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+           <a href="/teacher/teacher-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
           <div className={navbar['logout']}>
            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -221,7 +217,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/teacher/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/teacher/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
     </div>
 
@@ -257,7 +253,7 @@ onClick={(e) => e.stopPropagation()}>Home</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/result/teacher-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/result/teacher-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Search Result</a>
     </div>
 
@@ -285,9 +281,9 @@ onClick={(e) => e.stopPropagation()}>Search Result</a>
            
         
             <div className={navbar['collapsible__content--drawer']}>
-            <a href="#/teacher/teacher-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+            <a href="/teacher/teacher-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Profile</a>
-             <a href="#/password/password-reset-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
+             <a href="/password/password-reset-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Change Password</a>
              <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
             </div>

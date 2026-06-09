@@ -306,7 +306,7 @@
 //           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
 //           <div className={navbar['profile--selection__container']}>
 //           <div className={navbar['profile']}>
-//            <a href="#/teacher/teacher-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+//            <a href="/teacher/teacher-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
 //           </div>
 //           <div className={navbar['logout']}>
 //            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -387,7 +387,7 @@
     
 
 //     <div className={navbar['collapsible__content--drawer']}>
-//    <a href="#/teacher/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+//    <a href="/teacher/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 // onClick={(e) => e.stopPropagation()}>Home</a>
 //     </div>
 
@@ -414,7 +414,7 @@
     
 
 //     <div className={navbar['collapsible__content--drawer']}>
-//     <a href="#/result/teacher-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+//     <a href="/result/teacher-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 // onClick={(e) => e.stopPropagation()}>Search Result</a>
 //     </div>
 
@@ -442,9 +442,9 @@
            
         
 //             <div className={navbar['collapsible__content--drawer']}>
-//             <a href="#/teacher/teacher-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+//             <a href="/teacher/teacher-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
 // onClick={(e) => e.stopPropagation()}>Profile</a>
-//              <a href="#/password/password-reset-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
+//              <a href="/password/password-reset-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
 // onClick={(e) => e.stopPropagation()}>Change Password</a>
 //              <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
 //             </div>

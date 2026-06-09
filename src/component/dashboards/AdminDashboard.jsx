@@ -1,40 +1,24 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconButton } from "@mui/material";
-import Paper from '@mui/material/Paper';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
+import { IconButton, Snackbar } from "@mui/material";
+import { styled } from '@mui/material/styles';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableRow from '@mui/material/TableRow';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getAllSession } from '../../redux/reducer/sessionSlice';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import style from '../style/form/StudentRegistration.module.css';
-import { Formik } from 'formik';
-import { object, string, array } from 'yup';
-import { Alert, Snackbar } from "@mui/material";
-import { setCurrentSession } from '../../redux/reducer/sessionSlice';
+import { object, string } from 'yup';
+import { getAllSession, setCurrentSession } from '../../redux/reducer/sessionSlice';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
-import {  
-  Dialog
+import {
+    Dialog
 } from '@mui/material';
-import ActionMenu from '../utility/ActionMenu';
-import Loading from '../Chunks/loading';
 import { useLocation, useParams } from 'react-router-dom';
+import Loading from '../Chunks/loading';
 import AdminDemographicsCharts from '../utility/AdminChart';
 
 
@@ -43,39 +27,38 @@ import AdminDemographicsCharts from '../utility/AdminChart';
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar,
+    Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { 
-  getAllSchoolCount, 
-  getAllStudentCount,
-  getAllTeachersCount,
-  getAllStudentCountMale,
-  getAllStudentCountFemale,
-  getAllClassCountJss,
-  getAllClassCountPri,
-  getAllClassCountSss,
-  getAllClassCountJssTeacher,
-  getAllClassCountPriTeachers,
-  getAllClassCountSssTeachers
-
+import {
+    getAllClassCountJss,
+    getAllClassCountJssTeacher,
+    getAllClassCountPri,
+    getAllClassCountPriTeachers,
+    getAllClassCountSss,
+    getAllClassCountSssTeachers,
+    getAllSchoolCount,
+    getAllStudentCount,
+    getAllStudentCountFemale,
+    getAllStudentCountMale,
+    getAllTeachersCount
 } from '../../redux/reducer/schoolSlice';
 
 
@@ -318,7 +301,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
           <div className={navbar['profile--selection__container']}>
           <div className={navbar['profile']}>
-           <a href="#/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+           <a href="/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
           <div className={navbar['logout']}>
            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -400,9 +383,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="#/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Schools</a>
     </div>
 
@@ -431,7 +414,7 @@ onClick={(e) => e.stopPropagation()}>Schools</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/admin/profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/admin/profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Profile</a>
     <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
     </div>

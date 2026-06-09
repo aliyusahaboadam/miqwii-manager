@@ -1,48 +1,46 @@
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import { IconButton } from "@mui/material";
+import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import { IconButton } from "@mui/material";
-import Paper from '@mui/material/Paper';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
 import TableFooter from '@mui/material/TableFooter';
+import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getSubjectByClass } from '../../redux/reducer/subjectSlice';
+import { deleteSubject, getSubjectByClass } from '../../redux/reducer/subjectSlice';
 import Loading from '../Chunks/loading';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import SubjectActionMenu from '../utility/SubjectActionMenu';
-import { deleteSubject } from '../../redux/reducer/subjectSlice';
 
 
 
 // Import for dashboard Below
 
-import React from "react";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
-import { 
-  Drawer,  
-  List, 
-  Toolbar, 
-  AppBar, 
-  Box, 
-  Typography, 
-  CssBaseline,
+import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -217,7 +215,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
           <div className={navbar['profile--selection__container']}>
           <div className={navbar['profile']}>
-           <a href="#/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+           <a href="/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
           <div className={navbar['logout']}>
            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -298,13 +296,13 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="#/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Session</a>
-   <a href="#/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
-    <a href="#/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
     </div>
 
@@ -336,9 +334,9 @@ onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
       
   
       <div className={navbar['collapsible__content--drawer']}>
-      <a href="#/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
+      <a href="/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Student</a>
-      <a href="#/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
+      <a href="/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Students</a>
       </div>
   
@@ -365,21 +363,21 @@ onClick={(e) => e.stopPropagation()}>View Students</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>JSS Classes</a>
-    <a href="#/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>SSS Classes</a>
-    <a href="#/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Primary Classes</a>
-<a href="#/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
+<a href="/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
-    <a href="#/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
-    <a href="#/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
-    <a href="#/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
-<a href="#/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
+<a href="/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
     </div>
 
@@ -407,9 +405,9 @@ onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-        <a href="#/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+        <a href="/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Subjects</a>
-    <a href="#/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Subjects</a>
     </div>
 
@@ -437,9 +435,9 @@ onClick={(e) => e.stopPropagation()}>Add Subjects</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-         <a href="#/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
+         <a href="/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Add Teacher</a>
-     <a href="#/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Teachers</a>
     </div>
 
@@ -470,10 +468,10 @@ onClick={(e) => e.stopPropagation()}>View Teachers</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Generate Result</a>
 
- <a href="#/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
+ <a href="/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
     </div>
 
@@ -529,7 +527,7 @@ onClick={(e) => e.stopPropagation()}>Logout</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Pay Subscription</a>
     </div>
 
@@ -559,7 +557,7 @@ onClick={(e) => e.stopPropagation()}>Pay Subscription</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Settings</a>
      
     </div>
@@ -589,7 +587,7 @@ onClick={(e) => e.stopPropagation()}>Settings</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Profile</a>
     <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
     </div>

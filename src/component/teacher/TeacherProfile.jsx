@@ -1,43 +1,38 @@
+import { IconButton, Snackbar } from "@mui/material";
+import MuiCard from '@mui/material/Card';
+import Dialog from '@mui/material/Dialog';
+import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getAuthenticatedTeacherById } from '../../redux/reducer/teacherSlice';
+import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/StudentRegistration.module.css';
-import { lazy, useState } from 'react';
-import TextField from '@mui/material/TextField';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
-import { Alert, Snackbar } from "@mui/material";
-import { Formik } from 'formik';
-import { object, string, ref } from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import {IconButton, InputAdornment } from "@mui/material";
-import Dialog from '@mui/material/Dialog';
-import { useParams, useNavigate } from 'react-router-dom';
-import Loading from '../Chunks/loading';
-import { getAuthenticatedTeacherById, updateTeacher } from '../../redux/reducer/teacherSlice';
  
 
  // Import for dashboard Below
  
- import React from "react";
- import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
- import navbar from '../style/dashboard/SchoolDashboard.module.css';
- import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
- import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
  import { ClickAwayListener } from '@mui/base/ClickAwayListener';
- import { useLocation } from 'react-router-dom';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import React from "react";
+import { useLocation } from 'react-router-dom';
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
  
- import { 
-   Drawer,  
-   List, 
-   Toolbar, 
-   AppBar, 
-   Box, 
-   Typography, 
-   CssBaseline,
- } from "@mui/material";
- import { useTheme } from "@mui/material/styles";
- import useMediaQuery from "@mui/material/useMediaQuery";
+ import {
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar,
+    Typography,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
  
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -252,7 +247,7 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
           <div className={navbar['profile--selection__container']}>
           <div className={navbar['profile']}>
-           <a href="#/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+           <a href="/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
           <div className={navbar['logout']}>
            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -333,7 +328,7 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="#/teacher/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/teacher/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
     </div>
 
@@ -369,7 +364,7 @@ onClick={(e) => e.stopPropagation()}>Home</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-    <a href="#/result/teacher-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/result/teacher-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Search Result</a>
     </div>
 
@@ -397,9 +392,9 @@ onClick={(e) => e.stopPropagation()}>Search Result</a>
            
         
             <div className={navbar['collapsible__content--drawer']}>
-            <a href="#/teacher/teacher-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+            <a href="/teacher/teacher-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Profile</a>
-             <a href="#/password/password-reset-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
+             <a href="/password/password-reset-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Change Password</a>
              <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
             </div>

@@ -1,4 +1,4 @@
-import { Route, HashRouter as Router, Routes } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import Settings from './component/Settings/Settings';
 import AddNextTermFeeAndResumptionDate from './component/academicSession/AddNextFeeAndResumptionDate';

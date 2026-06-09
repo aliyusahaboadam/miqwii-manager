@@ -40,12 +40,12 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-  AppBar,
-  Box,
-  CssBaseline,
-  Drawer,
-  List,
-  Toolbar
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -309,7 +309,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
           <div className={navbar['profile--selection__container']}>
           <div className={navbar['profile']}>
-           <a href="#/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
+           <a href="/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
           </div>
           <div className={navbar['logout']}>
            <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
@@ -390,7 +390,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       
   
       <div className={navbar['collapsible__content--drawer']}>
-     <a href="#/student/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+     <a href="/student/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
       </div>
   
@@ -424,7 +424,7 @@ onClick={(e) => e.stopPropagation()}>Home</a>
       
   
       <div className={navbar['collapsible__content--drawer']}>
-      <a href="#/result/student-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
+      <a href="/result/student-search-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Search Result</a>
       </div>
   
@@ -453,9 +453,9 @@ onClick={(e) => e.stopPropagation()}>Search Result</a>
       
   
       <div className={navbar['collapsible__content--drawer']}>
-      <a href="#/student/student-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+      <a href="/student/student-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Profile</a>
-      <a href="#/password/password-reset-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
+      <a href="/password/password-reset-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Change Password</a>
       <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
       </div>
