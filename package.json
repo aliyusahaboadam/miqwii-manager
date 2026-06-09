@@ -1,5 +1,4 @@
 {
-  "homepage": "https://miqwii.com",
   "name": "miqwii-manager",
   "version": "0.1.0",
   "private": true,
@@ -15,7 +14,6 @@
     "@redux-devtools/extension": "^3.3.0",
     "@reduxjs/toolkit": "^2.5.1",
     "@rollup/rollup-linux-x64-gnu": "^4.61.1",
-    "@rollup/rollup-win32-x64-msvc": "^4.61.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -25,7 +23,6 @@
     "buffer": "^6.0.3",
     "formik": "^2.4.6",
     "lightningcss-linux-x64-gnu": "^1.32.0",
-    "lightningcss-win32-x64-msvc": "^1.32.0",
     "lodash": "^4.17.21",
     "pdfmake": "^0.3.5",
     "react": "^18.3.1",
@@ -42,8 +39,6 @@
     "yup": "^1.6.1"
   },
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -68,7 +63,6 @@
   },
   "devDependencies": {
     "@rolldown/binding-linux-x64-gnu": "^1.1.0",
-    "@rolldown/binding-win32-x64-msvc": "^1.1.0",
     "@vitejs/plugin-react": "^6.0.2",
     "ajv": "^8.17.1",
     "esbuild": "^0.28.0",
