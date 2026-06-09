@@ -36,12 +36,12 @@ import ClassScoreSheet from '../result/ClassScoreSheet';
 import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -120,7 +120,7 @@ const JSSClasses  = () => {
   }
   
 
- const [page, setPage] = React.useState(0);
+   const [page, setPage] = React.useState(0);
  const [rowsPerPage, setRowsPerPage] = React.useState(100);
 
 
