@@ -27,8 +27,27 @@ const loginSchema = object({
     .required('Password is required'),
 });
 
+/* ─── Logo cache & preloader (outside component) ─────────── */
+const logoCache = {};
 
-
+const preloadImage = async (url) => {
+  if (logoCache[url]) return logoCache[url];
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+    logoCache[url] = base64;
+    return base64;
+  } catch (error) {
+    console.error('Error preloading image:', error);
+    return null;
+  }
+};
 
 /* ─── Icons ───────────────────────────────────────────────── */
 const UserIcon = () => (
@@ -63,11 +82,10 @@ const EyeOffIcon = () => (
   </svg>
 );
 
-/* ─── Shield placeholder SVG ─────────────────────────────── */
+/* ─── School Logo with placeholder fallback ──────────────── */
 const SchoolLogo = ({ imageUrl, schoolName }) => {
   const [imgError, setImgError] = useState(false);
 
-  // Show placeholder if no URL or image failed to load
   if (!imageUrl || imgError) {
     return (
       <div className={style.logoPlaceholder}>
@@ -82,7 +100,6 @@ const SchoolLogo = ({ imageUrl, schoolName }) => {
           <text x="18" y="27" textAnchor="middle"
             fontFamily="Playfair Display, serif"
             fontSize="14" fontWeight="700" fill="#C9A84C">
-            {/* Show first letter of school name or "S" as fallback */}
             {schoolName ? schoolName.charAt(0).toUpperCase() : 'S'}
           </text>
         </svg>
@@ -98,7 +115,7 @@ const SchoolLogo = ({ imageUrl, schoolName }) => {
       src={imageUrl}
       alt={schoolName || 'School Logo'}
       className={style.schoolLogo}
-      onError={() => setImgError(true)} // fallback if image URL breaks
+      onError={() => setImgError(true)}
     />
   );
 };
@@ -107,8 +124,8 @@ const SchoolLogo = ({ imageUrl, schoolName }) => {
    SchoolLogin Component
 ═══════════════════════════════════════════════════════════ */
 const CustomizedSchoolLogin = ({ subdomain }) => {
-  const dispatch  = useDispatch();
-  const navigate  = useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   /* Role state */
   const [activeRoleId, setActiveRoleId] = useState(ROLES[0].id);
@@ -125,35 +142,31 @@ const CustomizedSchoolLogin = ({ subdomain }) => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
+  const [loading, setIsLoading] = useState(true);
 
-  const [message, setMessage] = useState(""); 
-  const [ loading,  setIsLoading] = useState(true);
+  /* School state */
+  const [state, setState] = useState({
+    id: '',
+    name: '',
+    address: '',
+    contact: '',
+    motto: '',
+    logo: '',
+  });
 
-
-   /* Snackbar */
-  const [state, setState ] = useState({
-    id: "",
-    name: "",
-    address: "",
-    contact: "",
-    motto: "",
-    email: ""
-   });
+  /* Logo URL state — loaded async inside fetchSchool */
+  const [logoUrl, setLogoUrl] = useState(null);
 
   useEffect(() => {
-    
-     
-       
-         fetchSchool()
-
+    fetchSchool();
   }, []);
 
+  const fetchSchool = async () => {
+    if (!subdomain) return;
+    try {
+      setIsLoading(true);
+      const result = await dispatch(getSchoolByDomain(subdomain)).unwrap();
 
-const fetchSchool = async () => {
-  if (!subdomain) return;
-  try {
-    setIsLoading(true);
-    await dispatch(getSchoolByDomain(subdomain)).unwrap().then(async (result) => {
       setState({
         id: result.id,
         name: result.name,
@@ -163,47 +176,18 @@ const fetchSchool = async () => {
         logo: result.logo,
       });
 
-      // ✅ Load logo here inside async function
+      // Load logo inside async function — no await at component level
       if (result.logo) {
         const s3Url = `https://d39kcxvd290stw.cloudfront.net/${result.logo}`;
         const url = await preloadImage(s3Url);
         setLogoUrl(url);
       }
-    });
-  } catch (error) {
-    setSnackbar({ open: true, type: 'error', message: error.message });
-    console.log(error.message);
-  }
-  setIsLoading(false);
-};
-
-
-         // ✅ Logo cache outside component so it persists across renders
-const logoCache = {};
- 
-const preloadImage = async (url) => {
-  if (logoCache[url]) return logoCache[url];
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const base64 = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-    logoCache[url] = base64;
-    return base64;
-  } catch (error) {
-    console.error('Error preloading image:', error);
-    return null;
-  }
-};
-
-
-
-  
-  const logoUrl = await preloadImage(s3Url);
+    } catch (error) {
+      setSnackbar({ open: true, type: 'error', message: error.message });
+      console.log(error.message);
+    }
+    setIsLoading(false);
+  };
 
   /* Submit handler */
   const handleFormSubmit = async (values, { resetForm }) => {
@@ -223,191 +207,174 @@ const preloadImage = async (url) => {
   };
 
   return (
-  <>
-
-
-    {
-
-      loading === true ? (<Loading/>) : (
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
         <div className={style.signInContainer}>
+          <Formik
+            initialValues={{ username: '', password: '' }}
+            validationSchema={loginSchema}
+            onSubmit={handleFormSubmit}
+          >
+            {({ errors, handleChange, handleSubmit, values, isSubmitting, touched, handleBlur }) => (
+              <div className={style.card}>
 
-      <Formik
-        initialValues={{ username: '', password: '' }}
-        validationSchema={loginSchema}
-        onSubmit={handleFormSubmit}
-      >
-        {({ errors, handleChange, handleSubmit, values, isSubmitting, touched, handleBlur }) => (
-
-          <div className={style.card}>
-
-            {/* ── Card Header ── */}
-            <div className={style.cardHeader}>
-
-              {/* Logo */}
-              <div className={style.logoZone}>
-                
-                <SchoolLogo imageUrl={logoUrl} schoolName={state.name || ""} />
-              </div>
-
-              <p className={style.schoolName}>{state.name || ""}</p>
-              <p className={style.schoolMotto}>{state.motto || ""}</p>
-              <p className={style.schoolAddress}>
-                {state.address || ""}
-              </p>
-            </div>
-
-            {/* ── Gold diamond divider ── */}
-            <div className={style.divider}>
-              <div className={style.dividerLine} />
-              <div className={style.dividerDiamond} />
-              <div className={style.dividerLineRight} />
-            </div>
-
-            {/* ── Card Body ── */}
-            <div className={style.cardBody}>
-
-              <p className={style.loginLabel}>Portal Sign In</p>
-
-              {/* Role selector tabs */}
-              <div className={style.roleTabs} role="tablist" aria-label="Login as">
-                {ROLES.map(role => (
-                  <button
-                    key={role.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={role.id === activeRoleId}
-                    className={[
-                      style.roleTab,
-                      role.id === activeRoleId ? style.roleTabActive : '',
-                    ].join(' ')}
-                    onClick={() => setActiveRoleId(role.id)}
-                  >
-                    <span className={style.roleIcon}>{role.icon}</span>
-                    {role.text}
-                  </button>
-                ))}
-              </div>
-
-              {/* Username field */}
-              <div className={style.field}>
-                <label htmlFor="username" className={style.fieldLabel}>
-                  {activeRole.text} Username
-                </label>
-                <div className={style.fieldWrap}>
-                  <span className={style.fieldIcon}><UserIcon /></span>
-                  <input
-                    id="username"
-                    name="username"
-                    type="text"
-                    autoComplete="username"
-                    className={[
-                      style.fieldInput,
-                      touched.username && errors.username ? style.fieldInputError : '',
-                    ].join(' ')}
-                    placeholder={activeRole.placeholder}
-                    value={values.username}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
+                {/* ── Card Header ── */}
+                <div className={style.cardHeader}>
+                  <div className={style.logoZone}>
+                    <SchoolLogo imageUrl={logoUrl} schoolName={state.name || ''} />
+                  </div>
+                  <p className={style.schoolName}>{state.name || ''}</p>
+                  <p className={style.schoolMotto}>{state.motto || ''}</p>
+                  <p className={style.schoolAddress}>{state.address || ''}</p>
                 </div>
-                {touched.username && errors.username && (
-                  <p className={style.errorText}>{errors.username}</p>
-                )}
-              </div>
 
-              {/* Password field */}
-              <div className={style.field}>
-                <label htmlFor="password" className={style.fieldLabel}>Password</label>
-                <div className={style.fieldWrap}>
-                  <span className={style.fieldIcon}><LockIcon /></span>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    className={[
-                      style.fieldInput,
-                      touched.password && errors.password ? style.fieldInputError : '',
-                    ].join(' ')}
-                    placeholder="Enter your password"
-                    value={values.password}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <button
-                    type="button"
-                    className={style.passwordToggle}
-                    onClick={() => setShowPassword(v => !v)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  >
-                    {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                  </button>
+                {/* ── Gold diamond divider ── */}
+                <div className={style.divider}>
+                  <div className={style.dividerLine} />
+                  <div className={style.dividerDiamond} />
+                  <div className={style.dividerLineRight} />
                 </div>
-                {touched.password && errors.password && (
-                  <p className={style.errorText}>{errors.password}</p>
-                )}
+
+                {/* ── Card Body ── */}
+                <div className={style.cardBody}>
+                  <p className={style.loginLabel}>Portal Sign In</p>
+
+                  {/* Role selector tabs */}
+                  <div className={style.roleTabs} role="tablist" aria-label="Login as">
+                    {ROLES.map(role => (
+                      <button
+                        key={role.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={role.id === activeRoleId}
+                        className={[
+                          style.roleTab,
+                          role.id === activeRoleId ? style.roleTabActive : '',
+                        ].join(' ')}
+                        onClick={() => setActiveRoleId(role.id)}
+                      >
+                        <span className={style.roleIcon}>{role.icon}</span>
+                        {role.text}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Username field */}
+                  <div className={style.field}>
+                    <label htmlFor="username" className={style.fieldLabel}>
+                      {activeRole.text} Username
+                    </label>
+                    <div className={style.fieldWrap}>
+                      <span className={style.fieldIcon}><UserIcon /></span>
+                      <input
+                        id="username"
+                        name="username"
+                        type="text"
+                        autoComplete="username"
+                        className={[
+                          style.fieldInput,
+                          touched.username && errors.username ? style.fieldInputError : '',
+                        ].join(' ')}
+                        placeholder={activeRole.placeholder}
+                        value={values.username}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                    </div>
+                    {touched.username && errors.username && (
+                      <p className={style.errorText}>{errors.username}</p>
+                    )}
+                  </div>
+
+                  {/* Password field */}
+                  <div className={style.field}>
+                    <label htmlFor="password" className={style.fieldLabel}>Password</label>
+                    <div className={style.fieldWrap}>
+                      <span className={style.fieldIcon}><LockIcon /></span>
+                      <input
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        autoComplete="current-password"
+                        className={[
+                          style.fieldInput,
+                          touched.password && errors.password ? style.fieldInputError : '',
+                        ].join(' ')}
+                        placeholder="Enter your password"
+                        value={values.password}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                      />
+                      <button
+                        type="button"
+                        className={style.passwordToggle}
+                        onClick={() => setShowPassword(v => !v)}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+                      </button>
+                    </div>
+                    {touched.password && errors.password && (
+                      <p className={style.errorText}>{errors.password}</p>
+                    )}
+                  </div>
+
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={style.btnLogin}
+                    onClick={handleSubmit}
+                  >
+                    {isSubmitting ? 'Please wait…' : `Sign in as ${activeRole.text}`}
+                  </button>
+
+                  {/* Links */}
+                  <div className={style.formLinkContainer}>
+                    <span className={style.formLink}>
+                      New school?{' '}
+                      <a className={style.linkRegister} href="/school/register">Register here</a>
+                    </span>
+                    <span className={style.formLink}>
+                      <a className={style.linkRegister} href="/password/password-request">
+                        Forgot password?
+                      </a>
+                    </span>
+                  </div>
+
+                </div>{/* end cardBody */}
+
+                {/* ── Card Footer ── */}
+                <div className={style.cardFooter}>
+                  © 2026 {state.name || ''} · All rights reserved ·{' '}
+                  <a href="#" className={style.footerLink}>Privacy Policy</a>
+                </div>
+
               </div>
+            )}
+          </Formik>
 
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={style.btnLogin}
-                onClick={handleSubmit}
-              >
-                {isSubmitting ? 'Please wait…' : `Sign in as ${activeRole.text}`}
-              </button>
+          {/* Snackbar feedback */}
+          <Snackbar
+            open={snackbar.open}
+            autoHideDuration={3000}
+            onClose={closeSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={closeSnackbar}
+              severity={snackbar.type || 'info'}
+              sx={{ width: '100%', fontSize: '1rem', padding: '12px 16px' }}
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
 
-              {/* Links */}
-              <div className={style.formLinkContainer}>
-                <span className={style.formLink}>
-                  New school?{' '}
-                  <a className={style.linkRegister} href="/school/register">Register here</a>
-                </span>
-                <span className={style.formLink}>
-                  <a className={style.linkRegister} href="/password/password-request">
-                    Forgot password?
-                  </a>
-                </span>
-              </div>
-
-            </div>{/* end cardBody */}
-
-            {/* ── Card Footer ── */}
-            <div className={style.cardFooter}>
-              © 2026 {state.name || ""} · All rights reserved ·{' '}
-              <a href="#" className={style.footerLink}>Privacy Policy</a>
-            </div>
-
-          </div>
-        )}
-      </Formik>
-
-   
-
-      {/* Snackbar feedback */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={closeSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={closeSnackbar}
-          severity={snackbar.type || 'info'}
-          sx={{ width: '100%', fontSize: '1rem', padding: '12px 16px' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-
-    </div>
-      )
-    }
-  
-  </>
-  
-    
+        </div>
+      )}
+    </>
   );
 };
 
