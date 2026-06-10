@@ -1,8 +1,8 @@
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import Dialog from '@mui/material/Dialog';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import React, { memo } from "react";
-import animationData from '../lotties/loading1.json';
 import loading from '../style/chunks/Loading.module.css';
 
 // ✅ ONLY CHANGE: Moved styled component OUTSIDE
@@ -36,14 +36,14 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 // ✅ ONLY CHANGE: Moved defaultOptions OUTSIDE
-const defaultOptions = {
-  loop: true,
-  autoplay: true,
-  animationData: animationData,
-  rendererSettings: {
-    preserveAspectRatio: "xMidYMid slice"
-  }
-};
+// const defaultOptions = {
+//   loop: true,
+//   autoplay: true,
+//   animationData: animationData,
+//   rendererSettings: {
+//     preserveAspectRatio: "xMidYMid slice"
+//   }
+// };
 
 const Loading = () => {
   const [open, setOpen] = React.useState(true);
@@ -66,18 +66,20 @@ const Loading = () => {
       >    
         <div className={loading['loading-container']}>
           <img className={loading['loading-image']} src="/images/logo-primary.png" alt="Logo"/>
-          {/* <Lottie  
-            options={defaultOptions}   
-            height={80}
-            width={110} 
-            isClickToPauseDisabled={true}
-            style={{
-              transform: "scale(1.7)",
-              transformOrigin: "center",
-              display: 'block',
-              marginRight: '0.5rem',
-            }}
-          /> */}
+      <DotLottieReact 
+  src="/lottie/loading.lottie" 
+  loop 
+  autoplay 
+  style={{ 
+    height: 80, 
+    width: 110, 
+    transform: 'scale(1.7)', 
+    transformOrigin: 'center', 
+    display: 'block', 
+    marginRight: '0.5rem', 
+  }} 
+/>
+
         </div>
       </Dialog>
     </SignInContainer>
