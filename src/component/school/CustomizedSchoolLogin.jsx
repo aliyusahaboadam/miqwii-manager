@@ -1,6 +1,6 @@
 import { Alert, Snackbar } from '@mui/material';
 import { Formik } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { object, string } from 'yup';
@@ -149,30 +149,33 @@ const CustomizedSchoolLogin = ({ subdomain }) => {
   }, []);
 
 
-   const   fetchSchool = async () => {
-      if (!subdomain) return;
-        try {
-          setIsLoading(true)
-          await  dispatch(getSchoolByDomain(subdomain)).unwrap().then((result) => {
-            console.log("ganinan" + result.regNo);
-           setState({
-            id: result.id,
-            name: result.name,
-            address: result.address,
-            contact: result.contact,
-            motto: result.motto,
-            })
-         });
+const fetchSchool = async () => {
+  if (!subdomain) return;
+  try {
+    setIsLoading(true);
+    await dispatch(getSchoolByDomain(subdomain)).unwrap().then(async (result) => {
+      setState({
+        id: result.id,
+        name: result.name,
+        address: result.address,
+        contact: result.contact,
+        motto: result.motto,
+        logo: result.logo,
+      });
 
-         
-        }  catch (error) {  
-         
-          setAlertType("error");
-          setMessage(error.message);
-          console.log(error.message);
-         }
-         setIsLoading(false) 
-         }
+      // ✅ Load logo here inside async function
+      if (result.logo) {
+        const s3Url = `https://d39kcxvd290stw.cloudfront.net/${result.logo}`;
+        const url = await preloadImage(s3Url);
+        setLogoUrl(url);
+      }
+    });
+  } catch (error) {
+    setSnackbar({ open: true, type: 'error', message: error.message });
+    console.log(error.message);
+  }
+  setIsLoading(false);
+};
 
 
          // ✅ Logo cache outside component so it persists across renders
@@ -199,7 +202,7 @@ const preloadImage = async (url) => {
 
 
 
-  const s3Url = `https://d39kcxvd290stw.cloudfront.net/${state.logo}`;
+  
   const logoUrl = await preloadImage(s3Url);
 
   /* Submit handler */
@@ -243,7 +246,7 @@ const preloadImage = async (url) => {
               {/* Logo */}
               <div className={style.logoZone}>
                 
-                <SchoolLogo imageUrl={s3Url} schoolName={state.name || ""}/>
+                <SchoolLogo imageUrl={logoUrl} schoolName={state.name || ""} />
               </div>
 
               <p className={style.schoolName}>{state.name || ""}</p>
