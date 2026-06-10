@@ -2,18 +2,16 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton, Typography } from "@mui/material";
 import MenuItem from '@mui/material/MenuItem';
 
-import { useState } from 'react';
+import {
+  Button,
+  Dialog,
+  DialogActions
+} from '@mui/material';
 import Menu from '@mui/material/Menu';
+import { useState } from 'react';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { 
 
-    Dialog,
-    DialogActions,
- 
-    Button
-  } from '@mui/material'
-
-const  SchoolsActionMenu = ({ row, onDelete, onEdit,  onView, onActivation }) => {
+const  SchoolsActionMenu = ({ row, onDelete, onEdit, onUpdateDomain,  onView, onActivation }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
    
@@ -43,6 +41,11 @@ const  SchoolsActionMenu = ({ row, onDelete, onEdit,  onView, onActivation }) =>
     
       const handleEdit = () => {
         onEdit(row.id);
+        handleClose();
+      };
+
+      const handleDomainUpdate = () => {
+        onUpdateDomain(row.id);
         handleClose();
       };
 
@@ -95,6 +98,7 @@ const  SchoolsActionMenu = ({ row, onDelete, onEdit,  onView, onActivation }) =>
         >
           <MenuItem  style={{fontSize: 17}}  onClick={handleEdit}>Edit</MenuItem>
           <MenuItem style={{fontSize: 17}} onClick={handleDeleteClick}>Delete</MenuItem>
+           <MenuItem style={{fontSize: 17}} onClick={handleDomainUpdate}>Update Domain</MenuItem>
           <MenuItem style={{fontSize: 17}} onClick={handleViewDetails}>Details</MenuItem>
           <MenuItem style={{fontSize: 17}} onClick={handleActivation}>Activator</MenuItem>
         </Menu>

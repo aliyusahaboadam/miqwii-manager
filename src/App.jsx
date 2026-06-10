@@ -67,12 +67,20 @@ import TeacherResetPassword from './component/teacher/TeacherResetPassword';
 import TeacherSubject from './component/teacher/TeacherSubject';
 import Teachers from './component/teacher/Teachers';
 import UpdateTeacher from './component/teacher/UpdateTeacher';
+import { useSubdomain } from './component/utility/useSubdomain';
 
 
 
 function App() {
 
 
+
+   const subdomain = useSubdomain();
+
+  // If subdomain exists, show school page — ignore all other routes
+  if (subdomain) {
+    return <CustomizedSchoolLogin subdomain={subdomain} />;
+  }
   
   return (
     <Router>

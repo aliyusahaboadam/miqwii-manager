@@ -5,7 +5,10 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { object, string } from 'yup';
 import { loginRequest } from '../../redux/reducer/loginSlice';
+import { getSchoolByDomain } from '../../redux/reducer/schoolSlice';
+import Loading from '../Chunks/loading';
 import style from '../style/form/CustomizedSchoolLogin.module.css';
+
 
 /* ─── Role configuration ──────────────────────────────────── */
 const ROLES = [
@@ -23,6 +26,29 @@ const loginSchema = object({
     .min(8, 'Password must be at least 8 characters')
     .required('Password is required'),
 });
+
+
+// ✅ Logo cache outside component so it persists across renders
+const logoCache = {};
+ 
+const preloadImage = async (url) => {
+  if (logoCache[url]) return logoCache[url];
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+    logoCache[url] = base64;
+    return base64;
+  } catch (error) {
+    console.error('Error preloading image:', error);
+    return null;
+  }
+};
 
 /* ─── Icons ───────────────────────────────────────────────── */
 const UserIcon = () => (
@@ -58,30 +84,49 @@ const EyeOffIcon = () => (
 );
 
 /* ─── Shield placeholder SVG ─────────────────────────────── */
-const ShieldPlaceholder = () => (
-  <div className={style.logoPlaceholder}>
-    <svg width="36" height="42" viewBox="0 0 36 42" fill="none"
-      xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M18 1L2 8v14c0 9.4 6.9 18.2 16 20 9.1-1.8 16-10.6 16-20V8L18 1z"
-        fill="rgba(201,168,76,0.15)"
-        stroke="#C9A84C"
-        strokeWidth="1.5"
-      />
-      <text x="18" y="27" textAnchor="middle"
-        fontFamily="Playfair Display, serif"
-        fontSize="14" fontWeight="700" fill="#C9A84C">
-        S
-      </text>
-    </svg>
-    <span className={style.logoPlaceholderText}>LOGO</span>
-  </div>
-);
+const SchoolLogo = ({ imageUrl, schoolName }) => {
+  const [imgError, setImgError] = useState(false);
+
+  // Show placeholder if no URL or image failed to load
+  if (!imageUrl || imgError) {
+    return (
+      <div className={style.logoPlaceholder}>
+        <svg width="36" height="42" viewBox="0 0 36 42" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M18 1L2 8v14c0 9.4 6.9 18.2 16 20 9.1-1.8 16-10.6 16-20V8L18 1z"
+            fill="rgba(201,168,76,0.15)"
+            stroke="#C9A84C"
+            strokeWidth="1.5"
+          />
+          <text x="18" y="27" textAnchor="middle"
+            fontFamily="Playfair Display, serif"
+            fontSize="14" fontWeight="700" fill="#C9A84C">
+            {/* Show first letter of school name or "S" as fallback */}
+            {schoolName ? schoolName.charAt(0).toUpperCase() : 'S'}
+          </text>
+        </svg>
+        <span className={style.logoPlaceholderText}>
+          {schoolName || 'LOGO'}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={schoolName || 'School Logo'}
+      className={style.schoolLogo}
+      onError={() => setImgError(true)} // fallback if image URL breaks
+    />
+  );
+};
 
 /* ═══════════════════════════════════════════════════════════
    SchoolLogin Component
 ═══════════════════════════════════════════════════════════ */
-const CustomizedSchoolLogin = () => {
+const CustomizedSchoolLogin = ({ subdomain }) => {
   const dispatch  = useDispatch();
   const navigate  = useNavigate();
 
@@ -99,6 +144,60 @@ const CustomizedSchoolLogin = () => {
     if (reason === 'clickaway') return;
     setSnackbar(prev => ({ ...prev, open: false }));
   };
+
+
+  const [message, setMessage] = useState(""); 
+  const [ loading,  setIsLoading] = useState(true);
+
+
+   /* Snackbar */
+  const [state, setState ] = useState({
+    id: "",
+    name: "",
+    address: "",
+    contact: "",
+    motto: "",
+    email: ""
+   });
+
+  useEffect(() => {
+    
+     
+       
+         fetchSchool()
+
+  }, []);
+
+
+   const   fetchSchool = async () => {
+      if (!subdomain) return;
+        try {
+          setIsLoading(true)
+          await  dispatch(getSchoolByDomain(subdomain)).unwrap().then((result) => {
+            console.log("ganinan" + result.regNo);
+           setState({
+            id: result.id,
+            name: result.name,
+            address: result.address,
+            contact: result.contact,
+            motto: result.motto,
+            })
+         });
+
+         
+        }  catch (error) {  
+         
+          setAlertType("error");
+          setMessage(error.message);
+          console.log(error.message);
+         }
+         setIsLoading(false) 
+         }
+
+
+
+  const s3Url = `https://d39kcxvd290stw.cloudfront.net/${state.logo}`;
+  const logoUrl = await preloadImage(s3Url);
 
   /* Submit handler */
   const handleFormSubmit = async (values, { resetForm }) => {
@@ -118,7 +217,13 @@ const CustomizedSchoolLogin = () => {
   };
 
   return (
-    <div className={style.signInContainer}>
+  <>
+
+
+    {
+
+      loading === true ? (<Loading/>) : (
+        <div className={style.signInContainer}>
 
       <Formik
         initialValues={{ username: '', password: '' }}
@@ -134,15 +239,14 @@ const CustomizedSchoolLogin = () => {
 
               {/* Logo */}
               <div className={style.logoZone}>
-                {/* Swap ShieldPlaceholder for <img src="/images/logo.png" alt="Logo" /> when ready */}
-                <ShieldPlaceholder />
+                
+                <SchoolLogo imageUrl={s3Url} schoolName={state.name || ""}/>
               </div>
 
-              <p className={style.schoolName}>Sunrise Academy</p>
-              <p className={style.schoolMotto}>"Knowledge · Character · Excellence"</p>
+              <p className={style.schoolName}>{state.name || ""}</p>
+              <p className={style.schoolMotto}>{state.motto || ""}</p>
               <p className={style.schoolAddress}>
-                14 Education Boulevard, Greenfield District<br />
-                P.O. Box 1042 · info@sunriseacademy.edu · +1 (800) 555-0192
+                {state.address || ""}
               </p>
             </div>
 
@@ -265,7 +369,7 @@ const CustomizedSchoolLogin = () => {
 
             {/* ── Card Footer ── */}
             <div className={style.cardFooter}>
-              © 2026 Sunrise Academy · All rights reserved ·{' '}
+              © 2026 {state.name || ""} · All rights reserved ·{' '}
               <a href="#" className={style.footerLink}>Privacy Policy</a>
             </div>
 
@@ -292,6 +396,12 @@ const CustomizedSchoolLogin = () => {
       </Snackbar>
 
     </div>
+      )
+    }
+  
+  </>
+  
+    
   );
 };
 

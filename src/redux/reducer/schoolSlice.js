@@ -79,6 +79,22 @@ export const getSchoolById = createAsyncThunk(
 );
 
 
+
+export const getSchoolByDomain = createAsyncThunk(
+  'class/getSchoolByDOmain',
+  async (domain,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-school-by-domain/${domain}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      console.log(JSON.stringify(response.data))
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
 export const uploadLogo = createAsyncThunk(
   'school/uploadLogo',
   async (logoData,  { rejectWithValue }) => {
@@ -100,9 +116,22 @@ export const updateSchool = createAsyncThunk(
   async ({id, schoolData},  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      console.log("From Inside Slice" + id);
-      console.log("From Inside Slice" + schoolData);
       const response = await api.put(BASE_URL + `/update-school/${id}`, schoolData, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
+
+export const updateDomainName = createAsyncThunk(
+  'school/updateDomainName',
+  async ({id, schoolData},  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.put(BASE_URL + `/update-domain-name/${id}`, domainName, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
@@ -677,6 +706,21 @@ const schoolSlice = createSlice({
                                             state.updateStatus = 'succeeded';
                                           })
                                           .addCase(updateSchool.rejected, (state) => {
+                                            state.updateStatus = 'failed';
+                                          })
+
+
+
+                                          // Update Domain Name
+                  
+                                             .addCase(updateDomainName.pending, (state) => {
+                                            state.updateStatus = 'loading';
+                                          })
+                                          .addCase(updateDomainName.fulfilled, (state, action) => {
+                                      
+                                            state.updateStatus = 'succeeded';
+                                          })
+                                          .addCase(updateDomainName.rejected, (state) => {
                                             state.updateStatus = 'failed';
                                           });
 

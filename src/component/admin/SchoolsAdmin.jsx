@@ -34,12 +34,12 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -149,6 +149,12 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       const handleEdit = (id) => {
         // Implement edit functionality
         navigate(`/admin/update-school/${id}`);
+      };
+
+
+        const handleDomainUpdate = (id) => {
+        // Implement edit functionality
+        navigate(`/admin/update-domain-name/${id}`);
       };
 
 
@@ -380,6 +386,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                           <StyledTableCell align="left">Student</StyledTableCell>
                           <StyledTableCell align="left">Teachers</StyledTableCell>
                           <StyledTableCell align="left">Classes</StyledTableCell>
+                          <StyledTableCell align="left">Domain Name</StyledTableCell>
                           <StyledTableCell align="left">Status</StyledTableCell>
                           <StyledTableCell align="right">Action</StyledTableCell>
                         </TableRow>
@@ -400,6 +407,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                             <StyledTableCell component="th" align="left">{row.numberOfStudents}</StyledTableCell>
                             <StyledTableCell component="th" align="left">{row.numberOfTeachers}</StyledTableCell>
                             <StyledTableCell component="th" align="left">{row.numberOfClasses}</StyledTableCell>
+                            <StyledTableCell component="th" align="left">{row.domainName}</StyledTableCell>
                              <StyledTableCell component="th" align="left">{row.isActive}</StyledTableCell>
                             <StyledTableCell component="th" align="right">
                             <div>
@@ -410,6 +418,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                      row={row} 
                      onDelete={handleDelete} 
                      onEdit={handleEdit} 
+                     onUpdateDomain={handleDomainUpdate} 
                      onView={handleViewDetails}
                      onActivation={handleActivation}
                      />
