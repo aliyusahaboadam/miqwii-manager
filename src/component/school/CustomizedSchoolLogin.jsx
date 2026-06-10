@@ -28,27 +28,7 @@ const loginSchema = object({
 });
 
 
-// ✅ Logo cache outside component so it persists across renders
-const logoCache = {};
- 
-const preloadImage = async (url) => {
-  if (logoCache[url]) return logoCache[url];
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const base64 = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-    logoCache[url] = base64;
-    return base64;
-  } catch (error) {
-    console.error('Error preloading image:', error);
-    return null;
-  }
-};
+
 
 /* ─── Icons ───────────────────────────────────────────────── */
 const UserIcon = () => (
@@ -193,6 +173,29 @@ const CustomizedSchoolLogin = ({ subdomain }) => {
          }
          setIsLoading(false) 
          }
+
+
+         // ✅ Logo cache outside component so it persists across renders
+const logoCache = {};
+ 
+const preloadImage = async (url) => {
+  if (logoCache[url]) return logoCache[url];
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+    logoCache[url] = base64;
+    return base64;
+  } catch (error) {
+    console.error('Error preloading image:', error);
+    return null;
+  }
+};
 
 
 
