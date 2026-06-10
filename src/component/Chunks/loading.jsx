@@ -1,8 +1,8 @@
 import Dialog from '@mui/material/Dialog';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
+import Lottie from 'lottie-react';
 import React, { memo } from "react";
-import Lottie from 'react-lottie';
 import animationData from '../lotties/loading1.json';
 import loading from '../style/chunks/Loading.module.css';
 

@@ -27,7 +27,7 @@ import StudentDashboard from './component/dashboards/StudentDashboard';
 import TeacherDashboard from './component/dashboards/TeacherDashboard';
 import AboutUs from './component/home/AboutUs';
 import ContactUs from './component/home/ContactUs';
-import Home from './component/home/Home.jsx';
+import Home from './component/home/Home';
 import Services from './component/home/Services';
 import StudentReceipt from './component/receipt/StudentReceipt';
 import ViewStudentReceipt from './component/receipt/ViewStudentReceipt';
@@ -36,6 +36,7 @@ import ShowResultByRegNo from './component/result/ShowResultByRegNo';
 import ShowResults from './component/result/ShowResults';
 import StudentResultByRegNoStudentDashboard from './component/result/StudentResultByRegNoStudentDashboard';
 import StudentResultByRegNoTeacherDashboard from './component/result/StudentResultByRegNoTeacherDashboard';
+import CustomizedSchoolLogin from './component/school/CustomizedSchoolLogin';
 import PasswordRequest from './component/school/PasswordRequest';
 import ResetPassword from './component/school/ResetPassword';
 import SchoolLogin from './component/school/SchoolLogin';
@@ -164,6 +165,7 @@ function App() {
             {/*Registration and Login*/}
         <Route exact path='/school/register'  element={<SchoolRegistration/>}/>
         <Route exact path='/school/login'  element={<SchoolLogin/>}/>
+        <Route exact path='/school/login-customized'  element={<CustomizedSchoolLogin/>}/>
         <Route exact path='/school/verify-account'  element={ <VerifierPage/> }/>
            {/*Website*/}
         <Route exact path='/' element={<Home/>}/>

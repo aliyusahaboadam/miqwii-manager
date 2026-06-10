@@ -1,0 +1,430 @@
+/* ─────────────────────────────────────────
+   SchoolLogin.module.css
+   Matches the HTML landing-page design:
+   navy #0a2859 · gold #C9A84C
+───────────────────────────────────────── */
+
+/* ── Outer wrapper (full-page) ── */
+.signInContainer {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0a2859;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='251' height='251' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%230E387A' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%230E387A'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Subtle radial glow overlay */
+.signInContainer::before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201, 168, 76, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ── Card ── */
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(201, 168, 76, 0.2),
+    0 32px 80px rgba(0, 0, 0, 0.55),
+    0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Card Header (navy band) ── */
+.cardHeader {
+  background: #0a2859;
+  padding: 36px 32px 28px;
+  text-align: center;
+  position: relative;
+}
+
+.cardHeader::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+}
+
+/* ── Logo zone ── */
+.logoZone {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #E8E4DC;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(201, 168, 76, 0.35);
+  overflow: hidden;
+}
+
+.logoZone img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.logoPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.logoPlaceholderText {
+  font-size: 8.5px;
+  color: #8A95A3;
+  letter-spacing: 0.07em;
+  margin-top: 2px;
+}
+
+/* ── School info ── */
+.schoolName {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #F8F6F1;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+
+.schoolMotto {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #E2C97E;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+
+.schoolAddress {
+  font-size: 11.5px;
+  color: #8A95A3;
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+
+/* ── Diamond divider ── */
+.divider {
+  display: flex;
+  align-items: center;
+  background: #0a2859;
+  padding: 0 32px;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C9A84C);
+}
+
+.dividerLineRight {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, #C9A84C, transparent);
+}
+
+.dividerDiamond {
+  width: 8px;
+  height: 8px;
+  background: #C9A84C;
+  transform: rotate(45deg);
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+
+/* ── Card Body (white section) ── */
+.cardBody {
+  padding: 28px 32px 36px;
+  background: #ffffff;
+}
+
+.loginLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8A95A3;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+/* ── Role tabs ── */
+.roleTabs {
+  display: flex;
+  border: 1.5px solid #E2DFDA;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.roleTab {
+  flex: 1;
+  padding: 9px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: #8A95A3;
+  transition: background 0.18s, color 0.18s;
+  font-family: 'Inter', sans-serif;
+}
+
+.roleTab + .roleTab {
+  border-left: 1.5px solid #E2DFDA;
+}
+
+.roleTabActive {
+  background: #0a2859;
+  color: #E2C97E;
+}
+
+.roleIcon {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+/* ── Inputs ── */
+.field {
+  margin-bottom: 16px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4A5568;
+  margin-bottom: 6px;
+}
+
+.fieldWrap {
+  position: relative;
+}
+
+.fieldIcon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8A95A3;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.fieldInput {
+  width: 100%;
+  padding: 11px 40px 11px 40px;
+  border: 1.5px solid #DDD9D2;
+  border-radius: 3px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  background: #F4F2ED;
+  color: #1A2535;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.fieldInput:focus {
+  border-color: #C9A84C;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
+  background: #fff;
+}
+
+.fieldInput::placeholder {
+  color: #BDB9B2;
+}
+
+.fieldInputError {
+  border-color: #e53e3e;
+}
+
+.fieldInputError:focus {
+  border-color: #e53e3e;
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.12);
+}
+
+.errorText {
+  font-size: 11px;
+  color: #e53e3e;
+  margin-top: 4px;
+  letter-spacing: 0.03em;
+}
+
+/* Password toggle button */
+.passwordToggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #8A95A3;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: color 0.15s;
+}
+
+.passwordToggle:hover {
+  color: #0a2859;
+}
+
+/* ── Submit button ── */
+.btnLogin {
+  width: 100%;
+  padding: 13px;
+  margin-top: 8px;
+  background: #0a2859;
+  color: #E2C97E;
+  border: none;
+  border-radius: 3px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.18s, opacity 0.18s;
+}
+
+.btnLogin::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #C9A84C;
+}
+
+.btnLogin:hover:not(:disabled) {
+  background: #0d3066;
+}
+
+.btnLogin:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btnLogin:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ── Links ── */
+.formLinkContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.formLink {
+  font-size: 12px;
+  color: #8A95A3;
+}
+
+.linkRegister {
+  color: #C9A84C;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.linkRegister:hover {
+  text-decoration: underline;
+}
+
+/* ── Card Footer ── */
+.cardFooter {
+  border-top: 1px solid #EAE7E1;
+  padding: 12px 32px;
+  text-align: center;
+  font-size: 10.5px;
+  color: #8A95A3;
+  letter-spacing: 0.04em;
+}
+
+.footerLink {
+  color: #C9A84C;
+  text-decoration: none;
+}
+
+.footerLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Footer brand (below card) ── */
+.footerBrand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.footerBrand img {
+  height: 24px;
+  width: auto;
+  opacity: 0.6;
+}
+
+.footerCopyright {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.04em;
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .cardHeader {
+    padding: 28px 20px 22px;
+  }
+
+  .cardBody {
+    padding: 24px 20px 28px;
+  }
+
+  .schoolName {
+    font-size: 19px;
+  }
+
+  .formLinkContainer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
