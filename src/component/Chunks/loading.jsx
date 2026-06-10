@@ -1,7 +1,6 @@
 import Dialog from '@mui/material/Dialog';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import Lottie from 'lottie-react';
 import React, { memo } from "react";
 import animationData from '../lotties/loading1.json';
 import loading from '../style/chunks/Loading.module.css';
@@ -67,7 +66,7 @@ const Loading = () => {
       >    
         <div className={loading['loading-container']}>
           <img className={loading['loading-image']} src="/images/logo-primary.png" alt="Logo"/>
-          <Lottie  
+          {/* <Lottie  
             options={defaultOptions}   
             height={80}
             width={110} 
@@ -78,7 +77,7 @@ const Loading = () => {
               display: 'block',
               marginRight: '0.5rem',
             }}
-          />
+          /> */}
         </div>
       </Dialog>
     </SignInContainer>
