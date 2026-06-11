@@ -81,9 +81,9 @@ function App() {
   // If subdomain exists, show school page — ignore all other routes
   if (subdomain) {
     return (
-      <BrowserRouter>
+      <Router>
         <CustomizedSchoolLogin subdomain={subdomain} />
-      </BrowserRouter>
+      </Router>
     );
   }
   
