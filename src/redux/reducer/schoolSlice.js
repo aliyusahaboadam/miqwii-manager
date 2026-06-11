@@ -81,15 +81,13 @@ export const getSchoolById = createAsyncThunk(
 
 
 export const getSchoolByDomain = createAsyncThunk(
-  'class/getSchoolByDOmain',
-  async (domain,  { rejectWithValue }) => {
+  'class/getSchoolByDomain',
+  async (domain, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-school-by-domain/${domain}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
-      console.log(JSON.stringify(response.data))
-      return response.data; // Return the saved user response
+      const response = await api.get(BASE_URL + `/get-school-by-domain/${domain}`);
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+      return rejectWithValue(error.response?.data || { message: "Something went wrong" });
     }
   }
 );

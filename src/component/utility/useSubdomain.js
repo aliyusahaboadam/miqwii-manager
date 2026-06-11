@@ -3,7 +3,7 @@ export function useSubdomain() {
   const hostname = window.location.hostname;
 
   // Ignore localhost, 127.0.0.1
-  if (hostname === 'localhost' || hostname === '127.0.0.1') return null;
+  // if (hostname === 'localhost' || hostname === '127.0.0.1') return null;
 
   const parts = hostname.split('.');
 
