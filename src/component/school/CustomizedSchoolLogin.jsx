@@ -12,9 +12,9 @@ import style from '../style/form/CustomizedSchoolLogin.module.css';
 
 /* ─── Role configuration ──────────────────────────────────── */
 const ROLES = [
-  { id: 1, text: 'Student',  icon: '🎓', placeholder: 'e.g. student2026_id' },
-  { id: 2, text: 'Teacher',  icon: '📚', placeholder: 'e.g. t.surname'       },
-  { id: 3, text: 'Admin',    icon: '🏛️', placeholder: 'e.g. admin.username'  },
+  { id: 1, text: 'Student',  icon: '🎓', placeholder: 'Reg. No.' },
+  { id: 2, text: 'Teacher',  icon: '📚', placeholder: 'Reg. No.'       },
+  { id: 3, text: 'Admin',    icon: '🏛️', placeholder: 'Email'  },
 ];
 
 /* ─── Validation schema ───────────────────────────────────── */
