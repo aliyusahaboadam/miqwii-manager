@@ -79,16 +79,37 @@ function App() {
    const subdomain = useSubdomain();
 
   // If subdomain exists, show school page — ignore all other routes
-  if (subdomain) {
+ if (subdomain) {
     return (
       <Router>
-        <CustomizedSchoolLogin subdomain={subdomain} />
+        <Routes>
+          {/* Subdomain login page */}
+          <Route path="/" element={<CustomizedSchoolLogin subdomain={subdomain} />} />
+          
+          {/* ✅ Reuse shared routes */}
+          <Route path="/*" element={<AppRoutes />} />
+        </Routes>
       </Router>
     );
   }
   
   return (
     <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        
+        {/* ✅ Reuse shared routes */}
+        <Route path="/*" element={<AppRoutes />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+
+
+
+const AppRoutes = () => (
     <Routes>
         {/* <Route exact path='/'  element={<Testing/>}/> */}
    
@@ -182,13 +203,8 @@ function App() {
         <Route exact path='/school/login-customized'  element={<CustomizedSchoolLogin/>}/>
         <Route exact path='/school/verify-account'  element={ <VerifierPage/> }/>
            {/*Website*/}
-        <Route exact path='/' element={<Home/>}/>
         <Route exact path='/services' element={<Services/>}/>
         <Route exact path='/contact-us' element={<ContactUs/>}/>
         <Route exact path='/about-us' element={<AboutUs/>}/>
     </Routes>
-</Router>
-  );
-}
-
-export default App;
+);
