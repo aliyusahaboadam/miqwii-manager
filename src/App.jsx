@@ -8,6 +8,7 @@ import AdminProfile from './component/admin/AdminProfile';
 import AdminSchoolsDetails from './component/admin/AdminSchoolsDetails';
 import SchoolActivator from './component/admin/SchoolActivator';
 import SchoolsAdmin from './component/admin/SchoolsAdmin';
+import UpdateDomainName from './component/admin/UpdateDomainName';
 import UpdateSchool from './component/admin/UpdateSchool';
 import AddJSSClass from './component/class/AddJSSClass';
 import AddNurClass from './component/class/AddNurClass';
@@ -159,6 +160,7 @@ function App() {
              <Route exact path='/school/student-activator' element={ <StudentActivator/> }/>
             <Route exact path='/admin/school-activator/:id' element={ <SchoolActivator/> }/>
             <Route exact path='/admin/update-school/:id' element={ <UpdateSchool/> }/>
+            <Route exact path='/admin/update-domain-name/:id' element={ <UpdateDomainName/> }/>
              <Route exact path='/admin/school-profile/:id' element={ <AdminSchoolsDetails/> }/>
             <Route exact path='/school/school-profile' element={ <SchoolProfile/> }/>
             <Route exact path='/school/upload-school-logo' element={ <UploadSchoolLogo/> }/>

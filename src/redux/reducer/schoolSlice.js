@@ -128,10 +128,10 @@ export const updateSchool = createAsyncThunk(
 
 export const updateDomainName = createAsyncThunk(
   'school/updateDomainName',
-  async ({id, schoolData},  { rejectWithValue }) => {
+  async ({id, domainName},  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.put(BASE_URL + `/update-domain-name/${id}`, domainName, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      const response = await api.put(BASE_URL + `/update-domain-name/${id}`, {domainName}, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
