@@ -224,9 +224,6 @@ const qrBase64 = useMemo(() => {
               <Text style={resultStyle.qrText}>VERIFY (SCAN ME)</Text>
 
         
-        
-        
-        
          <Image src={qrBase64} style={resultStyle.qrScannerImage} />
           </View>
           
