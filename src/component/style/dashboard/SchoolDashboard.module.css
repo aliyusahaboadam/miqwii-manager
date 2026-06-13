@@ -330,19 +330,28 @@
 
 
    .card--add-in-table .btn {
+
     font-family: 'Roboto', sans-serif;
-     font-size: 1.5rem;
+     font-size: 1.2rem;
      font-weight: 400;
      text-transform: uppercase;
-      padding: 1rem 3rem ;
+      padding: 1rem 2rem ;
      border: 0;
      text-align: center;
      border-radius: 7px;
      cursor: pointer;
      white-space: nowrap;
-     margin: 1rem 0;
+     margin: 0.5rem;
   }
 
+
+  .add-score-subject-text {
+    text-align: left;
+    font-size: 2.3rem;
+    font-weight: 400;
+    color: #0a2859;
+    font-weight: 500;
+  }
 
 
 
@@ -380,6 +389,49 @@
 
  .btn--green {
      background: #388E3C;
+     color: #fff;
+ }
+
+
+  .btn--score-add-all {
+     background: #013375;
+     color: #fff;
+ }
+
+  .btn--score-add-ca1 {
+     background: #1432dcff;
+     color: #fff;
+ }
+
+  .btn--score-add-ca2 {
+     background: rgb(69, 78, 128);
+     color: #fff;
+ }
+
+  .btn--score-add-exam {
+     background: #0167AD;
+     color: #fff;
+ }
+
+
+
+ .btn--score-add-all:hover {
+     background: #01285a;
+     color: #fff;
+ }
+
+  .btn--score-add-ca1:hover {
+     background: rgb(18, 44, 189);
+     color: #fff;
+ }
+
+  .btn--score-add-ca2:hover {
+     background: rgb(53, 60, 99);
+     color: #fff;
+ }
+
+  .btn--score-add-exam:hover {
+     background: #02538a;
      color: #fff;
  }
 
@@ -550,6 +602,8 @@
 }
 
 .card--add-in-table {
+    display: flex;
+    flex-direction: row;
     border-radius: 7px;
     
      
@@ -718,6 +772,8 @@
     text-align: center;
     justify-content: space-between;
  }
+
+
 
  .card_footer {
     text-align: center;

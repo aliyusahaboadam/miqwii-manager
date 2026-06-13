@@ -35,12 +35,12 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -154,6 +154,18 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
      const navigateToAddScore = (subjectId, subjectName) => {
       navigate(`/score/add-score/${subjectId}/${classId}/${className}/${subjectName}`);
+    }
+
+      const navigateToAddFirstCA = (subjectId, subjectName) => {
+      navigate(`/score/add-first-ca/${subjectId}/${classId}/${className}/${subjectName}`);
+    }
+
+      const navigateToAddSecondCA = (subjectId, subjectName) => {
+      navigate(`/score/add-second-ca/${subjectId}/${classId}/${className}/${subjectName}`);
+    }
+
+      const navigateToAddExam = (subjectId, subjectName) => {
+      navigate(`/score/add-exam/${subjectId}/${classId}/${className}/${subjectName}`);
     }
    
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -470,7 +482,6 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
                         <TableRow>
                           <StyledTableCell align="left">S/N</StyledTableCell>
                           <StyledTableCell align="left">Subjects</StyledTableCell>
-                          <StyledTableCell align="right">Action</StyledTableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -483,16 +494,20 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
                               {index + 1}
                             </StyledTableCell>
                             <StyledTableCell  component="th" scope="row">
+                            <div class={[dashboard['add-score-subject-text'], dashboard['']].join(' ')}>
                               {row.name}
-                            </StyledTableCell>
-                            <StyledTableCell component="th" align="row">
-                            <div class={[dashboard['card--add-in-table'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
+                              </div>
+                         <div class={[dashboard['card--add-in-table'], dashboard['card--primary']].join(' ')}>
+       
                 
-                <button onClick={() => navigateToAddScore(row.id, row.name)}   className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--green']].join(' ')}> Add Score</button>
-              </div>
+                <button onClick={() => navigateToAddScore(row.id, row.name)}   className={[dashboard['btn'], dashboard[''], dashboard['btn--score-add-all']].join(' ')}> Add All</button>
+                 <button onClick={() => navigateToAddFirstCA(row.id, row.name)}   className={[dashboard['btn'], dashboard[''], dashboard['btn--score-add-ca1']].join(' ')}> Add CA1</button>
+                  <button onClick={() => navigateToAddSecondCA(row.id, row.name)}   className={[dashboard['btn'], dashboard[''], dashboard['btn--score-add-ca2']].join(' ')}> Add CA2</button>
+                   <button onClick={() => navigateToAddExam(row.id, row.name)}   className={[dashboard['btn'], dashboard[''], dashboard['btn--score-add-exam']].join(' ')}> Add Exam</button>
+            
             </div>
                             </StyledTableCell>
+                           
                                            
                           </StyledTableRow>
                         ))}

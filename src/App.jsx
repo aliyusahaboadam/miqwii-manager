@@ -46,7 +46,10 @@ import SchoolRegistration from './component/school/SchoolRegistration';
 import StudentActivator from './component/school/StudentActivator';
 import UploadSchoolLogo from './component/school/UploadSchoolLogo';
 import VerifierPage from './component/school/VerifierPage';
+import AddExam from './component/score/AddExam';
+import AddFirstCA from './component/score/AddFirstCA';
 import AddScore from './component/score/AddScore';
+import AddSecondCA from './component/score/AddSecondCA';
 import AddStudent from './component/student/AddStudent';
 import StudentDetails from './component/student/StudentDetails';
 import StudentProfile from './component/student/StudentProfile';
@@ -69,8 +72,6 @@ import TeacherSubject from './component/teacher/TeacherSubject';
 import Teachers from './component/teacher/Teachers';
 import UpdateTeacher from './component/teacher/UpdateTeacher';
 import { useSubdomain } from './component/utility/useSubdomain';
-
-
 
 function App() {
 
@@ -151,6 +152,9 @@ const AppRoutes = () => (
 
            {/*Score Releted*/}
         <Route exact path='/score/add-score/:subjectId/:classId/:className/:subjectName'  element={ <AddScore/> }/>
+        <Route exact path='/score/add-first-ca/:subjectId/:classId/:className/:subjectName'  element={ <AddFirstCA/> }/>
+        <Route exact path='/score/add-second-ca/:subjectId/:classId/:className/:subjectName'  element={ <AddSecondCA/> }/>
+        <Route exact path='/score/add-exam/:subjectId/:classId/:className/:subjectName'  element={ <AddExam/> }/>
 
          {/*Session Releted*/}
          <Route exact path='/session/add-session'  element={ <AddSession/> }/>
