@@ -94,7 +94,7 @@ const AboutUs = () => {
                     <div className={home["media__body"]} >
                        
                       <p style={{textAlign: "center"}}>
-                       Miqwii Manager is an all in one school management portal founded by Aliyu Sahabo Adam designed to simplify and strengthen how educational institutions operate. Whether you're running a small private school or a large secondary institution, Miqwii Manager provides the tools you need to manage students, staff, results, and communication — all in one secure platform.
+                       Miqwii Manager Develop and manage by Miqwii Concept is an all in one school management portal founded by Aliyu Sahabo Adam designed to simplify and strengthen how educational institutions operate. Whether you're running a small private school or a large secondary institution, Miqwii Manager provides the tools you need to manage students, staff, results, and communication — all in one secure platform.
 
 We believe school administrators, teachers, and parents deserve a system that works with them, not against them. That's why Miqwii is built to be user-friendly, flexible, and powerful — so schools can focus less on paperwork and more on what truly matters: student success.
 
@@ -171,7 +171,7 @@ Our solution offers three tailored packages — Miqwii Lite, Miqwii Standard, an
           
                 <section className={home["footer__brand"]}>
                     <img src="/images/logo.png" alt=""/>
-                    <p className={home["footer__copyright"]}>Copyright 2026 Miqwii, All Rights Reserved To The Owners</p>
+                    <p className={home["footer__copyright"]}>© 2026 Miqwii Concept. All rights reserved. Empowering digital education.</p>
                 </section>
             </div>
         

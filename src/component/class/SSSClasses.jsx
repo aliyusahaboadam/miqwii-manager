@@ -302,8 +302,7 @@ const fetchData = async () => {
     <div className={navbar['collapsible__content--drawer']}>
    <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Session</a>
+
    <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
     <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}

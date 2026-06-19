@@ -36,12 +36,12 @@ import ClassScoreSheet from '../result/ClassScoreSheet';
 import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 import {
-  AppBar,
-  Box,
-  CssBaseline,
-  Drawer,
-  List,
-  Toolbar
+    AppBar,
+    Box,
+    CssBaseline,
+    Drawer,
+    List,
+    Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -316,8 +316,7 @@ const JSSClasses  = () => {
       <div className={navbar['collapsible__content--drawer']}>
      <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-      <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Session</a>
+  
      <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
     <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}

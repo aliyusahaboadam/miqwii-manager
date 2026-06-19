@@ -40,6 +40,21 @@ export const setCurrentSession = createAsyncThunk(
 
 
 
+export const deleteSession = createAsyncThunk(
+  'session/deleteSession',
+  async (id,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.delete(BASE_URL + `/delete-session/${id}`, { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Something went wrong");
+    }
+  }
+);
+
+
+
 export const updateSession = createAsyncThunk(
   'session/updateSession',
   async (sessionData,  { rejectWithValue }) => {
@@ -54,6 +69,22 @@ export const updateSession = createAsyncThunk(
   }
 );
 
+export const getAllSchoolSession = createAsyncThunk(
+  'session/getAllSchoolSession',
+  async (_,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-all-school-session`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
+
+
 export const getAllSession = createAsyncThunk(
   'session/getAllSession',
   async (_,  { rejectWithValue }) => {
@@ -66,6 +97,14 @@ export const getAllSession = createAsyncThunk(
     }
   }
 );
+
+
+
+
+
+
+
+
 
 
 
@@ -124,9 +163,24 @@ const sessionSlice = createSlice({
             state.savingStatus = 'failed';
           })
 
-               // get All Session
+               // get  School All Session
             
-           .addCase(getAllSession.pending, (state) => {
+           .addCase(getAllSchoolSession.pending, (state) => {
+                state.fetchingStatus = 'loading';
+              })
+              .addCase(getAllSchoolSession.fulfilled, (state, action) => {
+                state.fetchingStatus = 'succeeded';
+                state.sessions = action.payload;
+              })
+              .addCase(getAllSchoolSession.rejected, (state) => {
+                state.fetchingStatus = 'failed';
+              })
+
+
+
+                 // get All Session
+            
+               .addCase(getAllSession.pending, (state) => {
                 state.fetchingStatus = 'loading';
               })
               .addCase(getAllSession.fulfilled, (state, action) => {
@@ -168,6 +222,18 @@ const sessionSlice = createSlice({
               .addCase(getCurrentSession.rejected, (state) => {
                 state.fetchingStatus = 'failed';
               })
+
+            // delete Academi Session
+            .addCase(deleteSession.pending, (state) => {
+                  state.deletingStatus = 'loading';
+                 })
+            .addCase(deleteSession.fulfilled, (state, action) => {
+                  state.deletingStatus = 'succeeded';
+                  state.sessions = state.sessions.filter(session => session.id !== action.payload.id);
+                })
+             .addCase(deleteSession.rejected, (state) => {
+                  state.deletingStatus = 'failed';
+               })
 
 
 

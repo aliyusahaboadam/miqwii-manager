@@ -1,21 +1,14 @@
-import FirstPageIcon from '@mui/icons-material/FirstPage';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
 import { IconButton, Snackbar } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { object, string } from 'yup';
-import { getAllSession, setCurrentSession } from '../../redux/reducer/sessionSlice';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
 import {
-    Dialog
+  Dialog
 } from '@mui/material';
 import { useLocation, useParams } from 'react-router-dom';
 import Loading from '../Chunks/loading';
@@ -36,29 +29,29 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar,
-    Typography,
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  List,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import {
-    getAllClassCountJss,
-    getAllClassCountJssTeacher,
-    getAllClassCountPri,
-    getAllClassCountPriTeachers,
-    getAllClassCountSss,
-    getAllClassCountSssTeachers,
-    getAllSchoolCount,
-    getAllStudentCount,
-    getAllStudentCountFemale,
-    getAllStudentCountMale,
-    getAllTeachersCount
+  getAllClassCountJss,
+  getAllClassCountJssTeacher,
+  getAllClassCountPri,
+  getAllClassCountPriTeachers,
+  getAllClassCountSss,
+  getAllClassCountSssTeachers,
+  getAllSchoolCount,
+  getAllStudentCount,
+  getAllStudentCountFemale,
+  getAllStudentCountMale,
+  getAllTeachersCount
 } from '../../redux/reducer/schoolSlice';
 
 
@@ -119,20 +112,14 @@ const SchoolDashboard  = () => {
       
 
 
-   const subjectRegistrationSchema = object({
-         selectedId: string().required("Session required"),
-        
-    });
 
 
-  const sessionState = useSelector((state) => state.sessions);
-  const { sessions , fetchingStatus} = sessionState;
+
+  
 
 
   const schoolState = useSelector((state) => state.schools);
   const {
-
-
         allSchoolCount,
         allStudentCount,
         allTeachersCount,
@@ -144,6 +131,7 @@ const SchoolDashboard  = () => {
         allClassTeachersPriCount,
         allClassTeachersJssCount,
         allClassTeachersSssCount,
+        
   } = schoolState;
 
 
@@ -153,15 +141,15 @@ const SchoolDashboard  = () => {
   
  const [anchorEl, setAnchorEl] = React.useState(null);
  const openAnchor = Boolean(anchorEl);
- const [page, setPage] = React.useState(0);
- const [rowsPerPage, setRowsPerPage] = React.useState(100);
+
+
 
 
  const [open, setOpen] = useState(false); 
  const [alertType, setAlertType] = useState(""); 
  const [message, setMessage] = useState(""); 
- const [initialSelectedId, setInitialSelectedId] = useState(null);
-const rows = Array.isArray(sessions) ? sessions : [];
+ const [isLoading, setIsLoading] = useState(false);
+
  const params = useParams();
 const location = useLocation()
 
@@ -181,26 +169,28 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   }, [location.pathname]);
 
   
-   const fetchData = () => {
-       dispatch(getAllSession()); 
-
-       dispatch(getAllStudentCount());
-       dispatch(getAllSchoolCount());
-       dispatch(getAllTeachersCount());
-
-       dispatch(getAllStudentCountMale());
-       dispatch(getAllStudentCountFemale());
-
-       dispatch(getAllClassCountJss());
-       dispatch(getAllClassCountPri());
-       dispatch(getAllClassCountSss());
-
-       dispatch(getAllClassCountJssTeacher());
-       dispatch(getAllClassCountPriTeachers());
-       dispatch(getAllClassCountSssTeachers());
-    
-   }
-
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+        await Promise.all([
+            dispatch(getAllStudentCount()),
+            dispatch(getAllSchoolCount()),
+            dispatch(getAllTeachersCount()),
+            dispatch(getAllStudentCountMale()),
+            dispatch(getAllStudentCountFemale()),
+            dispatch(getAllClassCountJss()),
+            dispatch(getAllClassCountPri()),
+            dispatch(getAllClassCountSss()),
+            dispatch(getAllClassCountJssTeacher()),
+            dispatch(getAllClassCountPriTeachers()),
+            dispatch(getAllClassCountSssTeachers()),
+        ]);
+    } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+    } finally {
+        setIsLoading(false); // Always runs, even on error
+    }
+};
 
   const handleClose = (event, reason) => {
   if (reason === "clickaway") {
@@ -214,49 +204,13 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   
 
 
-      console.log("ARRAY " + rows);
-
-     const handleCheckboxChange = (id) => {
-    // formik.setFieldValue("selectedId", id);
-  };
-
-    const navigateToAddSession = () => {
-      navigate('/session/add-session')
-    }
-
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-      page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
   
-    const handleChangePage = (event, newPage) => {
-      setPage(newPage);
-    };
+
+    
   
-    const handleChangeRowsPerPage = (event) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    };
+  
 
-  const handleFormSubmit = async (values, { resetForm })  => {
-  //   console.log(values);
-  //    console.log("from inside the useeff" + rows)
-  // const selected = rows.forEach(r => r.current === true);
-  // console.log("from inside the effect " + selected);
-  // setInitialSelectedId(selected?.id ?? null);
-         try {
-             const resultAction = await dispatch(setCurrentSession(values.selectedId)).unwrap();
-             setAlertType("success");
-             setMessage(resultAction.message);
-             }  catch (error) {
-            setAlertType("error");
-            setMessage(error)
-            
-           }
-                    
-         setOpen(true);
-         resetForm(); // This will reset the forto the initial values
-      };
-
+ 
    
     return (
 
@@ -264,7 +218,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         
        <>
          {
-          fetchingStatus === 'loading' ? (<Loading/>) : (
+          isLoading === true ? (<Loading/>) : (
              <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -387,6 +341,8 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 onClick={(e) => e.stopPropagation()}>Home</a>
     <a href="/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Schools</a>
+ <a href="/admin/all-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>sessions</a>
     </div>
 
  </div> 
@@ -442,29 +398,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
 
         
-            {/* <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-            
-            <div class={dashboard['card_button_and_icon']}>
-            
-            <span class={dashboard['icon-container']}>
-            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#school"></use>
-            </svg>
-            </span>
-
-            <div>{rows.find((r) => r.school.name)?.school.name ?? 0}</div>
-            
-          
-            </div>
-            
-            
-            
            
-            
-            </div>
-            
-            </div> */}
 
             <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
             
@@ -712,64 +646,4 @@ const options = [
 
 
 
-  function TablePaginationActions(props) {
-    const theme = useTheme();
-    const { count, page, rowsPerPage, onPageChange } = props;
-  
-    const handleFirstPageButtonClick = (event) => {
-      onPageChange(event, 0);
-    };
-  
-    const handleBackButtonClick = (event) => {
-      onPageChange(event, page - 1);
-    };
-  
-    const handleNextButtonClick = (event) => {
-      onPageChange(event, page + 1);
-    };
-  
-    const handleLastPageButtonClick = (event) => {
-      onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-    };
-  
-    return (
-      <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-        <IconButton
-          onClick={handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="first page"
-        >
-          {theme.direction === 'rtl' ? <LastPageIcon sx={{fontSize: 30}} /> : <FirstPageIcon sx={{fontSize: 30}} />}
-        </IconButton>
-        <IconButton
-          onClick={handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="previous page"
-        >
-          {theme.direction === 'rtl' ? <KeyboardArrowRight sx={{fontSize: 30}} /> : <KeyboardArrowLeft sx={{fontSize: 30}}/>}
-        </IconButton>
-        <IconButton
-          onClick={handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="next page"
-        >
-          {theme.direction === 'rtl' ? <KeyboardArrowLeft sx={{fontSize: 30}} /> : <KeyboardArrowRight sx={{fontSize: 30}} />}
-        </IconButton>
-        <IconButton
-          onClick={handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="last page"
-        >
-          {theme.direction === 'rtl' ? <FirstPageIcon sx={{fontSize: 30}} /> : <LastPageIcon sx={{fontSize: 30}} />}
-        </IconButton>
-      </Box>
-    );
-  }  
 
-
-  TablePaginationActions.propTypes = {
-    count: PropTypes.number.isRequired,
-    onPageChange: PropTypes.func.isRequired,
-    page: PropTypes.number.isRequired,
-    rowsPerPage: PropTypes.number.isRequired,
-  };

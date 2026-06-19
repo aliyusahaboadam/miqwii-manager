@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getAllSession } from '../../redux/reducer/sessionSlice';
 import { getAuthenticatedStudentById } from '../../redux/reducer/studentSlice';
 import Loading from '../Chunks/loading';
 import StudentResultById from '../result/StudentResultById';
@@ -33,16 +32,17 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useLocation } from 'react-router-dom';
+import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -106,7 +106,7 @@ const StudentDashboard  = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const sessionState = useSelector((state) => state.sessions);
-  const { sessions } = sessionState;
+  const { sessionDetails,  fetchingStatus: sessionFetchingStatus } = sessionState;
 
   const scoreState = useSelector((state) => state.scores);
   const { results } = scoreState;
@@ -151,7 +151,7 @@ const [state, setState ] = useState({
     const   fetchStudent = async () => {
          try {
            setIsLoading(true)
-            dispatch(getAllSession());
+            dispatch(getSessionDashboardDetails());
             dispatch(getAuthenticatedStudentById())
            await  dispatch(getAuthenticatedStudentById()).unwrap().then((result) => {
              console.log("Student profile test: " + JSON.stringify(result.schoolName));
@@ -177,23 +177,13 @@ const [state, setState ] = useState({
  
 
 
-  const fetchData = () => {
-        
-     
-  }
 
 
 
-  const sessionRows = Array.isArray(sessions) ? sessions : [];
+ 
 
 
-  // const [rows, setRows] = useState(classData);
-
-
-      console.log("ARRAY " + JSON.stringify(results));
-
-
-    // Avoid a layout jump when reaching the last page with empty rows.
+ 
 
   
    
@@ -429,7 +419,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
             </svg>
             </span>
             
-            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionRows.find((r) => r.current)?.session ?? 0}</span>
+            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.session || ""}</span>
             
             
             </div>
@@ -456,7 +446,7 @@ onClick={(e) => e.stopPropagation()}>Change Password</a>
             </svg>
             </span>
             
-            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionRows.find((r) => r.current)?.term ?? 0}</span>
+            <span class={[dashboard['badge'], dashboard['']].join(' ')}>{sessionDetails?.term || ""}</span>
             
             
             </div>

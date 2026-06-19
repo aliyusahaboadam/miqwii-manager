@@ -16,13 +16,9 @@ import TableRow from '@mui/material/TableRow';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { deleteSubject, getSubjectByClass } from '../../redux/reducer/subjectSlice';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import SubjectActionMenu from '../utility/SubjectActionMenu';
-
-
 
 // Import for dashboard Below
 
@@ -35,16 +31,19 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useLocation, useParams } from 'react-router-dom';
+import { deleteSession, getAllSession } from '../../redux/reducer/sessionSlice';
+import SessionActionMenu from '../utility/SessionActionMenu';
+
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -69,9 +68,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 
 
-const Subjects  = () => {
+const Sessions  = () => {
 
-  const theme = useTheme();
+
+    const theme = useTheme();
             const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
             const [isDrawerOpen, setDrawerOpen] = useState(false);
             const [anchorProfile, setAnchorProfile] = React.useState(null);
@@ -99,63 +99,54 @@ const Subjects  = () => {
           
             // ABOVE IS DRAWER LOGIC BELOW IS THE APP LOGIC.........................................................................................
           
+        
 
 
-  const subjectState = useSelector((state) => state.subjects);
-  const {subjectsInClass, fetchingStatus} = subjectState;
+  const sessionState = useSelector((state) => state.sessions);
+  const {sessions, fetchingStatus} = sessionState;
+  const rows = Array.isArray(sessions) ? sessions : [];
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
  const [page, setPage] = React.useState(0);
  const [rowsPerPage, setRowsPerPage] = React.useState(100);
- const { className } =  useParams();
+ 
+
+
+
+   useEffect(() => {
+     
+        fetchData()  
+      
+    }, []);
+
+  const fetchData = () => {
+   dispatch(getAllSession());
+  }
 
 
 
 
- const authenticated = false;
+  const authenticated = false;
 const logout = () => {
 localStorage.removeItem('token');
 navigate("/school/login")
 localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
+  
 
-  useEffect(() => {
-     fetchData();
-  }, [location.pathname]);
-
-   const fetchData = () => {
-    dispatch(getSubjectByClass(className));
-   }
-  const rows = Array.isArray(subjectsInClass) ? subjectsInClass : [];
-
-  // const [rows, setRows] = useState(classData);
-
-      
-      console.log("ARRAY " + className);
+       console.log("ROWS " + rows)
 
       const handleDelete = async (id)  => {
         // Filter out the deleted row
         rows.filter(row => row.id !== id);
-        const result = await dispatch(deleteSubject(id)).unwrap();
+        const result = await dispatch(deleteSession(id)).unwrap();
       };
     
-      const handleEdit = (id) => {
-        // Implement edit functionality
-        navigate(`/subject/update-subject/${id}/${className}`);
-      };
+     
 
-
-
-
-    const backToSubjectView = () => {
-      navigate('/subject/view-subjects')
-    }
-
-
-    const navigateToAddSubjects = () => {
-      navigate('/subject/add-subjects')
-    }
+   
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -170,16 +161,17 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       setPage(0);
     };
 
-
+    
+    console.log(" Session " + JSON.stringify( rows));
 
    
     return (
 
       <>
 
-      {fetchingStatus === 'loading' ? (<Loading/>) : (
+      { fetchingStatus === 'loading' ? (<Loading/>) :  (
 
-         <ClickAwayListener onClickAway={handleClickAway}>
+      <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
 
@@ -274,8 +266,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         <List>
 
 
-          
-        {/* Dashboard Navbar Content */}
+      {/* Dashboard Navbar Content */}
      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-0')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-0' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
@@ -296,272 +287,15 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-
-   <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Setup Session</a>
-    <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
+    <a href="/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>Schools</a>
+   
     </div>
 
  </div> 
 
-
-
-          
-     
-
-       {/* Student Navbar Content */}
-       <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
-         <header className={navbar['collapsible__header']}>
-        <div className={navbar['collapsible__icon']}>
-  
-        <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-              <use href="/images/sprite.svg#student"></use>
-            </svg>
-          <p className={navbar['collapsible__heading']}>Students</p>
-        </div>
-        
-          
-          <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
-              <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                  <use href="/images/sprite.svg#chevron"></use>
-                </svg>
-          </span>
-      </header>
-      
-  
-      <div className={navbar['collapsible__content--drawer']}>
-      <a href="/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Student</a>
-      <a href="/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Students</a>
-      </div>
-  
-   </div>    
-
-   {/* Class Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header  className={navbar['collapsible__header']}>
-      <div  className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#class"></use>
-          </svg>
-        <p  className={navbar['collapsible__heading']}>Classes</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-2')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>JSS Classes</a>
-    <a href="/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>SSS Classes</a>
-    <a href="/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Primary Classes</a>
-<a href="/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
-    <a href="/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
-    <a href="/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
-    <a href="/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
-<a href="/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Nur Class</a>
-    </div>
-
- </div> 
-
-
-         {/* Subject Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-3')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-3' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#subject"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Subjects</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-3')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-        <a href="/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Subjects</a>
-    <a href="/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Subjects</a>
-    </div>
-
- </div>  
-
-
-    {/* Teacher Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-4')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-4' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#teacher"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Teachers</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-4')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-         <a href="/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Teacher</a>
-     <a href="/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Teachers</a>
-    </div>
-
- </div>
-
-
-  
-
-
-      {/* Result Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-6')}    className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#result"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Results</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-6')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-     <a href="/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Generate Result</a>
-
- <a href="/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
-    </div>
-
- </div>
-
-
-      {/* School Fee Navbar Content */}
-      <div   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-7' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#fee"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>School Fees</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-7')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Logout</a>
-    </div>
-
- </div>
-
-
-      {/* Subscription Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-         <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#subscription"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Subscription</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-8')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Pay Subscription</a>
-    </div>
-
- </div>
-
-
-
-
- {/* Settings Navbar Content */}
- <div  style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-5')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-5' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#settings"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Settings</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-     <a href="/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Settings</a>
-     
-    </div>
-
- </div>
 
 
 
@@ -586,7 +320,7 @@ onClick={(e) => e.stopPropagation()}>Settings</a>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
+   <a href="/admin/profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Profile</a>
     <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
     </div>
@@ -610,37 +344,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
            }}
          >
 <div className={dashboard['secondary--container']}>
-<div class={[dashboard['grid'], dashboard['grid--1x2']].join(' ')}>
-<div class={[dashboard['card--add'], dashboard['card--primary']].join(' ')}>
-<div class={dashboard['card_body']}>
 
-
-     <div class={dashboard['card--small-head']}>
-     {className} Subjects
-     </div>
-
-             
-     <button onClick={navigateToAddSubjects}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Subjects</button>
-
-  </div>
-</div>
-
-
-<div class={[dashboard['card--add'], dashboard['card--primary']].join(' ')}>
-<div class={dashboard['card_body']}>
-
-
-     <div class={dashboard['card--small-head']}>
-     Go back to subjects view
-     </div>
-
-             
-    <button onClick={backToSubjectView}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Back</button>
-
-
-  </div>
-</div>
-</div>
 
 
 {/* <div>{classNamesSpecific}</div> */}
@@ -650,8 +354,13 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                       <TableHead>
                         <TableRow>
-                          <StyledTableCell align="left">S/N</StyledTableCell>
-                          <StyledTableCell align="left">Subjects</StyledTableCell>
+                            <StyledTableCell align="left">S/N</StyledTableCell>
+                          <StyledTableCell align="left">School Name</StyledTableCell>
+                          <StyledTableCell align="left">Session</StyledTableCell>
+                          <StyledTableCell align="left">Term</StyledTableCell>
+                          <StyledTableCell align="left">is Current</StyledTableCell>
+                          <StyledTableCell align="left">Status</StyledTableCell>
+                          <StyledTableCell align="left">Expiry Date</StyledTableCell>
                           <StyledTableCell align="right">Action</StyledTableCell>
                         </TableRow>
                       </TableHead>
@@ -664,16 +373,26 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                               <StyledTableCell component="th" scope="row">
                               {index + 1}
                             </StyledTableCell>
-                            <StyledTableCell  component="th" scope="row">
-                              {row.name}
+                            <StyledTableCell component="th" scope="row">
+                              {row.schoolName}
                             </StyledTableCell>
+                            <StyledTableCell component="th" align="left">{row.session}</StyledTableCell>
+                            <StyledTableCell component="th" align="left">{row.term}</StyledTableCell>
+                            <StyledTableCell component="th" align="left">{row.current === true ? 'True' : 'False'}</StyledTableCell>
+                            <StyledTableCell component="th" align="left">{row.status}</StyledTableCell>
+                            <StyledTableCell component="th" align="left">{formatDate(row.expiryDate)}</StyledTableCell>
                             <StyledTableCell component="th" align="right">
                             <div>
-                    <SubjectActionMenu
+
+                   
+                        
+                    <SessionActionMenu
                      row={row} 
                      onDelete={handleDelete} 
-                     onEdit={handleEdit} 
                      />
+               
+                  
+               
                 </div>
                             </StyledTableCell>
                                            
@@ -718,11 +437,13 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
              
        
       </Box>
-
+      {/*This Area is for Snackbar*/}
+        
+              
     </Box>
 
      
-    </ClickAwayListener>  
+    </ClickAwayListener> 
 
       )}
       </>
@@ -731,7 +452,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
     );
 }
 
-export default Subjects;
+export default Sessions;
 
 
 
@@ -810,3 +531,13 @@ export default Subjects;
     page: PropTypes.number.isRequired,
     rowsPerPage: PropTypes.number.isRequired,
   };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
+};

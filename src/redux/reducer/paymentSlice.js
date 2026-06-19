@@ -52,12 +52,12 @@ export const getPayments = createAsyncThunk(
 
 
 
-export const getExpiryDate = createAsyncThunk(
-  'payment/getExpiryDate',
+export const getTrialStatus = createAsyncThunk(
+  'payment/getTrialStatus',
   async (_,  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-expiry-date`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      const response = await api.get(BASE_URL + `/trial-status`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
       console.log(JSON.stringify(response.data))
       return response.data; // Return the saved user response
     } catch (error) {
@@ -74,6 +74,9 @@ const paymentSlice = createSlice({
     initialState: {
         payments: [],
         schools: [],
+        isOnFreeTrial: false,
+        expiryDate: null,
+        hasExistingSession: false,
         expiryDate: "",
         school: null,
         schoolStatus: 'idle',
@@ -129,14 +132,16 @@ const paymentSlice = createSlice({
 
           
                     // GET expiry Date
-          .addCase(getExpiryDate.pending, (state) => {
+          .addCase(getTrialStatus.pending, (state) => {
             state.fetchingStatus = 'loading';
           })
-          .addCase(getExpiryDate.fulfilled, (state, action) => {
+          .addCase(getTrialStatus.fulfilled, (state, action) => {
             state.fetchingStatus = 'succeeded';
-            state.expiryDate = action.payload;
+            state.isOnFreeTrial = action.payload.isOnFreeTrial;
+            state.expiryDate = action.payload.expiryDate;
+            state.hasExistingSession = action.payload.hasExistingSession
           })
-          .addCase(getExpiryDate.rejected, (state) => {
+          .addCase(getTrialStatus.rejected, (state) => {
             state.fetchingStatus = 'failed';
           })
       },

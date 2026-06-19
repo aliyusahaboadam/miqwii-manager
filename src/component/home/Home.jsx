@@ -618,7 +618,7 @@ Whether you're managing 50 students or 5,000, Miqwii Manager is built to work fo
                 </section>
                 <section className={home["footer__brand"]}>
                     <img src="/images/logo.png" alt=""/>
-                    <p className={home["footer__copyright"]}>Copyright 2026 Miqwii, All Rights Reserved To The Owners</p>
+                    <p className={home["footer__copyright"]}>© 2026 Miqwii Concept. All rights reserved. Empowering digital education.</p>
                 </section>
             </div>
         

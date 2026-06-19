@@ -1,41 +1,38 @@
 import { IconButton, Snackbar } from "@mui/material";
 import MuiCard from '@mui/material/Card';
 import Dialog from '@mui/material/Dialog';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
 import { useEffect, useState } from 'react';
-import { PaystackButton } from "react-paystack";
+import { usePaystackPayment } from "react-paystack";
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { object, string } from 'yup';
+import api from '../../component/routing/Interceptor';
 import { savePayment } from '../../redux/reducer/paymentSlice';
-import { getAuthSchool } from '../../redux/reducer/schoolSlice';
+import { getSchoolForPaymentDisplayById } from '../../redux/reducer/schoolSlice';
 import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/StudentRegistration.module.css';
-
 // Import for dashboard Below
 
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
-import { Cancel, Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import { Close as CloseIcon } from "@mui/icons-material";
 import React from "react";
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar,
-    Typography,
+  Typography
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useParams } from 'react-router-dom';
 
 
 
@@ -100,7 +97,36 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 
-const PayUS = () => {
+ const sessions = [
+  "2025/2026",
+  "2026/2027",
+   "2027/2028",
+  "2028/2029",
+ "2029/2030",
+
+  
+];
+
+
+const terms = [
+
+  "1st",
+  "2nd",
+  "3rd",
+
+];
+
+
+const PayUs = () => {
+
+
+  
+    const termRegistrationSchema = object({
+         session: string().required("Session required"),
+         term: string().required("Term required"),
+        
+  
+    });
 
 
    const theme = useTheme();
@@ -136,43 +162,50 @@ const PayUS = () => {
   
   //.....................START OF PAYMENT ZONE CONFIG.....................................
   
-const PaystackPaymentButton = ({ 
-  values, 
-  publicKey, 
-  isDisabled, 
-  onSuccess, 
-  onError, 
-  onClose 
-}) => {
-  const config = {
-    reference: generatePaymentReference(),
-    email: values.email,
-    amount: amount * 100,
-    callbackUrl: "https://miqwii.com//school/home",
-    metadata: {
-    email: values.email,
-    regNo: values.regNo,
-    tel: values.contact,
-    paymentDate: values.paymentDate,
-    },
-    publicKey,
-    text: `Pay ₦${amount}`,
-    onSuccess,
-    onClose,
-    onError,
-  };
-  
+const PaystackPaymentButton = ({ values, publicKey, isDisabled, onSuccess, onError, onClose, errors, touched, validateForm, setTouched,  sessionError }) => {
 
-  return (
-    <PaystackButton
-      className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}
-      {...config}
-      disabled={isDisabled}
-    />
-  );
+    const config = {
+        reference: generatePaymentReference(),
+        email: values.email,
+        amount: amount * 100,
+        metadata: {
+            email: values.email,
+            regNo: values.regNo,
+            tel: values.contact,
+            paymentDate: values.paymentDate,
+        },
+        publicKey,
+        onSuccess,
+        onClose,
+        onError,
+    };
+
+    // ✅ Use initializePayment hook from react-paystack
+    const initializePayment = usePaystackPayment(config);
+
+    const handleClick = async () => {
+    const validationErrors = await validateForm();
+    setTouched({ session: true, term: true });
+
+    // ✅ Block payment if session already exists
+    if (sessionError) return;
+
+    if (Object.keys(validationErrors).length === 0) {
+        initializePayment({ onSuccess, onClose });
+    }
 };
 
-
+    return (
+        <button
+            type="button"
+            className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}
+            onClick={handleClick}  // ✅ handleClick is now actually called
+            disabled={isDisabled}
+        >
+            Pay ₦{amount.toLocaleString()}
+        </button>
+    );
+};
 
 
  const generatePaymentReference = () => {
@@ -207,8 +240,6 @@ const PaystackPaymentButton = ({
 //.....................END OF PAYMENT ZONE CONFIG.....................................
 
 
-
-
 const [open, setOpen] = useState(false); 
 const [alertType, setAlertType] = useState(""); 
 const [message, setMessage] = useState(""); 
@@ -216,8 +247,36 @@ const dispatch = useDispatch();
 const location = useLocation();
 const [ loading,  setIsLoading] = useState(true);
 const navigate = useNavigate()
+const { id } = useParams();
 let amount = 0;
 
+
+
+
+const [sessionError, setSessionError] = useState("");
+
+// Call this when either session or term changes
+const checkSessionExists = async (session, term) => {
+    if (!session || !term) return; // only check when both are selected
+
+    try {
+        const token = localStorage.getItem("token");
+        const response = await api.get("/v1/api/session/check-session", {
+            params: { session, term },
+            
+                 headers: {"Authorization":`Bearer ${JSON.parse(token)}`} // ✅ only for this request
+           
+        });
+
+        if (response.data.exists) {
+            setSessionError("This term and session already exists. Please select a different one.");
+        } else {
+            setSessionError(""); // clear error
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 
 const authenticated = false;
@@ -228,16 +287,20 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 }
 
 const [state, setState ] = useState({
+    name: "",
     email: "",
     regNo: "",
     contact: "",
-    studentSize: ""
+    studentSize: "",
+    classSize: ""
    });
 
 //  FORM DATA DECLARATION
 
 
-const publicKey = "pk_live_0f640f0bcc4c1a3353fa148f8aeac4cb28f44487";
+
+
+const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
 
 
   useEffect(() => {
@@ -252,12 +315,14 @@ const publicKey = "pk_live_0f640f0bcc4c1a3353fa148f8aeac4cb28f44487";
 const   fetchSchool = async () => {
         try {
              setIsLoading(true)
-          await  dispatch(getAuthSchool()).unwrap().then((result) => {
+          await  dispatch(getSchoolForPaymentDisplayById()).unwrap().then((result) => {
            setState({
-             email: result.user?.email,
+             name: result.name,
+             email: result.email,
              regNo: result.regNo,
              contact: result.contact,
-             studentSize: result.students.length,
+             studentSize: result.numberOfStudents,
+             classSize: result.numberOfClasses,
              paymentDate: generatePaymentDate()
             })
          });
@@ -272,7 +337,7 @@ const   fetchSchool = async () => {
   }
 
 
-
+   console.log("Student Size " + state.studentSize)
 
     const handleClose = (event, reason) => {
   if (reason === "clickaway") {
@@ -282,16 +347,15 @@ const   fetchSchool = async () => {
 };
 
 
-
- if (state.studentSize <= 200) {
+  if (state.studentSize <= 250) {
     amount = 20000
-  } else if (state.studentSize > 200 && state.studentSize <= 500) {
+  } else if (state.studentSize > 250 && state.studentSize <= 500) {
     amount = 35000
   } else if (state.studentSize > 500 && state.studentSize <= 1000) {
     amount = 39000
   } else if (state.studentSize >=  1000) {
     amount = 43000
-  }
+  } 
 
 
     
@@ -342,483 +406,26 @@ const   fetchSchool = async () => {
     <>
     {
   loading === true ? (<Loading/>) : (
-
-     <ClickAwayListener onClickAway={handleClickAway}>
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-
-      {/* Navbar */}
-      <AppBar position="fixed" sx={{ zIndex: 2, background: "white", color: "#0e387a" }}>
-        <Toolbar sx={{ zIndex: 2, display: "flex", justifyContent: "space-between" }}>
-          {!isLargeScreen && (
-            <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
-              <MenuIcon sx={{ color: "inherit", fontSize: 30 }} />
-            </IconButton>
-          )}
-          
-
-         
-          <div>
- 
-          {/** Profile Setup */}
-          
-          <IconButton onClick={profilePopup}    sx={{
-          backgroundColor: "#0e387a", // Custom background
-          "&:hover": {
-            backgroundColor: "#0c3371"
-          }
-        }}
-      
-        >
-
-          <PersonOutlineOutlinedIcon
-          sx={{ color: "white", fontSize: 25 }} // fontSize in px
-          />
-          </IconButton>
-
-          <BasePopup sx={{zIndex: 2 }}   id={idProfile} open={openProfile} anchor={anchorProfile}>
-          <div className={navbar['profile--selection__container']}>
-          <div className={navbar['profile']}>
-           <a href="/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>Profile</a>
-          </div>
-          <div className={navbar['logout']}>
-           <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>Logout</a>
-          </div>
-          </div>
-            
-         </BasePopup>
-          </div>
-        
-         
-        </Toolbar>
-      </AppBar>
-
-      {/* Drawer */}
-      <Drawer
-        variant={isLargeScreen ? "persistent" : "temporary"}
-        open={isLargeScreen || isDrawerOpen}
-        onClose={!isLargeScreen ? toggleDrawer : undefined}
-        sx={{
-          width: 240,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: 240,
-            boxSizing: "border-box",
-          },
-          "& .MuiBackdrop-root": {
-            backgroundColor: "rgba(157, 152, 202, 0.3)", // Transparent backdrop
-          }
-        }}
-      >
-        {/* Drawer Header */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            p: 2,
-            borderBottom: "1px solid #ddd",
-            
-          }}
-        >
-          {/* Logo in the center */}
-          <Box sx={{ textAlign: "center", flexGrow: 1 }}>
-          <a className={[navbar["logo__link"], navbar["logo"]].join(' ')} href="#"><img src="/images/logo.png" alt="miqwii logo"/></a>
-          </Box>
-
-          {/* Close Button */}
-          {!isLargeScreen && (
-            <IconButton  onClick={toggleDrawer}>
-              <Cancel sx={{ color: "#0e387a", fontSize: 30 }} />
-            </IconButton>
-          )}
-        </Box>
-
-        {/* Drawer Content */}
-        <List>
-
-
-          
-     {/* Dashboard Navbar Content */}
-        {/* Dashboard Navbar Content */}
-    <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-0')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-0' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#dashboard"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Dashboard</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-0')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
+    <>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-   <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Session</a>
-   <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Setup Session</a>
-    <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
-<a href="/school/upload-school-logo" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add School Logo</a>
-    </div>
-
- </div> 
-
-
-
-          
-     
-
-      {/* Student Navbar Content */}
-     <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-1')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#student"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Students</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
     
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="/student/add-student" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Student</a>
-    <a href="/student/view-students" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Students</a>
-    </div>
-
- </div>     
-
-
-   {/* Class Navbar Content */}
-    <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-2')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-2' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header  className={navbar['collapsible__header']}>
-      <div  className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#class"></use>
-          </svg>
-        <p  className={navbar['collapsible__heading']}>Classes</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-2')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="/class/jss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>JSS Classes</a>
-    <a href="/class/sss-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>SSS Classes</a>
-    <a href="/class/primary-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Primary Classes</a>
-<a href="/class/nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
-<a href="/class/pre-nursery-classes" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Pre-Nursery Classes</a>
-    <a href="/class/add-jss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add JSS Class</a>
-    <a href="/class/add-sss-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add SSS Class</a>
-    <a href="/class/add-pri-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Primary Class</a>
-<a href="/class/add-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Nursery Class</a>
-<a href="/class/add-pre-nur-class" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Pre-Nursery Class</a>
-    </div>
-
- </div> 
-         {/* Subject Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-3')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-3' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#subject"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Subjects</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-3')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-        <a href="/subject/view-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Subjects</a>
-    <a href="/subject/add-subjects" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Subjects</a>
-    </div>
-
- </div>  
-
-
-    {/* Teacher Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-4')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-4' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#teacher"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Teachers</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-4')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-         <a href="/teacher/add-teacher" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Teacher</a>
-     <a href="/teacher/view-teachers" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Teachers</a>
-    </div>
-
- </div>
-
-
-      
-
-
-     {/* Result Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-6')}    className={[navbar['collapsible'], navbar[activeChevron === 'chevron-6' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#result"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Results</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-6')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-     <a href="/result/show-results" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Generate Result</a>
-
- <a href="/result/show-mastersheet" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
-    <a href="/result/student-result-by-regNo" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Search Result</a>
-    </div>
-
- </div>
-
-
-       {/* School Fee Navbar Content */}
-      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-7')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-7' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#fee"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>School Fees</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-7')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-     <a href="/receipt/view-student-reciept" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>School Fees</a>
-    </div>
-
- </div>
-
-
-
-     {/* Subscription Navbar Content */}
-       
-     
-
-   <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-8')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-8' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-         <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#subscription"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Subscription</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-8')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-   <a href="/payment/pay-subscription" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Make Payment</a>
-   <a href="/payment/all-payments" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Payments History</a>
-    </div>
-
- </div>
-
-
-
-
-  {/* Settings Navbar Content */}
- <div  style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-5')}  className={[navbar['collapsible'], navbar[activeChevron === 'chevron-5' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#settings"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Settings</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-     <a href="/settings/settings" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Settings</a>
-     
-    </div>
-
- </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- {/* Profile Navbar Content */}
- <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-9')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-9' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#profile"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Profile</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-9')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-   <a href="/school/school-profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Profile</a>
-    <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
-    </div>
-
- </div> 
-
-  </List>
-      </Drawer>
-
-      {/* Main Content */}
-    <Box
-           component="main"
-           sx={{
-             flexGrow: 1,
-             marginTop: 6,
-             fontSize: 20,
-             transition: "margin-left 0.3s ease-in-out",
-           }}
-         >
-
-
   <SignInContainer>
 
              <Formik
+                   enableReinitialize
                     initialValues={{
                       email: state.email,
                       amount: formatAmount(amount),
                       regNo: state.regNo,
                       contact: state.contact,
-                      paymentDate: generatePaymentDate()
+                      paymentDate: generatePaymentDate(),
+                      session: "",
+                      term: '',
                     }}
+                    validationSchema={termRegistrationSchema}
+                    
                     onSubmit={{}}
+
                   >
     
                 {({
@@ -826,7 +433,13 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                   handleSubmit, 
                   values,
                   isSubmitting,
-                  resetForm
+                  resetForm,
+                  errors,
+                  touched,
+                  handleBlur,
+                  setFieldValue,
+                  validateForm, 
+                  setTouched,  
                 }) => (
 
                   <Card>
@@ -842,10 +455,101 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                  
              
                   {/*Card Header*/}
-                <p className={style['form-header']}>Pay Subscription</p>
+                <p className={style['form-header']}>Pay Term</p>
             
                  
     {/* Text Fields*/}
+
+
+         <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+    
+          <FormControl sx={{ m: 1, minWidth: "100%"}}>
+            <InputLabel  sx={{ fontSize: 18 }} >Select Year</InputLabel>
+              <Select
+              label="Session"
+              name='session'
+              variant='filled'
+              onChange={(event) => {
+    setFieldValue("session", event.target.value);
+    checkSessionExists(event.target.value, values.term); // ✅ check immediately
+}}
+              onBlur={handleBlur}
+              value={values.session}
+              sx={{ fontSize: 18 }}
+              error={touched.session && Boolean(errors.session)}
+    
+            >
+              {
+    
+                 sessions.map(session => (
+    
+                    <MenuItem  sx={{ fontSize: 18 }} value={session}>{session}</MenuItem>
+    
+                  ))
+    
+              }
+             
+             
+              
+    
+      
+            </Select>
+            <FormHelperText sx={{ fontSize: 15 }}>{touched.session && errors.session}</FormHelperText>
+                {sessionError && (
+    <p style={{ color: 'red', fontSize: 14, margin: '4px 8px' }}>
+        {sessionError}
+    </p>
+)}
+          </FormControl>
+
+    
+         </div>
+    
+           <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
+    
+          <FormControl sx={{ m: 1, minWidth: "100%"}}>
+            <InputLabel  sx={{ fontSize: 18 }} >Select Term</InputLabel>
+              <Select
+              label="Term"
+              name='term'
+              variant='filled'
+              onChange={(event) => {
+    setFieldValue("term", event.target.value);
+    checkSessionExists(values.session, event.target.value); // ✅ check immediately
+}}
+              onBlur={handleBlur}
+              value={values.term}
+              sx={{ fontSize: 18 }}
+              error={touched.term && Boolean(errors.term)}
+    
+            >
+              {
+    
+                  terms.map(term => (
+    
+                    <MenuItem  sx={{ fontSize: 18 }} value={term}>{term}</MenuItem>
+    
+                  ))
+    
+              }
+             
+             
+              
+    
+      
+            </Select>
+            <FormHelperText sx={{ fontSize: 15 }}>{touched.term && errors.term}</FormHelperText>
+                     {sessionError && (
+    <p style={{ color: 'red', fontSize: 14, margin: '4px 8px' }}>
+        {sessionError}
+    </p>
+)}
+          </FormControl>
+
+ 
+    
+         </div>
+    
      <TextField
       label="Email"
       variant="outlined"
@@ -853,6 +557,52 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
       margin="normal"
       value={values.email}
       name="email"
+   
+
+      slotProps={{
+        input: {
+          style: { fontSize: 18 }, // font size for input text
+        },
+        inputLabel: {
+          style: { fontSize: 16 }, // font size for label text
+        }
+      }}
+      disabled
+    />
+
+
+
+
+
+     <TextField
+      label="School Size"
+      variant="outlined"
+      fullWidth
+      margin="normal"
+      value={state.studentSize}
+ 
+   
+
+      slotProps={{
+        input: {
+          style: { fontSize: 18 }, // font size for input text
+        },
+        inputLabel: {
+          style: { fontSize: 16 }, // font size for label text
+        }
+      }}
+      disabled
+    />
+
+
+
+     <TextField
+      label="School Name"
+      variant="outlined"
+      fullWidth
+      margin="normal"
+      value={state.name}
+  
    
 
       slotProps={{
@@ -960,6 +710,11 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
              {/* {BUTTON } */}
               <PaystackPaymentButton
+              sessionError={sessionError}
+               errors={errors}           
+                touched={touched}       
+                validateForm={validateForm} 
+                setTouched={setTouched}  
               values={values}
               publicKey={publicKey}
               isDisabled={isSubmitting}
@@ -989,8 +744,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
             
        
-     </Box>
-      {/*This Area is for Snackbar*/}
+    
         
                     <Snackbar
                        open={open}
@@ -1036,7 +790,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
         
                   <span class={dashboard['icon-container']}>
                           <svg class={[dashboard['icon--big'], dashboard['icon--success']].join(' ')}>
-                              <use href="../images/sprite.svg#success-icon"></use>
+                              <use href="/images/sprite.svg#success-icon"></use>
                             </svg>
                       </span>
         
@@ -1066,7 +820,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
         
                 <span class={dashboard['icon-container']}>
                         <svg class={[dashboard['icon--big'], dashboard['icon--error']].join(' ')}>
-                            <use href="../images/sprite.svg#error-icon"></use>
+                            <use href="/images/sprite.svg#error-icon"></use>
                           </svg>
                     </span>
                  <Typography sx={{ fontSize: 21}}>
@@ -1091,10 +845,9 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
               </div>
         
               
-                     </Snackbar>
-    </Box>
-     
-    </ClickAwayListener>  
+     </Snackbar>
+    
+    </>
    )
 }
     </>
@@ -1108,11 +861,12 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
   
 };
 
-export default PayUS;
+export default PayUs;
 
 
 
- 
+
+
 
 
 

@@ -33,12 +33,12 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  List,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -283,8 +283,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     <div className={navbar['collapsible__content--drawer']}>
    <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Session</a>
+
    <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
     <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
@@ -642,6 +641,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                     <StyledTableCell align="left">Status</StyledTableCell>
                                      <StyledTableCell align="left">Term</StyledTableCell>
                                       <StyledTableCell align="left">Session</StyledTableCell>
+                                        <StyledTableCell align="left">Expiry Date</StyledTableCell>
                                     <StyledTableCell align="right">Payment Ref</StyledTableCell>
                                   </TableRow>
                                 </TableHead>
@@ -657,6 +657,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                                       <StyledTableCell align="left">{row.status}</StyledTableCell>
                                        <StyledTableCell align="left">{row.term}</StyledTableCell>
                                         <StyledTableCell align="left">{row.session}</StyledTableCell>
+                                        <StyledTableCell align="left">{row.expiryDate}</StyledTableCell>
                                       <StyledTableCell align="right">
                                       {row.paymentRef}
                                     </StyledTableCell>

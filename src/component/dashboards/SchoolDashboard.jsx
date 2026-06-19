@@ -10,8 +10,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { object, string } from 'yup';
-import { getExpiryDate } from '../../redux/reducer/paymentSlice';
+import { getTrialStatus } from '../../redux/reducer/paymentSlice';
 import { getSessionDashboardDetails, setCurrentSession } from '../../redux/reducer/sessionSlice';
 import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
@@ -99,20 +98,16 @@ const SchoolDashboard  = () => {
       
 
 
-   const subjectRegistrationSchema = object({
-         selectedId: string().required("Session required"),
-        
-    });
-
 
   const sessionState = useSelector((state) => state.sessions);
   const { sessionDetails , fetchingStatus} = sessionState;
   const paymentState = useSelector((state) => state.payments);
-  const { expiryDate } = paymentState;
+  const { expiryDate,  isOnFreeTrial,  hasExistingSession, fetchingStatus: paymentFetchingStatus  } = paymentState;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   
+
  const [anchorEl, setAnchorEl] = React.useState(null);
  const openAnchor = Boolean(anchorEl);
  const [page, setPage] = React.useState(0);
@@ -144,7 +139,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
   
    const fetchData = () => {
-       dispatch(getExpiryDate())
+       dispatch(getTrialStatus())
        dispatch(getSessionDashboardDetails()); 
    }
 
@@ -169,6 +164,11 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
     const navigateToAddSession = () => {
       navigate('/session/add-session')
+    }
+
+
+       const navigateToPayment = () => {
+      navigate('/payment/pay-subscription')
     }
 
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -332,8 +332,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     <div className={navbar['collapsible__content--drawer']}>
    <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Session</a>
+
    <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
     <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
@@ -680,7 +679,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
   <div className={dashboard['secondary--container']}>
 
-       <div class={[dashboard['grid'], dashboard['grid--1x2']].join(' ')}>
+       <div class={[dashboard['grid'], dashboard[isOnFreeTrial ? 'grid--1x2' : 'grid--1x1']].join(' ')}>
 
          <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
             <div class={dashboard['card_body']}>
@@ -707,7 +706,10 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </div>
 
 
-             <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
+            
+            {isOnFreeTrial && (
+            
+               <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
             <div class={dashboard['card_body']}>
             
             <div class={dashboard['card_button_and_icon']}>
@@ -718,7 +720,8 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </svg>
             </span>
 
-            <div>{"Subs ends on " }
+
+            <div>{"Demo ends on " }
               <p style={{color: "#0e387a", fontSize: "1.9rem", fontWeight: 'bold'}}>
                {expiryDate} 
               </p>
@@ -734,6 +737,11 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </div>
             
             </div>
+          )}
+
+
+
+          
 
        </div>
         
@@ -827,7 +835,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                  </div>
             
                          
-                <button onClick={navigateToAddSession}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--accent']].join(' ')}> Add new term</button>
+                <button onClick={hasExistingSession ? navigateToPayment :  navigateToAddSession}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--accent']].join(' ')}> Add new term</button>
             
             
               </div>

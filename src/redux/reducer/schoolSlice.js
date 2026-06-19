@@ -51,10 +51,10 @@ export const getSchoolWithBasicDetails = createAsyncThunk(
 
 export const getSchoolForPaymentDisplayById = createAsyncThunk(
   'class/getAuthSchoolForPaymentDisplay',
-  async (id,  { rejectWithValue }) => {
+  async (_,  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-school-with-payment-details-by-id/${id}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      const response = await api.get(BASE_URL + `/get-school-with-payment-details-by-id`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
       console.log(JSON.stringify(response.data))
       return response.data; // Return the saved user response
     } catch (error) {
@@ -335,6 +335,8 @@ export const getAllClassCountSssTeachers = createAsyncThunk(
     }
   }
 );
+
+
 
 
 

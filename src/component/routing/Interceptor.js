@@ -18,11 +18,10 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     const requestUrl = err.config?.url || "";
-
-    // ✅ Don't redirect for public endpoints
     const isPublic = publicUrls.some(url => requestUrl.includes(url));
+    const status = err.response?.status;
 
-    if (err.response && err.response.status === 401 && !isPublic) {
+    if (!isPublic && (status === 401 || status === 403)) {
       localStorage.removeItem("token");
       window.location.href = "/school/login";
     }

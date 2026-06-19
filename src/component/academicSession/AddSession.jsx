@@ -27,14 +27,14 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    IconButton,
-    List,
-    Toolbar,
-    Typography
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  IconButton,
+  List,
+  Toolbar,
+  Typography
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -128,7 +128,7 @@ const AddSession = () => {
 
   // ABOVE IS DRAWER LOGIC BELOW IS THE APP LOGIC.........................................................................................
 
-  const subjectRegistrationSchema = object({
+  const termRegistrationSchema = object({
        session: string().required("Session required"),
        term: string().required("Term required"),
       
@@ -309,8 +309,7 @@ const handleClose = (event, reason) => {
     <div className={navbar['collapsible__content--drawer']}>
    <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Session</a>
+
    <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
     <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
@@ -662,7 +661,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                         term: 0,
                    
                     }}
-                    validationSchema={subjectRegistrationSchema}
+                    validationSchema={termRegistrationSchema}
                     onSubmit={handleFormSubmit}
                   >
     
@@ -726,7 +725,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
   
         </Select>
-        <FormHelperText sx={{ fontSize: 15 }}>{touched.score?.session && errors.score?.session}</FormHelperText>
+        <FormHelperText sx={{ fontSize: 15 }}>{touched.session && errors.session}</FormHelperText>
       </FormControl>
 
      </div>
@@ -761,7 +760,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
 
   
         </Select>
-        <FormHelperText sx={{ fontSize: 15 }}>{touched.score?.term && errors.score?.term}</FormHelperText>
+        <FormHelperText sx={{ fontSize: 15 }}>{touched.term && errors.term}</FormHelperText>
       </FormControl>
 
      </div>

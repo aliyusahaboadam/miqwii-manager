@@ -22,7 +22,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { object, string } from 'yup';
-import { getAllSession, setCurrentSession } from '../../redux/reducer/sessionSlice';
+import { getTrialStatus } from '../../redux/reducer/paymentSlice';
+import { getAllSchoolSession, setCurrentSession } from '../../redux/reducer/sessionSlice';
 import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
@@ -37,13 +38,13 @@ import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar,
-    Typography,
+  AppBar,
+  Box,
+  CssBaseline,
+  Drawer,
+  List,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -122,7 +123,8 @@ const SessionSetup  = () => {
  const openAnchor = Boolean(anchorEl);
  const [page, setPage] = React.useState(0);
  const [rowsPerPage, setRowsPerPage] = React.useState(100);
-
+  const paymentState = useSelector((state) => state.payments);
+  const { expiryDate,  isOnFreeTrial,  hasExistingSession, fetchingStatus: paymentFetchingStatus  } = paymentState;
 
  const [open, setOpen] = useState(false); 
  const [alertType, setAlertType] = useState(""); 
@@ -142,13 +144,15 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
   useEffect(() => {
    
-      fetchData()  
+      fetchData() 
+    
    
   }, [location.pathname]);
 
   
    const fetchData = () => {
-       dispatch(getAllSession()); 
+       dispatch(getAllSchoolSession()); 
+         dispatch(getTrialStatus()) 
    }
 
 
@@ -163,16 +167,17 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
   
   
 
-
-     
-
-     const handleCheckboxChange = (id) => {
-    // formik.setFieldValue("selectedId", id);
-  };
-
-    const navigateToAddSession = () => {
+     const navigateToAddSession = () => {
       navigate('/session/add-session')
     }
+
+
+       const navigateToPayment = () => {
+      navigate('/payment/pay-subscription')
+    }
+
+
+   
 
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows =
@@ -188,11 +193,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     };
 
   const handleFormSubmit = async (values, { resetForm })  => {
-  //   console.log(values);
-  //    console.log("from inside the useeff" + rows)
-  // const selected = rows.forEach(r => r.current === true);
-  // console.log("from inside the effect " + selected);
-  // setInitialSelectedId(selected?.id ?? null);
+ 
          try {
              const resultAction = await dispatch(setCurrentSession(values.selectedId)).unwrap();
              setAlertType("success");
@@ -214,7 +215,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         
        <>
          {
-          fetchingStatus === 'loading' ? (<Loading/>) : (
+          paymentFetchingStatus === 'loading' ? (<Loading/>) : (
              <ClickAwayListener onClickAway={handleClickAway}>
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -335,8 +336,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     <div className={navbar['collapsible__content--drawer']}>
    <a href="/school/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="/session/add-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Add Session</a>
+
    <a href="/session/setup-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Setup Session</a>
     <a href="/session/update-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
@@ -751,7 +751,7 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                  </div>
             
                          
-                <button onClick={navigateToAddSession}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--accent']].join(' ')}> Add new term</button>
+                <button onClick={hasExistingSession ? navigateToPayment :  navigateToAddSession}  className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--accent']].join(' ')}> Add new term</button>
             
             
               </div>

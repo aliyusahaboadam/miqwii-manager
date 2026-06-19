@@ -8,6 +8,7 @@ import AdminProfile from './component/admin/AdminProfile';
 import AdminSchoolsDetails from './component/admin/AdminSchoolsDetails';
 import SchoolActivator from './component/admin/SchoolActivator';
 import SchoolsAdmin from './component/admin/SchoolsAdmin';
+import Sessions from './component/admin/Sessions';
 import UpdateDomainName from './component/admin/UpdateDomainName';
 import UpdateSchool from './component/admin/UpdateSchool';
 import AddJSSClass from './component/class/AddJSSClass';
@@ -61,8 +62,7 @@ import AddSubjects from './component/subject/AddSubjects';
 import Subjects from './component/subject/Subjects';
 import UpdateSubject from './component/subject/UpdateSubject';
 import ViewSubjects from './component/subject/ViewSubjects';
-import PayUS from './component/subscription/PayUs';
-import PayUSOutside from './component/subscription/PayUsOutside';
+import PayUs from './component/subscription/PayUs';
 import Payments from './component/subscription/Payments';
 import AddTeacher from './component/teacher/AddTeacher';
 import TeacherDetails from './component/teacher/TeacherDetails';
@@ -166,8 +166,8 @@ const AppRoutes = () => (
         
           
               {/*Payment Releted*/}
-        <Route exact path='/payment/pay-expired-subscription/:id'  element={<PayUSOutside/>}/>
-        <Route exact path='/payment/pay-subscription'  element={ <PayUS/> }/>
+  
+        <Route exact path='/payment/pay-subscription'  element={ <PayUs/> }/>
         <Route exact path='/payment/all-payments'  element={ <Payments/> }/>
 
 
@@ -195,6 +195,7 @@ const AppRoutes = () => (
             <Route exact path='/school/upload-school-logo' element={ <UploadSchoolLogo/> }/>
           {/*Admin Releted*/}
           <Route exact path='/admin/schools' element={ <SchoolsAdmin/> }/>
+          <Route exact path='/admin/all-session' element={ <Sessions/> }/>
             <Route exact path='/admin/profile' element={ <AdminProfile/> }/>
            {/*Dashboard Releted*/}
         <Route exact path='/school/home' element={ <SchoolDashboard/> }/>
