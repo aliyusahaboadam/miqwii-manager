@@ -60,7 +60,22 @@ export const updateSession = createAsyncThunk(
   async (sessionData,  { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.post(BASE_URL + '/update-session', sessionData , { headers: {"Authorization":`Bearer ${JSON.parse(token)}`, "Content-Type":"application/json"}});
+      const response = await api.put(BASE_URL + '/update-session', sessionData , { headers: {"Authorization":`Bearer ${JSON.parse(token)}`, "Content-Type":"application/json"}});
+      return response.data; // Return the saved user response
+      
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Something went wrong");
+    }
+  }
+);
+
+
+export const updateSessionAdmin = createAsyncThunk(
+  'session/updateSessionAdmin',
+  async ({sessionId, sessionData},  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.put(BASE_URL + `/update-session-admin/${sessionId}`, sessionData , { headers: {"Authorization":`Bearer ${JSON.parse(token)}`, "Content-Type":"application/json"}});
       return response.data; // Return the saved user response
       
     } catch (error) {
@@ -128,6 +143,21 @@ export const getCurrentSession = createAsyncThunk(
     try {
       const token = localStorage.getItem('token');
       const response = await api.get(BASE_URL + `/get-current-session`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
+      return response.data; // Return the saved user response
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong"});
+    }
+  }
+);
+
+
+
+export const getAcademicSessionById = createAsyncThunk(
+  'session/geSessionById',
+  async (sessionId,  { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(BASE_URL + `/get-by-session-id/${sessionId}`,  { headers: {"Authorization":`Bearer ${JSON.parse(token)}`}});
       return response.data; // Return the saved user response
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong"});
@@ -207,6 +237,25 @@ const sessionSlice = createSlice({
               .addCase(getSessionDashboardDetails.rejected, (state) => {
                 state.fetchingStatus = 'failed';
               })
+
+
+              // Update session Admin
+                                              
+                                              
+               .addCase(updateSessionAdmin.pending, (state) => {
+                   state.updateStatus = 'loading';
+                })
+                .addCase(updateSessionAdmin.fulfilled, (state, action) => {
+                 const index = state.sessions.findIndex(session => session.id === action.payload.academicSessionDto.id);
+                  if (index !== -1) {
+                                                            // Replace the old user object with the updated one
+                   state.sessions[index] = action.payload.academicSessionDto;
+                   }
+                   state.updateStatus = 'succeeded';
+                   })
+                    .addCase(updateSessionAdmin.rejected, (state) => {
+                  state.updateStatus = 'failed';
+                    })
 
 
 

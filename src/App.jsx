@@ -11,6 +11,7 @@ import SchoolsAdmin from './component/admin/SchoolsAdmin';
 import Sessions from './component/admin/Sessions';
 import UpdateDomainName from './component/admin/UpdateDomainName';
 import UpdateSchool from './component/admin/UpdateSchool';
+import UpdateSessionAdmin from './component/admin/UpdateSessionAdmin';
 import AddJSSClass from './component/class/AddJSSClass';
 import AddNurClass from './component/class/AddNurClass';
 import AddPreNurClass from './component/class/AddPreNurClass';
@@ -197,6 +198,7 @@ const AppRoutes = () => (
           <Route exact path='/admin/schools' element={ <SchoolsAdmin/> }/>
           <Route exact path='/admin/all-session' element={ <Sessions/> }/>
             <Route exact path='/admin/profile' element={ <AdminProfile/> }/>
+             <Route exact path='/admin/update-session/:id' element={ <UpdateSessionAdmin/> }/>
            {/*Dashboard Releted*/}
         <Route exact path='/school/home' element={ <SchoolDashboard/> }/>
         <Route exact path='/admin/home' element={ <AdminDashboard/> }/>

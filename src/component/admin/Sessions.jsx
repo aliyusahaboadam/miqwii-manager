@@ -143,6 +143,12 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         rows.filter(row => row.id !== id);
         const result = await dispatch(deleteSession(id)).unwrap();
       };
+
+
+        const handleEdit = (id) => {
+        // Implement edit functionality
+        navigate(`/admin/update-session/${id}`);
+      };
     
      
 
@@ -176,6 +182,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       <CssBaseline />
 
       {/* Navbar */}
+       {/* Navbar */}
       <AppBar position="fixed" sx={{ zIndex: 2, background: "white", color: "#0e387a" }}>
         <Toolbar sx={{ zIndex: 2, display: "flex", justifyContent: "space-between" }}>
           {!isLargeScreen && (
@@ -266,13 +273,15 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         <List>
 
 
-      {/* Dashboard Navbar Content */}
+          
+     {/* Dashboard Navbar Content */}
+        {/* Dashboard Navbar Content */}
      <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-0')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-0' ?  'collapsible--expanded' : null]].join(' ')} >
        <header className={navbar['collapsible__header']}>
       <div className={navbar['collapsible__icon']}>
 
       <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#dashboard"></use>
+            <use href="../images/sprite.svg#dashboard"></use>
           </svg>
         <p className={navbar['collapsible__heading']}>Dashboard</p>
       </div>
@@ -280,22 +289,22 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
         
         <span onClick={() => toggleChevron('chevron-0')} className={navbar['icon-container']}>
             <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
+                <use href="../images/sprite.svg#chevron"></use>
               </svg>
         </span>
     </header>
     
 
     <div className={navbar['collapsible__content--drawer']}>
-   <a href="/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
+    <a href="/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Home</a>
     <a href="/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}
 onClick={(e) => e.stopPropagation()}>Schools</a>
-   
+ <a href="/admin/all-session" className={[navbar['link--drawer'], navbar['']].join(' ')}
+onClick={(e) => e.stopPropagation()}>sessions</a>
     </div>
 
  </div> 
-
 
 
 
@@ -388,7 +397,8 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
                         
                     <SessionActionMenu
                      row={row} 
-                     onDelete={handleDelete} 
+                     onDelete={handleDelete}
+                     onEdit={handleEdit} 
                      />
                
                   

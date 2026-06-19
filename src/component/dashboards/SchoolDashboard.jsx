@@ -721,9 +721,9 @@ onClick={(e) => e.stopPropagation()}>Profile</a>
             </span>
 
 
-            <div>{"Demo ends on " }
-              <p style={{color: "#0e387a", fontSize: "1.9rem", fontWeight: 'bold'}}>
-               {expiryDate} 
+            <div>{"Free Plan " }
+              <p style={{textTransform: "", color: "#0e387a", fontSize: "1.9rem", fontWeight: 'bold'}}>
+               {"Free for 1 term"} 
               </p>
               </div>
             

@@ -3,15 +3,15 @@ import { IconButton, Typography } from "@mui/material";
 import MenuItem from '@mui/material/MenuItem';
 
 import {
-    Button,
-    Dialog,
-    DialogActions
+  Button,
+  Dialog,
+  DialogActions
 } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import { useState } from 'react';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
-const  SessionActionMenu = ({row, onDelete}) => {
+const  SessionActionMenu = ({row, onDelete, onEdit}) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
    
@@ -83,6 +83,7 @@ const  SessionActionMenu = ({row, onDelete}) => {
                     
         >
           <MenuItem style={{fontSize: 17}} onClick={handleDeleteClick}>Delete</MenuItem>
+           <MenuItem style={{fontSize: 17}} onClick={handleEdit}>Edit</MenuItem>
           
         </Menu>
   
