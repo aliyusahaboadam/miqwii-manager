@@ -455,7 +455,7 @@ const   fetchSchool = async () => {
                  
              
                   {/*Card Header*/}
-                <p className={style['form-header']}>Pay Term</p>
+                <p className={style['form-header']}>Pay Next Term</p>
             
                  
     {/* Text Fields*/}
