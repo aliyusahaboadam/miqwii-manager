@@ -582,7 +582,7 @@ const   fetchSchool = async () => {
 
 
      <TextField
-      label="School Size"
+      label="Student Size"
       variant="outlined"
       fullWidth
       margin="normal"
@@ -600,6 +600,51 @@ const   fetchSchool = async () => {
       }}
       disabled
     />
+
+
+
+    <div
+    style={{
+        background: '#f4f7ff',
+        border: '1px solid #d6e0f5',
+        borderRadius: 10,
+        padding: '14px 16px',
+        marginTop: 8,
+        marginBottom: 8,
+        fontSize: 15,
+        color: '#0e387a',
+        lineHeight: 1.5,
+    }}
+>
+    <div style={{ fontWeight: 700, marginBottom: 6, fontSize: 16 }}>
+        How we charge
+    </div>
+    <div>
+        We charge a flat termly fee based on the number of
+        <strong> active students</strong> enrolled in the current session.
+        Promoted students still count once; graduated students do not.
+    </div>
+    <div style={{ marginTop: 10 }}>
+        <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
+            <thead>
+                <tr style={{ color: '#6b7a99' }}>
+                    <th style={{ textAlign: 'left', padding: '4px 0', fontWeight: 600 }}>Active students</th>
+                    <th style={{ textAlign: 'right', padding: '4px 0', fontWeight: 600 }}>Termly fee</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td style={{ padding: '3px 0' }}>1 – 250</td><td style={{ textAlign: 'right' }}>₦20,000</td></tr>
+                <tr><td style={{ padding: '3px 0' }}>251 – 500</td><td style={{ textAlign: 'right' }}>₦35,000</td></tr>
+                <tr><td style={{ padding: '3px 0' }}>501 – 1,000</td><td style={{ textAlign: 'right' }}>₦39,000</td></tr>
+                <tr><td style={{ padding: '3px 0' }}>1,001 and above</td><td style={{ textAlign: 'right' }}>₦43,000</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div style={{ marginTop: 10, fontSize: 14, color: '#6b7a99' }}>
+        Your school currently has <strong>{state.studentSize}</strong> active student
+        {state.studentSize === 1 ? '' : 's'} → <strong>{formatAmount(amount)}</strong> this term.
+    </div>
+</div>
 
 
 
@@ -731,6 +776,12 @@ const   fetchSchool = async () => {
             />
              {/* <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Submitting...' : 'Pay'}</button> */}
              
+   
+            <div className={style['form-link--container']}>
+                  <span className={style['form-link']} > For more info:  <a className={style['link__register']} href="/contact-us">Contact Us</a></span>
+
+              </div>
+   
     </Card>
 
 )}
