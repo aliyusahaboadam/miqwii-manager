@@ -24,19 +24,20 @@ import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { Menu as MenuIcon } from "@mui/icons-material";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import React from "react";
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
+import SchoolDrawer from '../utility/drawer/SchoolDrawer';
+
 import {
     AppBar,
     Box,
     CssBaseline,
     IconButton,
     Toolbar,
-    Typography
+    Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import React from "react";
-import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import SchoolDrawer from '../utility/drawer/SchoolDrawer';
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -79,11 +80,7 @@ const PromotionSetup = () => {
     const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [anchorProfile, setAnchorProfile] = React.useState(null);
-    const [activeChevron, setActiveChevron] = useState(null);
 
-    const toggleChevron = (chevronId) => {
-        setActiveChevron((prev) => (prev === chevronId ? null : chevronId));
-    };
     const toggleDrawer = () => setDrawerOpen(!isDrawerOpen);
     const profilePopup = (event) => setAnchorProfile(anchorProfile ? null : event.currentTarget);
     const openProfile = Boolean(anchorProfile);
@@ -120,12 +117,42 @@ const PromotionSetup = () => {
         dispatch(clearPromotionPreview());
     }, []);
 
+    // -------------------------------------------------------------
+    // Determine source and target defaults when sessions load.
+    //
+    // Promotion goes FORWARD in time:
+    //   source = most recent NON-current session (the one students just finished)
+    //   target = the current session (the one they're moving into)
+    //
+    // Sessions are ordered by id ascending (oldest first) — sort by the
+    // numeric prefix of `session` to be safe.
+    // -------------------------------------------------------------
     useEffect(() => {
         if (!Array.isArray(sessions) || sessions.length === 0) return;
-        const current = sessions.find((s) => s.current);
-        if (current && !sourceSessionId) {
-            setSourceSessionId(current.id);
+
+        const sorted = [...sessions].sort((a, b) => {
+            const ay = parseInt((a.session || "").split(/[/\-]/)[0], 10) || 0;
+            const by = parseInt((b.session || "").split(/[/\-]/)[0], 10) || 0;
+            if (ay !== by) return ay - by;
+            const order = { "1st": 1, "2nd": 2, "3rd": 3, "first": 1, "second": 2, "third": 3 };
+            const at = order[(a.term || "").toLowerCase()] || 0;
+            const bt = order[(b.term || "").toLowerCase()] || 0;
+            return at - bt;
+        });
+
+        const current = sorted.find((s) => s.current);
+
+        // Source = the session immediately BEFORE current in sorted order
+        let source = null;
+        if (current) {
+            const idx = sorted.findIndex((s) => s.id === current.id);
+            if (idx > 0) source = sorted[idx - 1];
         }
+        // Fallback: if no current or current is oldest, pick the second-to-last
+        if (!source && sorted.length > 1) source = sorted[sorted.length - 2];
+
+        if (source && !sourceSessionId) setSourceSessionId(source.id);
+        if (current && !targetSessionId) setTargetSessionId(current.id);
     }, [sessions]);
 
     const allClasses = Array.isArray(classes) ? classes : [];
@@ -194,147 +221,156 @@ const PromotionSetup = () => {
 
     const isLoading = sessionFetchingStatus === 'loading' || classFetchingStatus === 'loading';
 
+    // Helper to render a session label with a "(current)" tag
+    const sessionLabel = (s) =>
+        `${s.session} – ${s.term}${s.current ? " (current)" : ""}`;
+
     return (
         <>
             {isLoading ? (<Loading />) : (
-                // NOTE: ClickAwayListener must wrap a SINGLE element.
-                // The Snackbar lives OUTSIDE it.
-                <ClickAwayListener onClickAway={handleClickAway}>
-                    <Box sx={{ display: "flex" }}>
-                        <CssBaseline />
+                <>
+                    <ClickAwayListener onClickAway={handleClickAway}>
+                        <Box sx={{ display: "flex" }}>
+                            <CssBaseline />
 
-                        <AppBar position="fixed" sx={{ zIndex: 2, background: "white", color: "#0e387a" }}>
-                            <Toolbar sx={{ zIndex: 2, display: "flex", justifyContent: "space-between" }}>
-                                {!isLargeScreen && (
-                                    <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
-                                        <MenuIcon sx={{ color: "inherit", fontSize: 30 }} />
-                                    </IconButton>
-                                )}
-                                <Typography variant="h4" noWrap>Promotion Setup</Typography>
-                                <div>
-                                    <IconButton onClick={profilePopup} sx={{ backgroundColor: "#0e387a", "&:hover": { backgroundColor: "#0c3371" } }}>
-                                        <PersonOutlineOutlinedIcon sx={{ color: "white", fontSize: 25 }} />
-                                    </IconButton>
-                                    <BasePopup sx={{ zIndex: 2 }} id={idProfile} open={openProfile} anchor={anchorProfile}>
-                                        <div className={navbar['profile--selection__container']}>
-                                            <div className={navbar['profile']}>
-                                                <a href="/school/school-profile" className={navbar['link--profile']}>Profile</a>
-                                            </div>
-                                            <div className={navbar['logout']}>
-                                                <a onClick={logout} className={navbar['link--profile']}>Logout</a>
-                                            </div>
-                                        </div>
-                                    </BasePopup>
-                                </div>
-                            </Toolbar>
-                        </AppBar>
-
-                       <SchoolDrawer
-    isLargeScreen={isLargeScreen}
-    isDrawerOpen={isDrawerOpen}
-    toggleDrawer={toggleDrawer}
-    logout={logout}
-/>
-
-                        <Box component="main" sx={{ flexGrow: 1, marginTop: 8, fontSize: 20, overflowX: 'auto', width: '100%', transition: "margin-left 0.3s ease-in-out" }}>
-                            <SignInContainer>
-                                <Card>
-                                    <p className={style['form-header']}>Setup Promotion</p>
-
-                                    <FormControl fullWidth sx={{ mt: 1 }}>
-                                        <InputLabel sx={{ fontSize: 16 }}>Source Session</InputLabel>
-                                        <Select
-                                            value={sourceSessionId}
-                                            onChange={(e) => setSourceSessionId(e.target.value)}
-                                            variant="filled"
-                                            sx={{ fontSize: 16 }}
-                                        >
-                                            {(sessions || []).map((s) => (
-                                                <MenuItem key={s.id} value={s.id} sx={{ fontSize: 16 }}>
-                                                    {s.session} – {s.term} {s.current ? "(current)" : ""}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-
-                                    <FormControl fullWidth sx={{ mt: 2 }}>
-                                        <InputLabel sx={{ fontSize: 16 }}>Target Session</InputLabel>
-                                        <Select
-                                            value={targetSessionId}
-                                            onChange={(e) => setTargetSessionId(e.target.value)}
-                                            variant="filled"
-                                            sx={{ fontSize: 16 }}
-                                        >
-                                            {(sessions || []).filter((s) => s.id !== sourceSessionId).map((s) => (
-                                                <MenuItem key={s.id} value={s.id} sx={{ fontSize: 16 }}>
-                                                    {s.session} – {s.term}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-
-                                    <FormControl fullWidth sx={{ mt: 3 }}>
-                                        <InputLabel sx={{ fontSize: 16 }}>Add a class to map</InputLabel>
-                                        <Select
-                                            value=""
-                                            onChange={(e) => handleAddSourceClass(e.target.value)}
-                                            variant="filled"
-                                            sx={{ fontSize: 16 }}
-                                        >
-                                            {availableSources.map((c) => (
-                                                <MenuItem key={c.id} value={c.id} sx={{ fontSize: 16 }}>
-                                                    {c.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-
-                                    {mappings.length > 0 && (
-                                        <div style={{ marginTop: "2rem" }}>
-                                            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr 1fr 0.4fr", gap: "1rem", padding: "0 1rem 0.5rem 1rem", fontWeight: 600, color: "#0e387a", fontSize: 15 }}>
-                                                <span>Source Class</span>
-                                                <span>Target Class</span>
-                                                <span>Action</span>
-                                                <span />
-                                            </div>
-                                            {mappings.map((m) => (
-                                                <PromotionMappingRow
-                                                    key={m.sourceClassId}
-                                                    row={m}
-                                                    allClasses={allClasses.filter((c) => c.id !== m.sourceClassId)}
-                                                    onChange={handleRowChange}
-                                                    onRemove={() => handleRowRemove(m.sourceClassId)}
-                                                />
-                                            ))}
-                                        </div>
+                            <AppBar position="fixed" sx={{ zIndex: 2, background: "white", color: "#0e387a" }}>
+                                <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+                                    {!isLargeScreen && (
+                                        <IconButton edge="start" color="inherit" onClick={toggleDrawer}>
+                                            <MenuIcon sx={{ color: "inherit", fontSize: 30 }} />
+                                        </IconButton>
                                     )}
+                                    <Typography variant="h4" noWrap>Promotion Setup</Typography>
+                                    <div>
+                                        <IconButton onClick={profilePopup} sx={{ backgroundColor: "#0e387a", "&:hover": { backgroundColor: "#0c3371" } }}>
+                                            <PersonOutlineOutlinedIcon sx={{ color: "white", fontSize: 25 }} />
+                                        </IconButton>
+                                        <BasePopup sx={{ zIndex: 2 }} id={idProfile} open={openProfile} anchor={anchorProfile}>
+                                            <div className={navbar['profile--selection__container']}>
+                                                <div className={navbar['profile']}>
+                                                    <a href="/school/school-profile" className={navbar['link--profile']}>Profile</a>
+                                                </div>
+                                                <div className={navbar['logout']}>
+                                                    <a onClick={logout} className={navbar['link--profile']}>Logout</a>
+                                                </div>
+                                            </div>
+                                        </BasePopup>
+                                    </div>
+                                </Toolbar>
+                            </AppBar>
 
-                                    <button
-                                        type="button"
-                                        onClick={handleProceedToPreview}
-                                        className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}
-                                        style={{ marginTop: "2rem" }}
-                                    >
-                                        Preview Promotion
-                                    </button>
-                                </Card>
+                            <SchoolDrawer
+                                isLargeScreen={isLargeScreen}
+                                isDrawerOpen={isDrawerOpen}
+                                toggleDrawer={toggleDrawer}
+                                logout={logout}
+                            />
 
-                                <div className={style.footer__brand}>
-                                    <img src="/images/logo.png" alt="" />
-                                    <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
-                                </div>
-                            </SignInContainer>
+                            <Box component="main" sx={{ flexGrow: 1, marginTop: 8, fontSize: 20, overflowX: 'auto', width: '100%' }}>
+                                <SignInContainer>
+                                    <Card>
+                                        <p className={style['form-header']}>Setup Promotion</p>
+
+                                        {/* Source session = previous (what students are leaving) */}
+                                        <FormControl fullWidth sx={{ mt: 1 }}>
+                                            <InputLabel sx={{ fontSize: 16 }}>Source Session (previous)</InputLabel>
+                                            <Select
+                                                value={sourceSessionId}
+                                                onChange={(e) => setSourceSessionId(e.target.value)}
+                                                variant="filled"
+                                                sx={{ fontSize: 16 }}
+                                            >
+                                                {(sessions || []).map((s) => (
+                                                    <MenuItem key={s.id} value={s.id} sx={{ fontSize: 16 }}>
+                                                        {sessionLabel(s)}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+
+                                        {/* Target session = current (where they're going) */}
+                                        <FormControl fullWidth sx={{ mt: 2 }}>
+                                            <InputLabel sx={{ fontSize: 16 }}>Target Session (current)</InputLabel>
+                                            <Select
+                                                value={targetSessionId}
+                                                onChange={(e) => setTargetSessionId(e.target.value)}
+                                                variant="filled"
+                                                sx={{ fontSize: 16 }}
+                                            >
+                                                {(sessions || [])
+                                                    .filter((s) => s.id !== sourceSessionId)
+                                                    .map((s) => (
+                                                        <MenuItem key={s.id} value={s.id} sx={{ fontSize: 16 }}>
+                                                            {sessionLabel(s)}
+                                                        </MenuItem>
+                                                    ))}
+                                            </Select>
+                                        </FormControl>
+
+                                        {/* Add class button */}
+                                        <FormControl fullWidth sx={{ mt: 3 }}>
+                                            <InputLabel sx={{ fontSize: 16 }}>Add a class to map</InputLabel>
+                                            <Select
+                                                value=""
+                                                onChange={(e) => handleAddSourceClass(e.target.value)}
+                                                variant="filled"
+                                                sx={{ fontSize: 16 }}
+                                            >
+                                                {availableSources.map((c) => (
+                                                    <MenuItem key={c.id} value={c.id} sx={{ fontSize: 16 }}>
+                                                        {c.name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+
+                                        {/* Mapping table */}
+                                        {mappings.length > 0 && (
+                                            <div style={{ marginTop: "2rem" }}>
+                                                <div style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr 1fr 0.4fr", gap: "1rem", padding: "0 1rem 0.5rem 1rem", fontWeight: 600, color: "#0e387a", fontSize: 15 }}>
+                                                    <span>Source Class</span>
+                                                    <span>Target Class</span>
+                                                    <span>Action</span>
+                                                    <span />
+                                                </div>
+                                                {mappings.map((m) => (
+                                                    <PromotionMappingRow
+                                                        key={m.sourceClassId}
+                                                        row={m}
+                                                        allClasses={allClasses.filter((c) => c.id !== m.sourceClassId)}
+                                                        onChange={handleRowChange}
+                                                        onRemove={() => handleRowRemove(m.sourceClassId)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        <button
+                                            type="button"
+                                            onClick={handleProceedToPreview}
+                                            className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}
+                                            style={{ marginTop: "2rem" }}
+                                        >
+                                            Preview Promotion
+                                        </button>
+                                    </Card>
+
+                                    <div className={style.footer__brand}>
+                                        <img src="/images/logo.png" alt="" />
+                                        <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
+                                    </div>
+                                </SignInContainer>
+                            </Box>
                         </Box>
-                    </Box>
-                </ClickAwayListener>
-            )}
+                    </ClickAwayListener>
 
-            {/* Snackbar lives OUTSIDE ClickAwayListener */}
-            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-                <Alert onClose={handleClose} severity={alertType} sx={{ width: "100%", fontSize: "1.6rem", padding: "16px", textAlign: "center" }}>
-                    {message}
-                </Alert>
-            </Snackbar>
+                    <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                        <Alert onClose={handleClose} severity={alertType} sx={{ width: "100%", fontSize: "1.6rem", padding: "16px", textAlign: "center" }}>
+                            {message}
+                        </Alert>
+                    </Snackbar>
+                </>
+            )}
         </>
     );
 };
