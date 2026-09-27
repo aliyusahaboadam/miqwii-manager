@@ -2,16 +2,14 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton, Typography } from "@mui/material";
 import MenuItem from '@mui/material/MenuItem';
 
-import { useState } from 'react';
-import Menu from '@mui/material/Menu';
-import dashboard from '../style/dashboard/SchoolDashboard.module.css';
-import { 
-
+import {
+    Button,
     Dialog,
-    DialogActions,
- 
-    Button
-  } from '@mui/material'
+    DialogActions
+} from '@mui/material';
+import Menu from '@mui/material/Menu';
+import { useState } from 'react';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
 const  StudentActionMenu = ({ row, onDelete, onEdit,  onView }) => {
     const [anchorEl, setAnchorEl] = useState(null);

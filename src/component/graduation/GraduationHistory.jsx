@@ -1,12 +1,8 @@
-// File: src/component/student/Students.jsx
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
-import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
-import { Menu as MenuIcon } from "@mui/icons-material";
+// File: src/component/graduation/GraduationHistory.jsx
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import { Alert, IconButton, Snackbar } from "@mui/material";
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
@@ -19,21 +15,27 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { deleteStudent, getStudentByClass } from '../../redux/reducer/studentSlice';
+import { useNavigate } from 'react-router-dom';
+import { getGraduationHistory } from '../../redux/reducer/graduationSlice';
 import Loading from '../Chunks/loading';
-import RepeatStudentDialog from '../promotion/RepeatStudentDialog';
-import { default as dashboard, default as navbar } from '../style/dashboard/SchoolDashboard.module.css';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import SchoolDrawer from '../utility/drawer/SchoolDrawer';
-import StudentActionMenu from '../utility/drawer/StudentDrawer';
+
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
+import { Menu as MenuIcon } from "@mui/icons-material";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import React from 'react';
+import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 import {
     AppBar,
     Box,
     CssBaseline,
-    Toolbar
+    Toolbar,
+    Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -52,37 +54,28 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:last-child td, &:last-child th': { border: 0 },
 }));
 
-const Students = () => {
+const GraduationHistory = () => {
 
-    // ---------- Drawer boilerplate ----------
     const theme = useTheme();
     const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
     const [isDrawerOpen, setDrawerOpen] = useState(false);
     const [anchorProfile, setAnchorProfile] = React.useState(null);
-    const [activeChevron, setActiveChevron] = useState(null);
 
-    const toggleChevron = (chevronId) => setActiveChevron((prev) => (prev === chevronId ? null : chevronId));
     const toggleDrawer = () => setDrawerOpen(!isDrawerOpen);
     const profilePopup = (event) => setAnchorProfile(anchorProfile ? null : event.currentTarget);
     const openProfile = Boolean(anchorProfile);
     const idProfile = openProfile ? 'simple-popper' : undefined;
     const handleClickAway = () => setAnchorProfile(null);
 
-    // ---------- Page state ----------
-    const studentState = useSelector((state) => state.students);
-    const { studentsInClass, fetchingStatus } = studentState;
-    const rows = Array.isArray(studentsInClass) ? studentsInClass : [];
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(100);
-    const { className } = useParams();
+    const graduationState = useSelector((state) => state.graduation);
+    const { history, fetchingStatus } = graduationState;
+    const rows = Array.isArray(history) ? history : [];
 
-    const [repeatOpen, setRepeatOpen] = useState(false);
-    const [repeatStudent, setRepeatStudent] = useState(null);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(100);
 
     const [open, setOpen] = useState(false);
     const [alertType, setAlertType] = useState("");
@@ -96,47 +89,18 @@ const Students = () => {
     };
 
     useEffect(() => {
-        fetchData();
-    }, [location.pathname]);
-
-    const fetchData = () => {
-        dispatch(getStudentByClass(className));
-    };
+        dispatch(getGraduationHistory());
+    }, []);
 
     const handleClose = (event, reason) => {
         if (reason === "clickaway") return;
         setOpen(false);
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await dispatch(deleteStudent(id)).unwrap();
-            setAlertType("success");
-            setMessage("Student deleted successfully");
-            setOpen(true);
-            fetchData();
-        } catch (error) {
-            setAlertType("error");
-            setMessage(error?.message || "Delete failed");
-            setOpen(true);
-        }
-    };
-
-    const handleEdit = (id) => {
-        navigate(`/student/update-student/${id}/${className}`);
-    };
-
-    const handleViewDetails = (id) => {
-        navigate(`/student/student-details/${id}`);
-    };
-
-    const handleRepeat = (student) => {
-        setRepeatStudent(student);
-        setRepeatOpen(true);
-    };
-
-    const backToStudentsClasses = () => {
-        navigate('/student/view-students');
+    const formatDate = (dateString) => {
+        if (!dateString) return "—";
+        const d = new Date(dateString);
+        return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
     };
 
     const handleChangePage = (event, newPage) => setPage(newPage);
@@ -149,13 +113,10 @@ const Students = () => {
         <>
             {fetchingStatus === 'loading' ? (<Loading />) : (
                 <>
-                    {/* ClickAwayListener must wrap exactly ONE child.
-                        Snackbar + RepeatStudentDialog live OUTSIDE. */}
                     <ClickAwayListener onClickAway={handleClickAway}>
                         <Box sx={{ display: "flex" }}>
                             <CssBaseline />
 
-                            {/* Navbar */}
                             <AppBar position="fixed" sx={{ zIndex: 2, background: "white", color: "#0e387a" }}>
                                 <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
                                     {!isLargeScreen && (
@@ -163,6 +124,7 @@ const Students = () => {
                                             <MenuIcon sx={{ color: "inherit", fontSize: 30 }} />
                                         </IconButton>
                                     )}
+                                    <Typography variant="h4" noWrap>Graduation History</Typography>
                                     <div>
                                         <IconButton onClick={profilePopup} sx={{ backgroundColor: "#0e387a", "&:hover": { backgroundColor: "#0c3371" } }}>
                                             <PersonOutlineOutlinedIcon sx={{ color: "white", fontSize: 25 }} />
@@ -181,35 +143,25 @@ const Students = () => {
                                 </Toolbar>
                             </AppBar>
 
-                            {/* Drawer */}
-                          <SchoolDrawer
-    isLargeScreen={isLargeScreen}
-    isDrawerOpen={isDrawerOpen}
-    toggleDrawer={toggleDrawer}
-    logout={logout}
-/>
+                            <SchoolDrawer
+                                isLargeScreen={isLargeScreen}
+                                isDrawerOpen={isDrawerOpen}
+                                toggleDrawer={toggleDrawer}
+                                logout={logout}
+                            />
 
-                            {/* Main content */}
-                            <Box component="main" sx={{ flexGrow: 1, marginTop: 8, fontSize: 23, overflowX: 'auto', width: '100%', color: '#9a99ac' }}>
+                            <Box component="main" sx={{ flexGrow: 1, marginTop: 8, fontSize: 20, overflowX: 'auto', width: '100%' }}>
                                 <div className={dashboard['secondary--container']}>
-
-                                    <div class={[dashboard['card--add'], dashboard['card--primary']].join(' ')}>
-                                        <div class={dashboard['card_body']}>
-                                            <div class={dashboard['card--small-head']}>Go back to students classes</div>
-                                            <button onClick={backToStudentsClasses} className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Back</button>
-                                        </div>
-                                    </div>
-
                                     <TableContainer component={Paper} sx={{ marginTop: 1 }}>
-                                        <Table sx={{ minWidth: 650 }}>
+                                        <Table sx={{ minWidth: 900 }}>
                                             <TableHead>
                                                 <TableRow>
                                                     <StyledTableCell align="left">S/N</StyledTableCell>
-                                                    <StyledTableCell align="left">Reg No</StyledTableCell>
-                                                    <StyledTableCell align="left">Full name</StyledTableCell>
-                                                    <StyledTableCell align="left">Entry Date</StyledTableCell>
-                                                    <StyledTableCell align="left">Gender</StyledTableCell>
-                                                    <StyledTableCell align="right">Action</StyledTableCell>
+                                                    <StyledTableCell align="left">Executed At</StyledTableCell>
+                                                    <StyledTableCell align="left">Session</StyledTableCell>
+                                                    <StyledTableCell align="left">Classes Graduated</StyledTableCell>
+                                                    <StyledTableCell align="left">Total</StyledTableCell>
+                                                    <StyledTableCell align="left">Status</StyledTableCell>
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -217,21 +169,23 @@ const Students = () => {
                                                     ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                                     : rows
                                                 ).map((row, index) => (
-                                                    <StyledTableRow key={row.id}>
-                                                        <StyledTableCell>{index + 1}</StyledTableCell>
-                                                        <StyledTableCell>{row.regNo}</StyledTableCell>
-                                                        <StyledTableCell align="left">{row.firstname + ' ' + row.surname + ' ' + row.lastname}</StyledTableCell>
-                                                        <StyledTableCell align="left">{row.entryDate}</StyledTableCell>
-                                                        <StyledTableCell align="left">{row.gender}</StyledTableCell>
-                                                        <StyledTableCell align="right">
-                                                            <StudentActionMenu
-                                                                row={row}
-                                                                onDelete={handleDelete}
-                                                                onEdit={handleEdit}
-                                                                onView={handleViewDetails}
-                                                                onRepeat={handleRepeat}
-                                                            />
+                                                    <StyledTableRow key={row.batchId}>
+                                                        <StyledTableCell>{page * rowsPerPage + index + 1}</StyledTableCell>
+                                                        <StyledTableCell>{formatDate(row.executedAt)}</StyledTableCell>
+                                                        <StyledTableCell>{row.sourceSessionLabel}</StyledTableCell>
+                                                        <StyledTableCell>
+                                                            {(row.items || []).length === 0
+                                                                ? <span style={{ color: '#999', fontSize: 14 }}>—</span>
+                                                                : (row.items || []).map((it, i) => (
+                                                                    <div key={i} style={{ fontSize: 14, marginBottom: 2 }}>
+                                                                        <span style={{ color: '#0e387a', fontWeight: 600 }}>{it.sourceClassName}</span>
+                                                                        <span style={{ color: '#888' }}> ({it.studentCount})</span>
+                                                                    </div>
+                                                                ))
+                                                            }
                                                         </StyledTableCell>
+                                                        <StyledTableCell>{row.totalGraduated}</StyledTableCell>
+                                                        <StyledTableCell>Completed</StyledTableCell>
                                                     </StyledTableRow>
                                                 ))}
                                             </TableBody>
@@ -262,20 +216,6 @@ const Students = () => {
                         </Box>
                     </ClickAwayListener>
 
-                    {/* Repeat student dialog — OUTSIDE ClickAwayListener */}
-                    <RepeatStudentDialog
-                        open={repeatOpen}
-                        student={repeatStudent}
-                        className={className}
-                        onClose={() => setRepeatOpen(false)}
-                        onSuccess={() => {
-                            setAlertType("success");
-                            setMessage("Student will repeat this class next session");
-                            setOpen(true);
-                        }}
-                    />
-
-                    {/* Snackbar — OUTSIDE ClickAwayListener */}
                     <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
                         <Alert onClose={handleClose} severity={alertType} sx={{ width: "100%", fontSize: "1.6rem", padding: "16px", textAlign: "center" }}>
                             {message}
@@ -287,7 +227,7 @@ const Students = () => {
     );
 };
 
-export default Students;
+export default GraduationHistory;
 
 function TablePaginationActions(props) {
     const theme = useTheme();

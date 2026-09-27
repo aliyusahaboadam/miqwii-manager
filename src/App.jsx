@@ -1,3 +1,4 @@
+// File: src/App.js
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import Settings from './component/Settings/Settings';
@@ -74,33 +75,34 @@ import Teachers from './component/teacher/Teachers';
 import UpdateTeacher from './component/teacher/UpdateTeacher';
 import { useSubdomain } from './component/utility/useSubdomain';
 
+// Promotion & Graduation screens
+import GraduateClass from './component/graduation/GraduateClass';
+import GraduatedStudents from './component/graduation/GraduatedStudents';
+import GraduationHistory from './component/graduation/GraduationHistory';
+import PromotionHistory from './component/promotion/PromotionHistory';
+import PromotionPreview from './component/promotion/PromotionPreview';
+import PromotionSetup from './component/promotion/PromotionSetup';
+
 function App() {
 
-
-
-   const subdomain = useSubdomain();
+  const subdomain = useSubdomain();
 
   // If subdomain exists, show school page — ignore all other routes
- if (subdomain) {
+  if (subdomain) {
     return (
       <Router>
         <Routes>
-          {/* Subdomain login page */}
           <Route path="/" element={<CustomizedSchoolLogin subdomain={subdomain} />} />
-          
-          {/* ✅ Reuse shared routes */}
           <Route path="/*" element={<AppRoutes />} />
         </Routes>
       </Router>
     );
   }
-  
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        
-        {/* ✅ Reuse shared routes */}
         <Route path="/*" element={<AppRoutes />} />
       </Routes>
     </Router>
@@ -109,109 +111,121 @@ function App() {
 
 export default App;
 
-
-
 const AppRoutes = () => (
-    <Routes>
-        {/* <Route exact path='/'  element={<Testing/>}/> */}
-   
+  <Routes>
 
-           {/*Student Releted*/}
-        <Route exact path='/student/add-student'  element={ <AddStudent/> }/>
-        <Route exact path='/student/view-students'  element={ <ViewStudents/> }/>
-        <Route exact path='/student/students/:className'  element={ <Students/> }/>
-        <Route exact path='/student/update-student/:id/:className'  element={ <UpdateStudent/> }/>
-        <Route exact path='/student/student-details/:id'  element={ <StudentDetails/> }/>
-         <Route exact path='/student/student-profile'  element={ <StudentProfile/> }/>
-           {/*Teacher Releted*/}
-        <Route exact path='/teacher/add-teacher'  element={ <AddTeacher/> }/>
-        <Route exact path='/teacher/teacher-profile'  element={ <TeacherProfile/> }/>
-        <Route exact path='/teacher/view-teachers'  element={ <Teachers/> }/>
-        <Route exact path='/teacher/update-teacher/:id'  element={ <UpdateTeacher/> }/>
-        <Route exact path='/teacher/teacher-details/:id'  element={ <TeacherDetails/> }/>
-        <Route exact path='/teacher/teacher-subjects/:classId/:className'  element={ <TeacherSubject/> }/>
-           {/*Class Releted*/}
-         <Route exact path='/class/jss-classes'  element={ <JSSClasses/> }/>
-         <Route exact path='/class/sss-classes'  element={ <SSSClasses/> }/>
-         <Route exact path='/class/primary-classes'  element={ <PrimaryClasses/> }/>
-         <Route exact path='/class/nursery-classes'  element={ <NurseryClasses/> }/>
-          <Route exact path='/class/pre-nursery-classes'  element={ <PreNurseryClasses/> }/>
-         
+    {/* ---------- Student ---------- */}
+    <Route exact path='/student/add-student' element={<AddStudent />} />
+    <Route exact path='/student/view-students' element={<ViewStudents />} />
+    <Route exact path='/student/students/:className' element={<Students />} />
+    <Route exact path='/student/update-student/:id/:className' element={<UpdateStudent />} />
+    <Route exact path='/student/student-details/:id' element={<StudentDetails />} />
+    <Route exact path='/student/student-profile' element={<StudentProfile />} />
 
-        <Route exact path='/class/add-jss-class'  element={ <AddJSSClass/> }/>
-        <Route exact path='/class/add-sss-class'  element={ <AddSSSClass/> }/>
-        <Route exact path='/class/add-pri-class'  element={ <AddPriClass/> }/>
-        <Route exact path='/class/add-nur-class'  element={ <AddNurClass/> }/>
-        <Route exact path='/class/add-pre-nur-class'  element={ <AddPreNurClass/> }/>
-        <Route exact path='/class/delete-class'  element={ <DeleteClass/> }/>
-        <Route exact path='/class/update-class/:className'  element={ <UpdateClass/> }/>
-              {/*Subject Releted*/}
-        <Route exact path='/subject/add-subjects'  element={ <AddSubjects/> }/>
-        <Route exact path='/subject/view-subjects'  element={ <ViewSubjects/> }/>
-        <Route exact path='/subject/subjects/:className'  element={ <Subjects/> }/>
-        <Route exact path='/subject/update-subject/:id/:className'  element={ <UpdateSubject/> }/>
+    {/* ---------- Teacher ---------- */}
+    <Route exact path='/teacher/add-teacher' element={<AddTeacher />} />
+    <Route exact path='/teacher/teacher-profile' element={<TeacherProfile />} />
+    <Route exact path='/teacher/view-teachers' element={<Teachers />} />
+    <Route exact path='/teacher/update-teacher/:id' element={<UpdateTeacher />} />
+    <Route exact path='/teacher/teacher-details/:id' element={<TeacherDetails />} />
+    <Route exact path='/teacher/teacher-subjects/:classId/:className' element={<TeacherSubject />} />
 
-           {/*Score Releted*/}
-        <Route exact path='/score/add-score/:subjectId/:classId/:className/:subjectName'  element={ <AddScore/> }/>
-        <Route exact path='/score/add-first-ca/:subjectId/:classId/:className/:subjectName'  element={ <AddFirstCA/> }/>
-        <Route exact path='/score/add-second-ca/:subjectId/:classId/:className/:subjectName'  element={ <AddSecondCA/> }/>
-        <Route exact path='/score/add-exam/:subjectId/:classId/:className/:subjectName'  element={ <AddExam/> }/>
+    {/* ---------- Class ---------- */}
+    <Route exact path='/class/jss-classes' element={<JSSClasses />} />
+    <Route exact path='/class/sss-classes' element={<SSSClasses />} />
+    <Route exact path='/class/primary-classes' element={<PrimaryClasses />} />
+    <Route exact path='/class/nursery-classes' element={<NurseryClasses />} />
+    <Route exact path='/class/pre-nursery-classes' element={<PreNurseryClasses />} />
 
-         {/*Session Releted*/}
-         <Route exact path='/session/add-session'  element={ <AddSession/> }/>
-         <Route exact path='/session/setup-session'  element={ <SessionSetup/> }/>
-         <Route exact path='/session/update-session'  element={ <AddNextTermFeeAndResumptionDate/> }/>
-             {/*Receipt Releted*/}
-        <Route exact path='/receipt/view-student-reciept'  element={ <ViewStudentReceipt/> }/>
-         <Route exact path='/receipt/student-reciept/:className'  element={ <StudentReceipt/> }/>
-        
-          
-              {/*Payment Releted*/}
-  
-        <Route exact path='/payment/pay-subscription'  element={ <PayUs/> }/>
-        <Route exact path='/payment/all-payments'  element={ <Payments/> }/>
+    <Route exact path='/class/add-jss-class' element={<AddJSSClass />} />
+    <Route exact path='/class/add-sss-class' element={<AddSSSClass />} />
+    <Route exact path='/class/add-pri-class' element={<AddPriClass />} />
+    <Route exact path='/class/add-nur-class' element={<AddNurClass />} />
+    <Route exact path='/class/add-pre-nur-class' element={<AddPreNurClass />} />
+    <Route exact path='/class/delete-class' element={<DeleteClass />} />
+    <Route exact path='/class/update-class/:className' element={<UpdateClass />} />
 
+    {/* ---------- Subject ---------- */}
+    <Route exact path='/subject/add-subjects' element={<AddSubjects />} />
+    <Route exact path='/subject/view-subjects' element={<ViewSubjects />} />
+    <Route exact path='/subject/subjects/:className' element={<Subjects />} />
+    <Route exact path='/subject/update-subject/:id/:className' element={<UpdateSubject />} />
 
-           {/*Settings Releted*/}
-        <Route exact path='/settings/settings'  element={ <Settings/> }/>
+    {/* ---------- Score ---------- */}
+    <Route exact path='/score/add-score/:subjectId/:classId/:className/:subjectName' element={<AddScore />} />
+    <Route exact path='/score/add-first-ca/:subjectId/:classId/:className/:subjectName' element={<AddFirstCA />} />
+    <Route exact path='/score/add-second-ca/:subjectId/:classId/:className/:subjectName' element={<AddSecondCA />} />
+    <Route exact path='/score/add-exam/:subjectId/:classId/:className/:subjectName' element={<AddExam />} />
 
-          {/*Password Releted*/}
-        <Route exact path='/password/password-request'  element={<PasswordRequest/>}/>
-         <Route exact path='/password/password-reset'  element={<ResetPassword/>}/>
-         <Route exact path='/password/password-reset-student'  element={<StudentResetPassword/>}/>
-         <Route exact path='/password/password-reset-teacher'  element={<TeacherResetPassword/>}/>
-         {/*Result Releted*/}
-         <Route exact path='/result/show-results'  element={ <ShowResults/> }/>
-          <Route exact path='/result/show-mastersheet'  element={ <ShowMasterSheet/> }/>
-          <Route exact path='/result/student-result-by-regNo'  element={ <ShowResultByRegNo/> }/>
-          <Route exact path='/result/student-search-by-regNo'  element={ <StudentResultByRegNoStudentDashboard/> }/>
-          <Route exact path='/result/teacher-search-by-regNo'  element={ <StudentResultByRegNoTeacherDashboard/> }/> 
-           {/*school Releted*/}
-             <Route exact path='/school/student-activator' element={ <StudentActivator/> }/>
-            <Route exact path='/admin/school-activator/:id' element={ <SchoolActivator/> }/>
-            <Route exact path='/admin/update-school/:id' element={ <UpdateSchool/> }/>
-            <Route exact path='/admin/update-domain-name/:id' element={ <UpdateDomainName/> }/>
-             <Route exact path='/admin/school-profile/:id' element={ <AdminSchoolsDetails/> }/>
-            <Route exact path='/school/school-profile' element={ <SchoolProfile/> }/>
-            <Route exact path='/school/upload-school-logo' element={ <UploadSchoolLogo/> }/>
-          {/*Admin Releted*/}
-          <Route exact path='/admin/schools' element={ <SchoolsAdmin/> }/>
-          <Route exact path='/admin/all-session' element={ <Sessions/> }/>
-            <Route exact path='/admin/profile' element={ <AdminProfile/> }/>
-             <Route exact path='/admin/update-session/:id' element={ <UpdateSessionAdmin/> }/>
-           {/*Dashboard Releted*/}
-        <Route exact path='/school/home' element={ <SchoolDashboard/> }/>
-        <Route exact path='/admin/home' element={ <AdminDashboard/> }/>
-        <Route exact path='/teacher/home' element={ <TeacherDashboard/> }/>
-        <Route exact path='/student/home' element={ <StudentDashboard/> }/>
-            {/*Registration and Login*/}
-        <Route exact path='/school/register'  element={<SchoolRegistration/>}/>
-        <Route exact path='/school/login'  element={<SchoolLogin/>}/>
-        <Route exact path='/school/login-customized'  element={<CustomizedSchoolLogin/>}/>
-        <Route exact path='/school/verify-account'  element={ <VerifierPage/> }/>
-           {/*Website*/}
-        <Route exact path='/services' element={<Services/>}/>
-        <Route exact path='/contact-us' element={<ContactUs/>}/>
-        <Route exact path='/about-us' element={<AboutUs/>}/>
-    </Routes>
+    {/* ---------- Session ---------- */}
+    <Route exact path='/session/add-session' element={<AddSession />} />
+    <Route exact path='/session/setup-session' element={<SessionSetup />} />
+    <Route exact path='/session/update-session' element={<AddNextTermFeeAndResumptionDate />} />
+
+    {/* ---------- Promotion ---------- */}
+    <Route exact path='/promotion/setup' element={<PromotionSetup />} />
+    <Route exact path='/promotion/preview' element={<PromotionPreview />} />
+    <Route exact path='/promotion/history' element={<PromotionHistory />} />
+
+    {/* ---------- Graduation ---------- */}
+    <Route exact path='/graduation/graduate-class' element={<GraduateClass />} />
+    <Route exact path='/graduation/graduated-students' element={<GraduatedStudents />} />
+    <Route exact path='/graduation/history' element={<GraduationHistory />} />
+
+    {/* ---------- Receipt ---------- */}
+    <Route exact path='/receipt/view-student-reciept' element={<ViewStudentReceipt />} />
+    <Route exact path='/receipt/student-reciept/:className' element={<StudentReceipt />} />
+
+    {/* ---------- Payment ---------- */}
+    <Route exact path='/payment/pay-subscription' element={<PayUs />} />
+    <Route exact path='/payment/all-payments' element={<Payments />} />
+
+    {/* ---------- Settings ---------- */}
+    <Route exact path='/settings/settings' element={<Settings />} />
+
+    {/* ---------- Password ---------- */}
+    <Route exact path='/password/password-request' element={<PasswordRequest />} />
+    <Route exact path='/password/password-reset' element={<ResetPassword />} />
+    <Route exact path='/password/password-reset-student' element={<StudentResetPassword />} />
+    <Route exact path='/password/password-reset-teacher' element={<TeacherResetPassword />} />
+
+    {/* ---------- Result ---------- */}
+    <Route exact path='/result/show-results' element={<ShowResults />} />
+    <Route exact path='/result/show-mastersheet' element={<ShowMasterSheet />} />
+    <Route exact path='/result/student-result-by-regNo' element={<ShowResultByRegNo />} />
+    <Route exact path='/result/student-search-by-regNo' element={<StudentResultByRegNoStudentDashboard />} />
+    <Route exact path='/result/teacher-search-by-regNo' element={<StudentResultByRegNoTeacherDashboard />} />
+
+    {/* ---------- School ---------- */}
+    <Route exact path='/school/student-activator' element={<StudentActivator />} />
+    <Route exact path='/admin/school-activator/:id' element={<SchoolActivator />} />
+    <Route exact path='/admin/update-school/:id' element={<UpdateSchool />} />
+    <Route exact path='/admin/update-domain-name/:id' element={<UpdateDomainName />} />
+    <Route exact path='/admin/school-profile/:id' element={<AdminSchoolsDetails />} />
+    <Route exact path='/school/school-profile' element={<SchoolProfile />} />
+    <Route exact path='/school/upload-school-logo' element={<UploadSchoolLogo />} />
+
+    {/* ---------- Admin ---------- */}
+    <Route exact path='/admin/schools' element={<SchoolsAdmin />} />
+    <Route exact path='/admin/all-session' element={<Sessions />} />
+    <Route exact path='/admin/profile' element={<AdminProfile />} />
+    <Route exact path='/admin/update-session/:id' element={<UpdateSessionAdmin />} />
+
+    {/* ---------- Dashboards ---------- */}
+    <Route exact path='/school/home' element={<SchoolDashboard />} />
+    <Route exact path='/admin/home' element={<AdminDashboard />} />
+    <Route exact path='/teacher/home' element={<TeacherDashboard />} />
+    <Route exact path='/student/home' element={<StudentDashboard />} />
+
+    {/* ---------- Auth ---------- */}
+    <Route exact path='/school/register' element={<SchoolRegistration />} />
+    <Route exact path='/school/login' element={<SchoolLogin />} />
+    <Route exact path='/school/login-customized' element={<CustomizedSchoolLogin />} />
+    <Route exact path='/school/verify-account' element={<VerifierPage />} />
+
+    {/* ---------- Website ---------- */}
+    <Route exact path='/services' element={<Services />} />
+    <Route exact path='/contact-us' element={<ContactUs />} />
+    <Route exact path='/about-us' element={<AboutUs />} />
+  </Routes>
 );

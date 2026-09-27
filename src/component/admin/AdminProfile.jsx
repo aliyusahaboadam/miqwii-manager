@@ -10,6 +10,7 @@ import { getAuthSchool } from '../../redux/reducer/schoolSlice';
 import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/StudentRegistration.module.css';
+import AdminDrawer from '../utility/drawer/AdminDrawer';
 
  // Import for dashboard Below
  
@@ -22,13 +23,11 @@ import { useLocation } from 'react-router-dom';
 import navbar from '../style/dashboard/SchoolDashboard.module.css';
  
  import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Drawer,
-    List,
-    Toolbar,
-    Typography,
+  AppBar,
+  Box,
+  CssBaseline,
+  Toolbar,
+  Typography
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -262,112 +261,12 @@ console.log("get teacher by id" +  JSON.stringify(state.class));
       </AppBar>
 
       {/* Drawer */}
-      <Drawer
-        variant={isLargeScreen ? "persistent" : "temporary"}
-        open={isLargeScreen || isDrawerOpen}
-        onClose={!isLargeScreen ? toggleDrawer : undefined}
-        sx={{
-          width: 240,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: 240,
-            boxSizing: "border-box",
-          },
-          "& .MuiBackdrop-root": {
-            backgroundColor: "rgba(157, 152, 202, 0.3)", // Transparent backdrop
-          }
-        }}
-      >
-        {/* Drawer Header */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            p: 2,
-            borderBottom: "1px solid #ddd",
-            
-          }}
-        >
-          {/* Logo in the center */}
-          <Box sx={{ textAlign: "center", flexGrow: 1 }}>
-          <a className={[navbar["logo__link"], navbar["logo"]].join(' ')} href="#"><img src="/images/logo.png" alt="miqwii logo"/></a>
-          </Box>
-
-          {/* Close Button */}
-          {!isLargeScreen && (
-            <IconButton  onClick={toggleDrawer}>
-              <Cancel sx={{ color: "#0e387a", fontSize: 30 }} />
-            </IconButton>
-          )}
-        </Box>
-
-        {/* Drawer Content */}
-        <List>
-
-      
-     {/* Dashboard Navbar Content */}
-        {/* Dashboard Navbar Content */}
-     <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-0')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-0' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#dashboard"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Dashboard</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-0')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="../images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-    <a href="/admin/home" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Home</a>
-    <a href="/admin/schools" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Schools</a>
-    </div>
-
- </div> 
-
-
-
- {/* Profile Navbar Content */}
- <div style={{cursor: 'pointer'}} onClick={() => toggleChevron('chevron-9')}   className={[navbar['collapsible'], navbar[activeChevron === 'chevron-9' ?  'collapsible--expanded' : null]].join(' ')} >
-       <header className={navbar['collapsible__header']}>
-      <div className={navbar['collapsible__icon']}>
-
-      <svg  class={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-            <use href="/images/sprite.svg#profile"></use>
-          </svg>
-        <p className={navbar['collapsible__heading']}>Profile</p>
-      </div>
-      
-        
-        <span onClick={() => toggleChevron('chevron-9')} className={navbar['icon-container']}>
-            <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
-                <use href="/images/sprite.svg#chevron"></use>
-              </svg>
-        </span>
-    </header>
-    
-
-    <div className={navbar['collapsible__content--drawer']}>
-   <a href="/admin/profile" className={[navbar['link--drawer'], navbar['']].join(' ')}
-onClick={(e) => e.stopPropagation()}>Profile</a>
-    <a onClick={logout} className={[navbar['link--drawer'], navbar['']].join(' ')}>Logout</a>
-    </div>
-
- </div> 
-
-  </List>
-      </Drawer>
+     <AdminDrawer
+    isLargeScreen={isLargeScreen}
+    isDrawerOpen={isDrawerOpen}
+    toggleDrawer={toggleDrawer}
+    logout={logout}
+/>
 
       {/* Main Content */}
     <Box
