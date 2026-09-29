@@ -24,7 +24,7 @@ import SchoolDemographicsCharts from '../utility/SchoolChart';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { Close as CloseIcon, Menu as MenuIcon } from "@mui/icons-material";
-import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import React from "react";
 import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
@@ -170,6 +170,10 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
       navigate('/payment/pay-subscription')
     }
 
+    const navigateToPromotion = () => {
+      navigate('/promotion/setup')
+    }
+
     // Avoid a layout jump when reaching the last page with empty rows.
     // const emptyRows =
     //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -184,11 +188,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     };
 
   const handleFormSubmit = async (values, { resetForm })  => {
-  //   console.log(values);
-  //    console.log("from inside the useeff" + rows)
-  // const selected = rows.forEach(r => r.current === true);
-  // console.log("from inside the effect " + selected);
-  // setInitialSelectedId(selected?.id ?? null);
          try {
              const resultAction = await dispatch(setCurrentSession(values.selectedId)).unwrap();
              setAlertType("success");
@@ -202,6 +201,18 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
          setOpen(true);
          resetForm(); // This will reset the forto the initial values
       };
+
+    // -----------------------------------------------------------------
+    // Promotion banner
+    // -----------------------------------------------------------------
+    // The backend decides. It sets needsPromotion = true only when:
+    //   - the current session has no enrollments, AND
+    //   - a previous session exists AND has students to promote.
+    //
+    // A brand-new school with only one session has no previous session,
+    // so needsPromotion stays false.
+    // -----------------------------------------------------------------
+    const showPromotionBanner = sessionDetails?.needsPromotion === true;
 
    
     return (
@@ -285,6 +296,63 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
 
   <div className={dashboard['secondary--container']}>
 
+       {/* Promotion banner — styled like the "How we charge" card. */}
+       {showPromotionBanner && (
+         <div
+           style={{
+             background: '#f4f7ff',
+             border: '1px solid #d6e0f5',
+             borderRadius: 10,
+             padding: '14px 16px',
+             marginTop: 8,
+             marginBottom: 8,
+             fontSize: 15,
+             color: '#0e387a',
+             lineHeight: 1.5,
+           }}
+         >
+           <div style={{ fontWeight: 700, marginBottom: 6, fontSize: 16 }}>
+             Promote your students into this session
+           </div>
+           <div>
+             The current session (<strong>{sessionDetails?.session || ''} – {sessionDetails?.term || ''}</strong>) has
+             <strong> no active students</strong> yet. Run a promotion to carry
+             students forward from the previous session into this one.
+           </div>
+           <div style={{ marginTop: 10 }}>
+             <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
+               <thead>
+                 <tr style={{ color: '#6b7a99' }}>
+                   <th style={{ textAlign: 'left', padding: '4px 0', fontWeight: 600 }}>Current session</th>
+                   <th style={{ textAlign: 'right', padding: '4px 0', fontWeight: 600 }}>Active students</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr>
+                   <td style={{ padding: '3px 0' }}>
+                     {sessionDetails?.session || ''} – {sessionDetails?.term || ''}
+                   </td>
+                   <td style={{ textAlign: 'right' }}>0</td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
+           <div style={{ marginTop: 10, fontSize: 14, color: '#6b7a99' }}>
+             Promote students from the previous session to populate this one.
+           </div>
+           <div style={{ marginTop: 12 }}>
+             <button
+               type="button"
+               onClick={navigateToPromotion}
+               className={[dashboard['btn'], dashboard['btn--primary']].join(' ')}
+               style={{ padding: '8px 16px', fontSize: 14, whiteSpace: 'nowrap' }}
+             >
+               Go to Promotion Setup
+             </button>
+           </div>
+         </div>
+       )}
+
        <div class={[dashboard['grid'], dashboard[isOnFreeTrial ? 'grid--1x2' : 'grid--1x1']].join(' ')}>
 
          <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
@@ -350,30 +418,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
           
 
        </div>
-        
-            {/* <div class={[dashboard['card--count'], dashboard['card--primary']].join(' ')}>
-            <div class={dashboard['card_body']}>
-            
-            <div class={dashboard['card_button_and_icon']}>
-            
-            <span class={dashboard['icon-container']}>
-            <svg class={[dashboard['icon--big'], dashboard['icon--primary']].join(' ')}>
-            <use href="../images/sprite.svg#school"></use>
-            </svg>
-            </span>
-
-            <div>{rows.find((r) => r.school.name)?.school.name ?? 0}</div>
-            
-          
-            </div>
-            
-            
-            
-           
-            
-            </div>
-            
-            </div> */}
 
             <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
             
