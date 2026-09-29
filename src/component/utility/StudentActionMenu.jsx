@@ -1,54 +1,62 @@
+// File: src/utility/drawer/StudentActionMenu.jsx
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { IconButton, Typography } from "@mui/material";
 import MenuItem from '@mui/material/MenuItem';
 
 import {
-    Button,
-    Dialog,
-    DialogActions
+  Button,
+  Dialog,
+  DialogActions
 } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import { useState } from 'react';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
-const  StudentActionMenu = ({ row, onDelete, onEdit,  onView }) => {
+const StudentActionMenu = ({ row, onDelete, onEdit, onView, onRepeat }) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-   
+
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
-     };
-    
-      const handleClose = () => {
+    };
+
+    const handleClose = () => {
         setAnchorEl(null);
-      };
-    
-      const handleDeleteClick = () => {
+    };
+
+    const handleDeleteClick = () => {
         setDeleteDialogOpen(true);
         handleClose();
-      };
-    
-      const handleConfirmDelete = () => {
+    };
+
+    const handleConfirmDelete = () => {
         onDelete(row.id);
         setDeleteDialogOpen(false);
-      };
-    
-      const handleCancelDelete = () => {
+    };
+
+    const handleCancelDelete = () => {
         setDeleteDialogOpen(false);
-      };
-    
-      const handleEdit = () => {
+    };
+
+    const handleEdit = () => {
         onEdit(row.id);
         handleClose();
-      };
+    };
 
-      const handleViewDetails = () => {
+    const handleViewDetails = () => {
         onView(row.id);
         handleClose();
-      };
-  
+    };
+
+    const handleRepeat = () => {
+        if (onRepeat) {
+            onRepeat(row);
+        }
+        handleClose();
+    };
+
     return (
         <>
         <IconButton
@@ -57,9 +65,9 @@ const  StudentActionMenu = ({ row, onDelete, onEdit,  onView }) => {
           aria-haspopup="true"
           onClick={handleClick}
         >
-          <MoreVertIcon   sx={{fontSize: 30}} />
+          <MoreVertIcon sx={{fontSize: 30}} />
         </IconButton>
-        
+
         {/* Menu with options */}
         <Menu
           id="action-menu"
@@ -68,59 +76,48 @@ const  StudentActionMenu = ({ row, onDelete, onEdit,  onView }) => {
           open={open}
           onClose={handleClose}
 
-
-         
                     MenuListProps={{
                       'aria-labelledby': 'long-button',
                     }}
                     slotProps={{
                       paper: {
                         style: {
-                          
                           borderRadius: '8px',
                           boxShadow: '0 0 20px 10px #f3f3f3'
                         },
                       },
                     }}
-            
-                    
         >
-          <MenuItem  style={{fontSize: 17}}  onClick={handleEdit}>Edit</MenuItem>
+          <MenuItem style={{fontSize: 17}} onClick={handleEdit}>Edit</MenuItem>
           <MenuItem style={{fontSize: 17}} onClick={handleDeleteClick}>Delete</MenuItem>
           <MenuItem style={{fontSize: 17}} onClick={handleViewDetails}>Details</MenuItem>
+          <MenuItem style={{fontSize: 17}} onClick={handleRepeat}>Repeat</MenuItem>
         </Menu>
-  
-        {/* Delete Confirmation Dialog */}
 
+        {/* Delete Confirmation Dialog */}
          <Dialog
                open={deleteDialogOpen}
                onClose={handleCancelDelete}
                 BackdropProps={{
-                  sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" }, // Darker overlay
+                  sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" },
                 }}
-        
+
                 sx={{
                   "& .MuiDialog-paper": {
                     width: '100%',
-                    borderRadius: "15px", // Optional: Rounded corners
+                    borderRadius: "15px",
                   },
                 }}
-              
               >
-        
-           
-        
                   <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-error']].join(' ')}>
                   <div class={dashboard['card_body']}>
-        
-        
+
                   <span class={dashboard['icon-container']}>
                           <svg class={[dashboard['icon--big'], dashboard['icon--error']].join(' ')}>
                               <use href="/images/sprite.svg#success-icon"></use>
                             </svg>
                       </span>
                       <Typography
-                      
                        sx={{
              fontSize: 20,
              color: '#9a99ac',
@@ -128,36 +125,34 @@ const  StudentActionMenu = ({ row, onDelete, onEdit,  onView }) => {
                       >
                          <p  class={dashboard['alert-message']} >Are you sure you want to delete {row.firstname + ' ' + row.surname + ' ' + row.lastname}?</p>
                       </Typography>
-                   
-                   
-                   
+
                   </div>
-                 
+
                 </div>
-        
+
                 <DialogActions  style={{ padding: '1.5rem  3rem 1.5rem 3rem', display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}} >
-  <Button 
-  style={{fontSize: 15}} 
-  onClick={handleCancelDelete}   
-  sx={{ 
+  <Button
+  style={{fontSize: 15}}
+  onClick={handleCancelDelete}
+  sx={{
     borderRadius: '15px',
     color: '#fff',
-    backgroundColor: '#388E3C',    // Your desired color
+    backgroundColor: '#388E3C',
     '&:hover': {
-      backgroundColor: '#2f7533',  // Optional: darker shade for hover
+      backgroundColor: '#2f7533',
     }
   }}>
     Cancel
   </Button>
-  <Button 
-  style={{fontSize: 15}} 
-  onClick={handleConfirmDelete} 
-  sx={{ 
+  <Button
+  style={{fontSize: 15}}
+  onClick={handleConfirmDelete}
+  sx={{
     borderRadius: '15px',
     color: '#fff',
-    backgroundColor: '#F44336',    // Your desired color
+    backgroundColor: '#F44336',
     '&:hover': {
-      backgroundColor: '#bd3228',  // Optional: darker shade for hover
+      backgroundColor: '#bd3228',
     }
   }}
   autoFocus
@@ -165,46 +160,10 @@ const  StudentActionMenu = ({ row, onDelete, onEdit,  onView }) => {
     Delete
   </Button>
 </DialogActions>
-                    
-                   
               </Dialog>
-
-        {/* <Dialog
-          open={deleteDialogOpen}
-          onClose={handleCancelDelete}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Are you sure you want to delete {row.name}?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCancelDelete} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleConfirmDelete} color="primary" autoFocus>
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog> */}
       </>
     );
   }
 
 
   export default StudentActionMenu;
-  
-
-
-
-//   <DialogActions>
-//   <Button onClick={handleCancelDelete} color="primary">
-//     Cancel
-//   </Button>
-//   <Button onClick={handleConfirmDelete} color="primary" autoFocus>
-//     Delete
-//   </Button>
-// </DialogActions>

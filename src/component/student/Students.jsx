@@ -27,7 +27,7 @@ import Loading from '../Chunks/loading';
 import RepeatStudentDialog from '../promotion/RepeatStudentDialog';
 import { default as dashboard, default as navbar } from '../style/dashboard/SchoolDashboard.module.css';
 import SchoolDrawer from '../utility/drawer/SchoolDrawer';
-import StudentActionMenu from '../utility/drawer/StudentDrawer';
+import StudentActionMenu from '../utility/StudentActionMenu';
 
 import {
     AppBar,

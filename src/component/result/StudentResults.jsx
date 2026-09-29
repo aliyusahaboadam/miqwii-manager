@@ -75,8 +75,26 @@ const preloadImage = async (url) => {
 
 
 
+// -----------------------------------------------------------------------
+// Average-based teacher remark (replaces percentile-based remark)
+// -----------------------------------------------------------------------
+const getAverageRemark = (average) => {
+  const a = Number(average);
+  if (!Number.isFinite(a)) return "Keep working hard!";
+  if (a >= 75) return "Outstanding! Keep up the excellent effort.";
+  if (a >= 70) return "Excellent! You're among the very best.";
+  if (a >= 60) return "Very good performance. Keep it up!";
+  if (a >= 50) return "Good effort. You can do better. Aim higher!";
+  if (a >= 40) return "Fair performance. More effort is needed.";
+  if (a >= 30) return "Put in more effort. Seek help when needed.";
+  return "Much improvement needed. Work harder!";
+};
+
+
+
+
 // ✅ FIX 3: Move MyDocument OUTSIDE StudentResults so it's not recreated every render
-const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, getPositionRemark, ScoreColumns, ScoreKeyColumns, feesKeyColumns, scoreKeyData }) => {
+const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, ScoreColumns, ScoreKeyColumns, feesKeyColumns, scoreKeyData }) => {
   const feeKeyData = [
     {
       nextSSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextSSSTermFee || "Unset"),
@@ -92,7 +110,9 @@ const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, getPositi
   return (
     <Document>
       {resultsData.map((result, index) => {
-        const teacherRemark = getPositionRemark(result.position, result.numberOfStudentInClass);
+        // ✅ Average-based remark (replaces position-based remark)
+        const teacherRemark = getAverageRemark(result.overallAverage);
+
         const resumptionDate = result.academicSession.resumptionDate
           ? new Date(result.academicSession.resumptionDate).toLocaleDateString('en-US', {
               year: 'numeric', month: 'long', day: 'numeric'
@@ -231,18 +251,6 @@ const StudentResults = ({ classId }) => {
 
   const formatAmount = (amount) => `N${new Intl.NumberFormat('en-NG').format(amount)}`;
 
-  const getPositionRemark = (position, totalStudents) => {
-    const percentile = ((totalStudents - position) / totalStudents) * 100;
-    if (totalStudents === 1) return "Only student in class. Keep it up!";
-    if (percentile >= 95) return "Outstanding! Keep up the excellent effort.";
-    if (percentile >= 90) return "Excellent! You're among the very best.";
-    if (percentile >= 80) return "Very good performance. Keep it up!";
-    if (percentile >= 60) return "Good effort. You can do better. Aim higher!";
-    if (percentile >= 40) return "Fair performance. More effort is needed.";
-    if (percentile >= 20) return "Put in more effort. Seek help when needed.";
-    return "Much improvement needed. Work harder!";
-  };
-
   const ScoreColumns = [
     { accessorKey: 'subjectName', header: () => 'Subject', size: 50 },
     { accessorKey: 'max', header: () => 'Max', size: 15 },
@@ -302,7 +310,7 @@ const StudentResults = ({ classId }) => {
     }
 
     const s3Url = `https://d39kcxvd290stw.cloudfront.net/${fetchedResults[0]?.school?.logo}`;
-    
+
     // ✅ FIX 5: Use cached/preloaded base64 logo instead of fetching from S3 every time
 
     const imageStart = performance.now();
@@ -323,7 +331,6 @@ const StudentResults = ({ classId }) => {
         logoUrl={logoUrl}
         positioning={positioning}
         formatAmount={formatAmount}
-        getPositionRemark={getPositionRemark}
         ScoreColumns={ScoreColumns}
         ScoreKeyColumns={ScoreKeyColumns}
         feesKeyColumns={feesKeyColumns}
@@ -335,7 +342,7 @@ const StudentResults = ({ classId }) => {
     const pdfEnd = performance.now();
     console.log(`PDF Generation Time: ${(pdfEnd - pdfStart).toFixed(2)}ms`);
 
-    console.log(`Total Time: ${(pdfEnd - fetchStart).toFixed(2)}ms`);
+    console.log(`Total Time: ${(pdfEnd - pdfStart).toFixed(2)}ms`);
 
      setProgress('Almost done...');
     return { blob, className: fetchedResults[0]?.class1?.name };

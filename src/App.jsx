@@ -33,6 +33,7 @@ import AboutUs from './component/home/AboutUs';
 import ContactUs from './component/home/ContactUs';
 import Home from './component/home/Home';
 import Services from './component/home/Services';
+import IDCardSetup from './component/idcard/IDCardSetup';
 import StudentReceipt from './component/receipt/StudentReceipt';
 import ViewStudentReceipt from './component/receipt/ViewStudentReceipt';
 import ShowMasterSheet from './component/result/ShowMasterSheet';
@@ -122,6 +123,9 @@ const AppRoutes = () => (
     <Route exact path='/student/student-details/:id' element={<StudentDetails />} />
     <Route exact path='/student/student-profile' element={<StudentProfile />} />
 
+    {/* ---------- ID Cards ---------- */}
+    <Route exact path='/student/id-card' element={<IDCardSetup />} />
+
     {/* ---------- Teacher ---------- */}
     <Route exact path='/teacher/add-teacher' element={<AddTeacher />} />
     <Route exact path='/teacher/teacher-profile' element={<TeacherProfile />} />
@@ -193,7 +197,7 @@ const AppRoutes = () => (
     <Route exact path='/result/show-results' element={<ShowResults />} />
     <Route exact path='/result/show-mastersheet' element={<ShowMasterSheet />} />
     <Route exact path='/result/student-result-by-regNo' element={<ShowResultByRegNo />} />
-    <Route exact path='/result/student-search-by-regNo' element={<StudentResultByRegNoStudentDashboard />} />
+    <Route exact path='/result/student-result-by-regNo' element={<StudentResultByRegNoStudentDashboard />} />
     <Route exact path='/result/teacher-search-by-regNo' element={<StudentResultByRegNoTeacherDashboard />} />
 
     {/* ---------- School ---------- */}

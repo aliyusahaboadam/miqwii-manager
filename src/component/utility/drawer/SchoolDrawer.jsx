@@ -69,9 +69,27 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                     </header>
                     <div className={navbar['collapsible__content--drawer']}>
                         <a href="/school/home" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Home</a>
+                        <a href="/school/upload-school-logo" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Add School Logo</a>
+                    </div>
+                </div>
+
+
+                 {/* Session */}
+                <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-12')} className={headerClass('chevron-12')}>
+                    <header className={navbar['collapsible__header']}>
+                        <div className={navbar['collapsible__icon']}>
+                            <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                                <use href="/images/sprite.svg#session"></use>
+                            </svg>
+                            <p className={navbar['collapsible__heading']}>Sessions</p>
+                        </div>
+                        <span onClick={() => toggleChevron('chevron-12')} className={navbar['icon-container']}>{chevron}</span>
+                    </header>
+                    <div className={navbar['collapsible__content--drawer']}>
+                        
                         <a href="/session/setup-session" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Setup Session</a>
                         <a href="/session/update-session" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Resumption / Fee</a>
-                        <a href="/school/upload-school-logo" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Add School Logo</a>
+                       
                     </div>
                 </div>
 
@@ -89,7 +107,7 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                     <div className={navbar['collapsible__content--drawer']}>
                         <a href="/student/add-student" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Add Student</a>
                         <a href="/student/view-students" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>View Students</a>
-                        <a href="/school/student-activator" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Switch Students Account</a>
+                        <a href="/school/student-activator" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Student Account</a>
                     </div>
                 </div>
 
@@ -235,6 +253,24 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                     <div className={navbar['collapsible__content--drawer']}>
                         <a href="/payment/pay-subscription" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Make Payment</a>
                         <a href="/payment/all-payments" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Payments History</a>
+                    </div>
+                </div>
+
+
+                 {/* ID Card */}
+                <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-13')} className={headerClass('chevron-13')}>
+                    <header className={navbar['collapsible__header']}>
+                        <div className={navbar['collapsible__icon']}>
+                            <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                                <use href="/images/sprite.svg#idcard"></use>
+                            </svg>
+                            <p className={navbar['collapsible__heading']}>ID Cards</p>
+                        </div>
+                        <span onClick={() => toggleChevron('chevron-13')} className={navbar['icon-container']}>{chevron}</span>
+                    </header>
+                    <div className={navbar['collapsible__content--drawer']}>
+                        <a href="/student/id-card" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>View ID-Cards</a>
+                       
                     </div>
                 </div>
 
