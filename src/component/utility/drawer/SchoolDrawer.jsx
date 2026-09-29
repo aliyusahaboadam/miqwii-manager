@@ -191,7 +191,7 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                     <header className={navbar['collapsible__header']}>
                         <div className={navbar['collapsible__icon']}>
                             <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-                                <use href="/images/sprite.svg#class"></use>
+                                <use href="/images/sprite.svg#promotion"></use>
                             </svg>
                             <p className={navbar['collapsible__heading']}>Promotion</p>
                         </div>
@@ -208,7 +208,7 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                     <header className={navbar['collapsible__header']}>
                         <div className={navbar['collapsible__icon']}>
                             <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
-                                <use href="/images/sprite.svg#class"></use>
+                                <use href="/images/sprite.svg#graduation"></use>
                             </svg>
                             <p className={navbar['collapsible__heading']}>Graduation</p>
                         </div>
