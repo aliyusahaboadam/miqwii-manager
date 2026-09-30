@@ -3,7 +3,8 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { Alert, IconButton, Snackbar } from "@mui/material";
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Snackbar } from "@mui/material";
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -88,6 +89,14 @@ const PromotionHistory = () => {
     const [alertType, setAlertType] = useState("");
     const [message, setMessage] = useState("");
 
+    // ---- Undo confirmation state ----
+    const [confirmRow, setConfirmRow] = useState(null);
+    const [confirmText, setConfirmText] = useState('');
+    const confirmOpen = confirmRow !== null;
+    const confirmEnabled =
+        confirmText.trim().toUpperCase() === 'UNDO' &&
+        undoingStatus !== 'loading';
+
     const authenticated = false;
     const logout = () => {
         localStorage.removeItem('token');
@@ -104,7 +113,22 @@ const PromotionHistory = () => {
         setOpen(false);
     };
 
-    const handleUndo = async (batchId) => {
+    // ---- Open the confirmation dialog (does NOT undo yet) ----
+    const requestUndo = (row) => {
+        setConfirmRow(row);
+        setConfirmText('');
+    };
+
+    const cancelUndo = () => {
+        setConfirmRow(null);
+        setConfirmText('');
+    };
+
+    // ---- Actually perform the undo, only from inside the dialog ----
+    const confirmUndo = async () => {
+        const batchId = confirmRow?.batchId;
+        if (!batchId || !confirmEnabled) return;
+
         try {
             await dispatch(undoPromotion(batchId)).unwrap();
             setAlertType("success");
@@ -115,6 +139,9 @@ const PromotionHistory = () => {
             setAlertType("error");
             setMessage(error?.message || "Undo failed");
             setOpen(true);
+        } finally {
+            setConfirmRow(null);
+            setConfirmText('');
         }
     };
 
@@ -220,7 +247,7 @@ const PromotionHistory = () => {
                                                             {!row.undone && (
                                                                 <button
                                                                     type="button"
-                                                                    onClick={() => handleUndo(row.batchId)}
+                                                                    onClick={() => requestUndo(row)}
                                                                     disabled={undoingStatus === 'loading'}
                                                                     style={{
                                                                         padding: "0.5rem 1rem",
@@ -266,6 +293,179 @@ const PromotionHistory = () => {
                             </Box>
                         </Box>
                     </ClickAwayListener>
+
+                    {/* ---- Undo confirmation dialog ---- */}
+                    <Dialog
+                        open={confirmOpen}
+                        onClose={cancelUndo}
+                        maxWidth="sm"
+                        fullWidth
+                        PaperProps={{
+                            sx: {
+                                borderRadius: '15px',
+                                overflow: 'hidden',
+                            },
+                        }}
+                    >
+                        <DialogTitle
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1.5,
+                                background: '#fff4e5',
+                                color: '#7a4f00',
+                                fontSize: 22,
+                                fontWeight: 700,
+                                borderBottom: '1px solid #f2d68c',
+                            }}
+                        >
+                            <WarningAmberIcon sx={{ fontSize: 32, color: '#d97706' }} />
+                            Undo this promotion batch?
+                        </DialogTitle>
+
+                        <DialogContent sx={{ paddingTop: 3 }}>
+                            <DialogContentText sx={{ fontSize: 16, color: '#333', mb: 2 }}>
+                                You are about to <strong>permanently undo</strong> a completed promotion batch.
+                                This action cannot be reversed.
+                            </DialogContentText>
+
+                            {confirmRow && (
+                                <Box
+                                    sx={{
+                                        background: '#f4f9ff',
+                                        border: '1px solid #c7d8f5',
+                                        borderRadius: 2,
+                                        padding: 2,
+                                        fontSize: 15,
+                                        mb: 2,
+                                    }}
+                                >
+                                    <div style={{ marginBottom: 6 }}>
+                                        <strong>Source session:</strong> {confirmRow.sourceSessionLabel}
+                                    </div>
+                                    <div style={{ marginBottom: 6 }}>
+                                        <strong>Target session:</strong> {confirmRow.targetSessionLabel || '—'}
+                                    </div>
+                                    <div>
+                                        <strong>Executed at:</strong> {formatDate(confirmRow.executedAt)}
+                                    </div>
+                                </Box>
+                            )}
+
+                            <DialogContentText sx={{ fontSize: 15, color: '#333', mb: 1.5 }}>
+                                If you continue:
+                            </DialogContentText>
+
+                            <Box
+                                component="ul"
+                                sx={{
+                                    fontSize: 15,
+                                    color: '#333',
+                                    paddingLeft: 3,
+                                    mb: 2,
+                                    '& li': { marginBottom: 10 },
+                                }}
+                            >
+                                <li>
+                                    Every <strong>promoted student will be moved back</strong> to their
+                                    source class and source session — the way they were before the promotion.
+                                </li>
+                                <li>
+                                    The <strong>target-session enrollments</strong> created by this batch
+                                    will be <strong>deleted</strong>. The students will no longer appear
+                                    in the target session's class roster.
+                                </li>
+                                <li>
+                                    <strong style={{ color: '#c43e3e' }}>
+                                        Any work done in the target session may become out of reach.
+                                    </strong>{' '}
+                                    Scores, receipts, and report cards that reference these students in
+                                    their target class may still exist in the database, but they will no
+                                    longer be linked to the student's current enrollment — so the app may
+                                    not show them on the student's profile, roster, or report card again
+                                    until the promotion is re-run.
+                                </li>
+                            </Box>
+
+                            <DialogContentText sx={{ fontSize: 14, color: '#6b7a99', mb: 2 }}>
+                                Note: graduated students in this batch are <strong>not affected</strong> — graduation is terminal.
+                            </DialogContentText>
+
+                            <Box
+                                sx={{
+                                    background: '#fff4e5',
+                                    border: '1px solid #f2d68c',
+                                    borderRadius: 2,
+                                    padding: 2,
+                                    fontSize: 14,
+                                    color: '#7a4f00',
+                                    mb: 3,
+                                }}
+                            >
+                                <strong>Recommendation:</strong> only undo this batch if you have not yet started
+                                entering scores, receipts, or other activity in the target session for the
+                                affected students. If you have, undo those first, or contact support.
+                            </Box>
+
+                            <DialogContentText sx={{ fontSize: 14, color: '#333', mb: 1 }}>
+                                Type <strong>UNDO</strong> below to enable the confirm button.
+                            </DialogContentText>
+                            <input
+                                type="text"
+                                value={confirmText}
+                                onChange={(e) => setConfirmText(e.target.value)}
+                                placeholder="Type UNDO"
+                                autoComplete="off"
+                                style={{
+                                    width: '100%',
+                                    padding: '10px 12px',
+                                    fontSize: 15,
+                                    border: '1px solid #ccc',
+                                    borderRadius: 8,
+                                    outline: 'none',
+                                    boxSizing: 'border-box',
+                                }}
+                            />
+                        </DialogContent>
+
+                        <DialogActions sx={{ padding: 2, borderTop: '1px solid #eee' }}>
+                            <button
+                                type="button"
+                                onClick={cancelUndo}
+                                disabled={undoingStatus === 'loading'}
+                                style={{
+                                    padding: '10px 20px',
+                                    borderRadius: 8,
+                                    border: '1px solid #ccc',
+                                    background: '#fff',
+                                    color: '#0e387a',
+                                    fontSize: 15,
+                                    fontWeight: 600,
+                                    cursor: undoingStatus === 'loading' ? 'not-allowed' : 'pointer',
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={confirmUndo}
+                                disabled={!confirmEnabled}
+                                style={{
+                                    padding: '10px 20px',
+                                    borderRadius: 8,
+                                    border: 'none',
+                                    background: confirmEnabled ? '#c43e3e' : '#e8a3a3',
+                                    color: '#fff',
+                                    fontSize: 15,
+                                    fontWeight: 600,
+                                    cursor: confirmEnabled ? 'pointer' : 'not-allowed',
+                                    marginLeft: 8,
+                                }}
+                            >
+                                {undoingStatus === 'loading' ? 'Undoing…' : 'Yes, undo this batch'}
+                            </button>
+                        </DialogActions>
+                    </Dialog>
 
                     <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
                         <Alert onClose={handleClose} severity={alertType} sx={{ width: "100%", fontSize: "1.6rem", padding: "16px", textAlign: "center" }}>

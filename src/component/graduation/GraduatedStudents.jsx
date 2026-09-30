@@ -1,4 +1,3 @@
-// File: src/component/graduation/GraduatedStudents.jsx
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { Menu as MenuIcon } from "@mui/icons-material";
@@ -19,7 +18,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getGraduatedStudents } from '../../redux/reducer/graduationSlice';
@@ -71,7 +70,10 @@ const GraduatedStudents = () => {
 
     const graduationState = useSelector((state) => state.graduation);
     const { graduatedStudents, fetchingStatus } = graduationState;
-    const rows = Array.isArray(graduatedStudents) ? graduatedStudents : [];
+    const allRows = Array.isArray(graduatedStudents) ? graduatedStudents : [];
+
+    const [classFilter, setClassFilter] = useState('');
+    const [sessionFilter, setSessionFilter] = useState('');
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(100);
@@ -91,6 +93,57 @@ const GraduatedStudents = () => {
         dispatch(getGraduatedStudents());
     }, []);
 
+    const classOptions = useMemo(() => {
+        const seen = new Map();
+        allRows.forEach((row) => {
+            const key = row.classId != null ? String(row.classId) : row.className;
+            if (key && !seen.has(key)) {
+                seen.set(key, { value: key, label: row.className || key });
+            }
+        });
+        return Array.from(seen.values()).sort((a, b) =>
+            a.label.localeCompare(b.label)
+        );
+    }, [allRows]);
+
+    const sessionOptions = useMemo(() => {
+        const seen = new Map();
+        allRows.forEach((row) => {
+            const key = row.academicSessionId != null
+                ? String(row.academicSessionId)
+                : row.academicSessionLabel;
+            if (key && !seen.has(key)) {
+                seen.set(key, {
+                    value: key,
+                    label: row.academicSessionLabel || key,
+                });
+            }
+        });
+        return Array.from(seen.values()).sort((a, b) =>
+            b.label.localeCompare(a.label)
+        );
+    }, [allRows]);
+
+    const rows = useMemo(() => {
+        return allRows.filter((row) => {
+            if (classFilter) {
+                const key = row.classId != null ? String(row.classId) : row.className;
+                if (key !== classFilter) return false;
+            }
+            if (sessionFilter) {
+                const key = row.academicSessionId != null
+                    ? String(row.academicSessionId)
+                    : row.academicSessionLabel;
+                if (key !== sessionFilter) return false;
+            }
+            return true;
+        });
+    }, [allRows, classFilter, sessionFilter]);
+
+    useEffect(() => {
+        setPage(0);
+    }, [classFilter, sessionFilter]);
+
     const handleClose = (event, reason) => {
         if (reason === "clickaway") return;
         setOpen(false);
@@ -101,6 +154,13 @@ const GraduatedStudents = () => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+    const clearFilters = () => {
+        setClassFilter('');
+        setSessionFilter('');
+    };
+
+    const hasActiveFilter = classFilter !== '' || sessionFilter !== '';
 
     return (
         <>
@@ -136,70 +196,153 @@ const GraduatedStudents = () => {
                                 </Toolbar>
                             </AppBar>
 
-                           <SchoolDrawer
-    isLargeScreen={isLargeScreen}
-    isDrawerOpen={isDrawerOpen}
-    toggleDrawer={toggleDrawer}
-    logout={logout}
-/>
+                            <SchoolDrawer
+                                isLargeScreen={isLargeScreen}
+                                isDrawerOpen={isDrawerOpen}
+                                toggleDrawer={toggleDrawer}
+                                logout={logout}
+                            />
 
                             <Box component="main" sx={{ flexGrow: 1, marginTop: 8, fontSize: 20, overflowX: 'auto', width: '100%' }}>
                                 <div className={dashboard['secondary--container']}>
-                                    <TableContainer component={Paper} sx={{ marginTop: 1 }}>
-                                        <Table sx={{ minWidth: 800 }}>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <StyledTableCell align="left">S/N</StyledTableCell>
-                                                    <StyledTableCell align="left">Reg No</StyledTableCell>
-                                                    <StyledTableCell align="left">Full Name</StyledTableCell>
-                                                    <StyledTableCell align="left">Gender</StyledTableCell>
-                                                    <StyledTableCell align="left">Class</StyledTableCell>
-                                                    <StyledTableCell align="left">Session</StyledTableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {(rowsPerPage > 0
-                                                    ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                                    : rows
-                                                ).map((row, index) => (
-                                                    <StyledTableRow key={row.id}>
-                                                        <StyledTableCell>{page * rowsPerPage + index + 1}</StyledTableCell>
-                                                        <StyledTableCell>{row.studentRegNo}</StyledTableCell>
-                                                        <StyledTableCell>{row.studentFullName}</StyledTableCell>
-                                                        <StyledTableCell>{row.gender}</StyledTableCell>
-                                                        <StyledTableCell>{row.className}</StyledTableCell>
-                                                        <StyledTableCell>{row.academicSessionLabel}</StyledTableCell>
-                                                    </StyledTableRow>
+
+                                    <div style={{
+                                        display: 'flex',
+                                        gap: '1rem',
+                                        flexWrap: 'wrap',
+                                        alignItems: 'flex-end',
+                                        marginBottom: '1rem',
+                                        padding: '1rem',
+                                        background: '#f4f9ff',
+                                        border: '1px solid #c7d8f5',
+                                        borderRadius: 10,
+                                    }}>
+                                        <div style={{ flex: 1, minWidth: 200 }}>
+                                            <label style={{ fontSize: 14, fontWeight: 600, color: '#0e387a', display: 'block', marginBottom: 4 }}>
+                                                Filter by Class
+                                            </label>
+                                            <select
+                                                value={classFilter}
+                                                onChange={(e) => setClassFilter(e.target.value)}
+                                                style={{ width: '100%', fontSize: 15, padding: '8px 10px', borderRadius: 8 }}
+                                            >
+                                                <option value="">All Classes</option>
+                                                {classOptions.map((opt) => (
+                                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
                                                 ))}
-                                            </TableBody>
-                                            <TableFooter>
-                                                <TableRow>
-                                                    <TablePagination
-                                                        rowsPerPageOptions={[100, 200, 300, { label: 'All', value: -1 }]}
-                                                        colSpan={6}
-                                                        count={rows.length}
-                                                        rowsPerPage={rowsPerPage}
-                                                        page={page}
-                                                        onPageChange={handleChangePage}
-                                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                                        ActionsComponent={TablePaginationActions}
-                                                        sx={{
-                                                            "& .MuiTablePagination-toolbar": { fontSize: 18 },
-                                                            "& .MuiTablePagination-selectLabel": { fontSize: 14 },
-                                                            "& .MuiTablePagination-input": { fontSize: 18 },
-                                                            "& .MuiTablePagination-displayedRows": { fontSize: 14 },
-                                                        }}
-                                                    />
-                                                </TableRow>
-                                            </TableFooter>
-                                        </Table>
-                                    </TableContainer>
+                                            </select>
+                                        </div>
+
+                                        <div style={{ flex: 1, minWidth: 200 }}>
+                                            <label style={{ fontSize: 14, fontWeight: 600, color: '#0e387a', display: 'block', marginBottom: 4 }}>
+                                                Filter by Session
+                                            </label>
+                                            <select
+                                                value={sessionFilter}
+                                                onChange={(e) => setSessionFilter(e.target.value)}
+                                                style={{ width: '100%', fontSize: 15, padding: '8px 10px', borderRadius: 8 }}
+                                            >
+                                                <option value="">All Sessions</option>
+                                                {sessionOptions.map((opt) => (
+                                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        {hasActiveFilter && (
+                                            <button
+                                                type="button"
+                                                onClick={clearFilters}
+                                                style={{
+                                                    background: '#0e387a',
+                                                    color: '#fff',
+                                                    border: 'none',
+                                                    borderRadius: 8,
+                                                    padding: '10px 16px',
+                                                    cursor: 'pointer',
+                                                    fontSize: 14,
+                                                    fontWeight: 600,
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                Clear Filters
+                                            </button>
+                                        )}
+
+                                        <div style={{ fontSize: 14, color: '#6b7a99', marginLeft: 'auto' }}>
+                                            Showing <strong>{rows.length}</strong> of <strong>{allRows.length}</strong> graduates
+                                        </div>
+                                    </div>
+
+                                    {rows.length === 0 ? (
+                                        <div style={{
+                                            padding: '3rem 1rem',
+                                            textAlign: 'center',
+                                            color: '#6b7a99',
+                                            fontSize: 16,
+                                            background: '#fff',
+                                            borderRadius: 10,
+                                        }}>
+                                            {hasActiveFilter
+                                                ? 'No graduated students match the selected filters.'
+                                                : 'No graduated students recorded yet.'}
+                                        </div>
+                                    ) : (
+                                        <TableContainer component={Paper} sx={{ marginTop: 1 }}>
+                                            <Table sx={{ minWidth: 800 }}>
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <StyledTableCell align="left">S/N</StyledTableCell>
+                                                        <StyledTableCell align="left">Reg No</StyledTableCell>
+                                                        <StyledTableCell align="left">Full Name</StyledTableCell>
+                                                        <StyledTableCell align="left">Gender</StyledTableCell>
+                                                        <StyledTableCell align="left">Class</StyledTableCell>
+                                                        <StyledTableCell align="left">Session</StyledTableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {(rowsPerPage > 0
+                                                        ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                                        : rows
+                                                    ).map((row, index) => (
+                                                        <StyledTableRow key={row.id}>
+                                                            <StyledTableCell>{page * rowsPerPage + index + 1}</StyledTableCell>
+                                                            <StyledTableCell>{row.studentRegNo}</StyledTableCell>
+                                                            <StyledTableCell>{row.studentFullName}</StyledTableCell>
+                                                            <StyledTableCell>{row.gender}</StyledTableCell>
+                                                            <StyledTableCell>{row.className}</StyledTableCell>
+                                                            <StyledTableCell>{row.academicSessionLabel}</StyledTableCell>
+                                                        </StyledTableRow>
+                                                    ))}
+                                                </TableBody>
+                                                <TableFooter>
+                                                    <TableRow>
+                                                        <TablePagination
+                                                            rowsPerPageOptions={[100, 200, 300, { label: 'All', value: -1 }]}
+                                                            colSpan={6}
+                                                            count={rows.length}
+                                                            rowsPerPage={rowsPerPage}
+                                                            page={page}
+                                                            onPageChange={handleChangePage}
+                                                            onRowsPerPageChange={handleChangeRowsPerPage}
+                                                            ActionsComponent={TablePaginationActions}
+                                                            sx={{
+                                                                "& .MuiTablePagination-toolbar": { fontSize: 18 },
+                                                                "& .MuiTablePagination-selectLabel": { fontSize: 14 },
+                                                                "& .MuiTablePagination-input": { fontSize: 18 },
+                                                                "& .MuiTablePagination-displayedRows": { fontSize: 14 },
+                                                            }}
+                                                        />
+                                                    </TableRow>
+                                                </TableFooter>
+                                            </Table>
+                                        </TableContainer>
+                                    )}
                                 </div>
                             </Box>
                         </Box>
                     </ClickAwayListener>
 
-                    {/* Snackbar lives OUTSIDE ClickAwayListener */}
                     <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
                         <Alert onClose={handleClose} severity={alertType} sx={{ width: "100%", fontSize: "1.6rem", padding: "16px", textAlign: "center" }}>
                             {message}
@@ -220,7 +363,8 @@ function TablePaginationActions(props) {
     const handleFirstPageButtonClick = (event) => onPageChange(event, 0);
     const handleBackButtonClick = (event) => onPageChange(event, page - 1);
     const handleNextButtonClick = (event) => onPageChange(event, page + 1);
-    const handleLastPageButtonClick = (event) => onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    const handleLastPageButtonClick = (event) =>
+        onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
 
     return (
         <Box sx={{ flexShrink: 0, ml: 2.5 }}>
