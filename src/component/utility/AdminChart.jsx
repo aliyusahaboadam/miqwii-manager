@@ -1,91 +1,52 @@
+// File: src/component/utility/AdminDemographicsCharts.jsx
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 
-
 import {
-  getAllClassCountJss,
-  getAllClassCountJssTeacher,
-  getAllClassCountPri,
-  getAllClassCountPriTeachers,
-  getAllClassCountSss,
-  getAllClassCountSssTeachers,
   getAllSchoolCount,
   getAllStudentCount,
   getAllStudentCountFemale,
   getAllStudentCountMale,
-  getAllTeachersCount
+  getAllTeachersCount,
+  getClassCountsBySection,
+  getTeacherCountsBySection,
 } from '../../redux/reducer/schoolSlice';
-
-
-
 
 const AdminDemographicsCharts = () => {
 
+  const schoolState = useSelector((state) => state.schools);
+  const {
+    allSchoolCount,
+    allStudentCount,
+    allTeachersCount,
+    allStudentCountMale,
+    allStudentCountFamale,
+    classCountsBySection,
+    teacherCountsBySection,
+    fetchingStatus,
+  } = schoolState;
 
-   
+  const dispatch = useDispatch();
 
-   const schoolState = useSelector((state) => state.schools);
-     const {
-   
-   
-           allSchoolCount,
-           allStudentCount,
-           allTeachersCount,
-           allStudentCountMale,
-           allStudentCountFamale,
-           allClassJssCount,
-           allClassSssCount,
-           allClassPriCount,
-           allClassTeachersPriCount,
-           allClassTeachersJssCount,
-           allClassTeachersSssCount,
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-           fetchingStatus,
-     } =     schoolState;
-   
-   
-   const dispatch = useDispatch();
-    
+  const fetchData = () => {
+    dispatch(getAllStudentCount());
+    dispatch(getAllSchoolCount());
+    dispatch(getAllTeachersCount());
 
+    dispatch(getAllStudentCountMale());
+    dispatch(getAllStudentCountFemale());
 
+    dispatch(getClassCountsBySection());
+    dispatch(getTeacherCountsBySection());
+  };
 
-       useEffect(() => {
-       
-            fetchData()  
-     
-        }, []);
-      
-        
-         const fetchData = () => {
-            
-      
-             dispatch(getAllStudentCount());
-             dispatch(getAllSchoolCount());
-             dispatch(getAllTeachersCount());
-      
-             dispatch(getAllStudentCountMale());
-             dispatch(getAllStudentCountFemale());
-      
-             dispatch(getAllClassCountJss());
-             dispatch(getAllClassCountPri());
-             dispatch(getAllClassCountSss());
-      
-             dispatch(getAllClassCountJssTeacher());
-             dispatch(getAllClassCountPriTeachers());
-             dispatch(getAllClassCountSssTeachers());
-          
-         }
-      
-
-
-
-   
-
-
-  const chartStyle =  {
-
+  const chartStyle = {
     container: {
       width: '100%',
       backgroundColor: '#f8f9fa',
@@ -162,40 +123,33 @@ const AdminDemographicsCharts = () => {
   };
 
   const summaryStyles = {
-    students: {
-      ...chartStyle.summaryItem,
-      backgroundColor: '#e3f2fd',
-      color: '#0e387a'
-    },
-    staff: {
-      ...chartStyle.summaryItem,
-      backgroundColor: '#e8f5e8',
-      color: '#0e387a'
-    },
-    classes: {
-      ...chartStyle.summaryItem,
-      backgroundColor: '#f3e5f5',
-      color: '#0e387a'
-    }
+    students: { ...chartStyle.summaryItem, backgroundColor: '#e3f2fd', color: '#0e387a' },
+    staff:    { ...chartStyle.summaryItem, backgroundColor: '#e8f5e8', color: '#0e387a' },
+    classes:  { ...chartStyle.summaryItem, backgroundColor: '#f3e5f5', color: '#0e387a' }
   };
-  // Sample data for students by gender
+
+  // Student gender split
   const studentGenderData = [
-    { name: 'Female Students', value: allStudentCountFamale, color: '#007CC3' },
-    { name: 'Male Students', value: allStudentCountMale, color: '#00529B' }
+    { name: 'Female Students', value: allStudentCountFamale || 0, color: '#007CC3' },
+    { name: 'Male Students',   value: allStudentCountMale   || 0, color: '#00529B' }
   ];
 
-  // Sample data for teachers
+  // Teacher distribution — one slice per section
   const teacherData = [
-    { name: 'Primary Teachers',value: allClassTeachersPriCount, color: '#00008B' },
-    { name: 'JSS Teachers', value: allClassTeachersJssCount, color: '#1F75FE' },
-    { name: 'SSS Teachers',value:  allClassTeachersSssCount, color: '#74BBFB' },
+    { name: 'Creche Teachers',    value: teacherCountsBySection.CRECHE    || 0, color: '#00008B' },
+    { name: 'KG Teachers',        value: teacherCountsBySection.KG        || 0, color: '#1F75FE' },
+    { name: 'Nursery Teachers',   value: teacherCountsBySection.NURSERY   || 0, color: '#74BBFB' },
+    { name: 'Primary Teachers',   value: teacherCountsBySection.PRIMARY   || 0, color: '#5788b3ff' },
+    { name: 'Secondary Teachers', value: teacherCountsBySection.SECONDARY || 0, color: 'rgb(14, 79, 136)' },
   ];
 
-  // Sample data for classes
+  // Class distribution — one slice per section
   const classData = [
-    { name: 'Primary Classes', value: allClassPriCount, color: '#7D77DE' },
-    { name: 'JSS Classes', value: allClassJssCount, color: '#013375' },
-    { name: 'SSS Classes', value: allClassSssCount, color: '#0167AD' }
+    { name: 'Creche Classes',    value: classCountsBySection.CRECHE    || 0, color: '#7D77DE' },
+    { name: 'KG Classes',        value: classCountsBySection.KG        || 0, color: '#1432dcff' },
+    { name: 'Nursery Classes',   value: classCountsBySection.NURSERY   || 0, color: '#013375' },
+    { name: 'Primary Classes',   value: classCountsBySection.PRIMARY   || 0, color: '#0167AD' },
+    { name: 'Secondary Classes', value: classCountsBySection.SECONDARY || 0, color: 'rgb(69, 78, 128)' },
   ];
 
   const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
@@ -205,11 +159,11 @@ const AdminDemographicsCharts = () => {
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
     return (
-      <text 
-        x={x} 
-        y={y} 
-        fill="white" 
-        textAnchor={x > cx ? 'start' : 'end'} 
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? 'start' : 'end'}
         dominantBaseline="central"
         fontSize="12"
         fontWeight="bold"
@@ -222,9 +176,8 @@ const AdminDemographicsCharts = () => {
   return (
     <div style={chartStyle.container}>
 
-        <div class={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
+      <div className={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
 
-    
         {/* Student Gender Distribution */}
         <div style={chartStyle.chartCard}>
           <h2 style={chartStyle.chartTitle}>Student Gender Distribution</h2>
@@ -242,7 +195,7 @@ const AdminDemographicsCharts = () => {
                 fontFamily='Roboto'
               >
                 {studentGenderData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color}  />
+                  <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
               <Tooltip formatter={(value) => [value, 'Students']} />
@@ -309,6 +262,7 @@ const AdminDemographicsCharts = () => {
             <p>Total Classes: {classData.reduce((sum, item) => sum + item.value, 0)}</p>
           </div>
         </div>
+
       </div>
 
       {/* Summary Statistics */}
@@ -329,17 +283,17 @@ const AdminDemographicsCharts = () => {
           </div>
         </div>
       </div>
+
     </div>
   );
 };
 
 export default AdminDemographicsCharts;
 
-
 const legendStyle = {
-  fontSize: '16px',        // Make it larger
-  fontWeight: '500',      // Make it bolder
-  color: '#9a99ac',           // Change color
-  fontFamily: 'Roboto',     // Change font family
+  fontSize: '16px',
+  fontWeight: '500',
+  color: '#9a99ac',
+  fontFamily: 'Roboto',
   margin: '0px'
 };

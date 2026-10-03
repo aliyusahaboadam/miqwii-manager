@@ -1,4 +1,4 @@
-// File: src/component/class/NurseryClasses.jsx
+// File: src/component/class/SecondaryClasses.jsx
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -66,9 +66,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const NURSERY_FILTER = { section: 'NURSERY' };
+const SECONDARY_FILTER = { section: 'SECONDARY' };
 
-const NurseryClasses = () => {
+const SecondaryClasses = () => {
 
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -112,9 +112,9 @@ const NurseryClasses = () => {
     try {
       setIsInitialLoad(true);
       await Promise.all([
-        dispatch(getClassesByFilter(NURSERY_FILTER)).unwrap(),
+        dispatch(getClassesByFilter(SECONDARY_FILTER)).unwrap(),
         dispatch(getClassCount()).unwrap(),
-        dispatch(getClassCountByFilter(NURSERY_FILTER)).unwrap()
+        dispatch(getClassCountByFilter(SECONDARY_FILTER)).unwrap()
       ]);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -134,8 +134,8 @@ const NurseryClasses = () => {
     navigate(`/class/update-class/${name}`);
   };
 
-  const navigateToAddNurseryClass = () => {
-    navigate('/class/add-nur-class');
+  const navigateToAddSecondaryClass = () => {
+    navigate('/class/add-sss-class');
   };
 
   const handleChangePage = (event, newPage) => setPage(newPage);
@@ -212,7 +212,7 @@ const NurseryClasses = () => {
                         </span>
                         <span className={[dashboard['badge'], dashboard['']].join(' ')}>{classCountSpecific}</span>
                       </div>
-                      Available Nursery Classes
+                      Available Secondary Classes
                     </div>
                   </div>
 
@@ -233,9 +233,9 @@ const NurseryClasses = () => {
                   <div className={[dashboard['card--add'], dashboard['card--primary']].join(' ')}>
                     <div className={dashboard['card_body']}>
                       <div className={dashboard['card--small-head']}>
-                        Add Nursery Classes
+                        Add Secondary Classes
                       </div>
-                      <button onClick={navigateToAddNurseryClass} className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Nursery Class</button>
+                      <button onClick={navigateToAddSecondaryClass} className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Secondary Class</button>
                     </div>
                   </div>
 
@@ -247,7 +247,7 @@ const NurseryClasses = () => {
                       <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                           <TableRow>
-                            <StyledTableCell>Nursery Classes</StyledTableCell>
+                            <StyledTableCell>Secondary Classes</StyledTableCell>
                             <StyledTableCell>Score Sheet</StyledTableCell>
                             <StyledTableCell align="left">No. of student</StyledTableCell>
                             <StyledTableCell align="right">Action&nbsp;</StyledTableCell>
@@ -319,7 +319,7 @@ const NurseryClasses = () => {
   );
 };
 
-export default NurseryClasses;
+export default SecondaryClasses;
 
 function TablePaginationActions(props) {
   const theme = useTheme();

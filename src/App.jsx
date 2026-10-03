@@ -13,17 +13,13 @@ import Sessions from './component/admin/Sessions';
 import UpdateDomainName from './component/admin/UpdateDomainName';
 import UpdateSchool from './component/admin/UpdateSchool';
 import UpdateSessionAdmin from './component/admin/UpdateSessionAdmin';
-import AddJSSClass from './component/class/AddJSSClass';
-import AddNurClass from './component/class/AddNurClass';
-import AddPreNurClass from './component/class/AddPreNurClass';
-import AddPriClass from './component/class/AddPriClass';
-import AddSSSClass from './component/class/AddSSSClass';
-import DeleteClass from './component/class/DeleteClass';
-import JSSClasses from './component/class/JSSClasses';
+import AddClass from './component/class/AddClass';
+import AddCustomClass from './component/class/AddCustomClass';
+import CrecheClasses from './component/class/CrecheClasses';
+import KGClasses from './component/class/KGClasses';
 import NurseryClasses from './component/class/NurseryClasses';
-import PreNurseryClasses from './component/class/PreNurseryClasses';
 import PrimaryClasses from './component/class/PrimaryClasses';
-import SSSClasses from './component/class/SSSClasses';
+import SecondaryClasses from './component/class/SecondaryClasses';
 import UpdateClass from './component/class/UpdateClass';
 import AdminDashboard from './component/dashboards/AdminDashboard';
 import SchoolDashboard from './component/dashboards/SchoolDashboard';
@@ -75,7 +71,6 @@ import TeacherSubject from './component/teacher/TeacherSubject';
 import Teachers from './component/teacher/Teachers';
 import UpdateTeacher from './component/teacher/UpdateTeacher';
 import { useSubdomain } from './component/utility/useSubdomain';
-
 // Promotion & Graduation screens
 import GraduateClass from './component/graduation/GraduateClass';
 import GraduatedStudents from './component/graduation/GraduatedStudents';
@@ -83,6 +78,7 @@ import GraduationHistory from './component/graduation/GraduationHistory';
 import PromotionHistory from './component/promotion/PromotionHistory';
 import PromotionPreview from './component/promotion/PromotionPreview';
 import PromotionSetup from './component/promotion/PromotionSetup';
+
 
 function App() {
 
@@ -134,19 +130,16 @@ const AppRoutes = () => (
     <Route exact path='/teacher/teacher-details/:id' element={<TeacherDetails />} />
     <Route exact path='/teacher/teacher-subjects/:classId/:className' element={<TeacherSubject />} />
 
-    {/* ---------- Class ---------- */}
-    <Route exact path='/class/jss-classes' element={<JSSClasses />} />
-    <Route exact path='/class/sss-classes' element={<SSSClasses />} />
-    <Route exact path='/class/primary-classes' element={<PrimaryClasses />} />
+    {/* ---------- Class views (one per section) ---------- */}
+    <Route exact path='/class/creche-classes' element={<CrecheClasses />} />
+    <Route exact path='/class/kg-classes' element={<KGClasses />} />
     <Route exact path='/class/nursery-classes' element={<NurseryClasses />} />
-    <Route exact path='/class/pre-nursery-classes' element={<PreNurseryClasses />} />
+    <Route exact path='/class/primary-classes' element={<PrimaryClasses />} />
+    <Route exact path='/class/secondary-classes' element={<SecondaryClasses />} />
 
-    <Route exact path='/class/add-jss-class' element={<AddJSSClass />} />
-    <Route exact path='/class/add-sss-class' element={<AddSSSClass />} />
-    <Route exact path='/class/add-pri-class' element={<AddPriClass />} />
-    <Route exact path='/class/add-nur-class' element={<AddNurClass />} />
-    <Route exact path='/class/add-pre-nur-class' element={<AddPreNurClass />} />
-    <Route exact path='/class/delete-class' element={<DeleteClass />} />
+    {/* ---------- Class add/edit ---------- */}
+    <Route exact path='/class/add-class' element={<AddClass />} />
+     <Route exact path='/class/add-custom-class' element={<AddCustomClass />} />
     <Route exact path='/class/update-class/:className' element={<UpdateClass />} />
 
     {/* ---------- Subject ---------- */}

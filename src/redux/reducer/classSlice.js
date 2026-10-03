@@ -56,12 +56,28 @@ export const getAllClassnameAndSubjectCount = createAsyncThunk(
   }
 );
 
-export const getPrefixClassnameAndBasicDetails = createAsyncThunk(
-  'class/getPrefixClassnameAndBasicDetails',
-  async (prefix, { rejectWithValue }) => {
+/**
+ * Fetch classes filtered by section and/or name.
+ *
+ * @param {Object} filters
+ * @param {string} [filters.section] - CRECHE | KG | NURSERY | PRIMARY | SECONDARY
+ * @param {string} [filters.name]    - JSS | SSS | PRI | Nursery | PreNursery | Creche | KG
+ *
+ * Both are optional. Passing neither returns all classes for the school.
+ */
+export const getClassesByFilter = createAsyncThunk(
+  'class/getClassesByFilter',
+  async (filters = {}, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-prefix-classes-with-basic-datails/${prefix}`, { headers: { "Authorization": `Bearer ${JSON.parse(token)}` } });
+      const params = new URLSearchParams();
+      if (filters.section) params.append('section', filters.section);
+      if (filters.name) params.append('name', filters.name);
+
+      const query = params.toString();
+      const url = BASE_URL + '/get-classes-by-filter' + (query ? `?${query}` : '');
+
+      const response = await api.get(url, { headers: { "Authorization": `Bearer ${JSON.parse(token)}` } });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong" });
@@ -95,19 +111,6 @@ export const getTeacherOwnedClass = createAsyncThunk(
   }
 );
 
-export const getClassNamesStartingWith = createAsyncThunk(
-  'class/getClassNamesStartingWith',
-  async (prefix, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-class-names/${prefix}`, { headers: { "Authorization": `Bearer ${JSON.parse(token)}` } });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Something went wrong" });
-    }
-  }
-);
-
 export const getClassChart = createAsyncThunk(
   'class/getClassChart',
   async (_, { rejectWithValue }) => {
@@ -121,12 +124,23 @@ export const getClassChart = createAsyncThunk(
   }
 );
 
-export const getClassCountSpecific = createAsyncThunk(
-  'class/getClassCountSpecific',
-  async (prefix, { rejectWithValue }) => {
+/**
+ * Count classes matching the given filters.
+ * Same argument shape as getClassesByFilter.
+ */
+export const getClassCountByFilter = createAsyncThunk(
+  'class/getClassCountByFilter',
+  async (filters = {}, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await api.get(BASE_URL + `/get-class-count-specific/${prefix}`, { headers: { "Authorization": `Bearer ${JSON.parse(token)}` } });
+      const params = new URLSearchParams();
+      if (filters.section) params.append('section', filters.section);
+      if (filters.name) params.append('name', filters.name);
+
+      const query = params.toString();
+      const url = BASE_URL + '/get-class-count-by-filter' + (query ? `?${query}` : '');
+
+      const response = await api.get(url, { headers: { "Authorization": `Bearer ${JSON.parse(token)}` } });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: "Something went wrong" });
@@ -205,7 +219,7 @@ const classSlice = createSlice({
     classes: [],
     classNames: [],
     classNamesSpecific: [],
-    chartCounts: { PRI: [], NUR: [], JSS: [], SSS: [] },
+    chartCounts: { CRECHE: [], KG: [], NURSERY: [], PRIMARY: [], SECONDARY: [] },
     classesOwnedByTeacher: [],
     classCount: 0,
     classCountSpecific: 0,
@@ -248,15 +262,15 @@ const classSlice = createSlice({
       })
       .addCase(getAllClassnameAndId.rejected, (state) => { state.fetchingStatus = 'failed'; })
 
-      .addCase(getPrefixClassnameAndBasicDetails.pending, (state) => {
+      .addCase(getClassesByFilter.pending, (state) => {
         state.fetchingStatus = 'loading';
         state.classNamesSpecific = [];
       })
-      .addCase(getPrefixClassnameAndBasicDetails.fulfilled, (state, action) => {
+      .addCase(getClassesByFilter.fulfilled, (state, action) => {
         state.fetchingStatus = 'succeeded';
         state.classNamesSpecific = action.payload;
       })
-      .addCase(getPrefixClassnameAndBasicDetails.rejected, (state) => { state.fetchingStatus = 'failed'; })
+      .addCase(getClassesByFilter.rejected, (state) => { state.fetchingStatus = 'failed'; })
 
       .addCase(getAllClassnameAndSubjectCount.pending, (state) => { state.fetchingStatus = 'loading'; })
       .addCase(getAllClassnameAndSubjectCount.fulfilled, (state, action) => {
@@ -272,16 +286,6 @@ const classSlice = createSlice({
       })
       .addCase(getTeacherOwnedClass.rejected, (state) => { state.fetchingStatus = 'failed'; })
 
-      .addCase(getClassNamesStartingWith.pending, (state) => {
-        state.fetchingStatus = 'loading';
-        state.classNamesSpecific = [];
-      })
-      .addCase(getClassNamesStartingWith.fulfilled, (state, action) => {
-        state.fetchingStatus = 'succeeded';
-        state.classNamesSpecific = action.payload;
-      })
-      .addCase(getClassNamesStartingWith.rejected, (state) => { state.fetchingStatus = 'failed'; })
-
       .addCase(getClassChart.pending, (state) => { state.fetchingStatus = 'loading'; })
       .addCase(getClassChart.fulfilled, (state, action) => {
         state.fetchingStatus = 'succeeded';
@@ -296,12 +300,12 @@ const classSlice = createSlice({
       })
       .addCase(getClassCount.rejected, (state) => { state.fetchingStatus = 'failed'; })
 
-      .addCase(getClassCountSpecific.pending, (state) => { state.fetchingStatus = 'loading'; })
-      .addCase(getClassCountSpecific.fulfilled, (state, action) => {
+      .addCase(getClassCountByFilter.pending, (state) => { state.fetchingStatus = 'loading'; })
+      .addCase(getClassCountByFilter.fulfilled, (state, action) => {
         state.fetchingStatus = 'succeeded';
         state.classCountSpecific = action.payload;
       })
-      .addCase(getClassCountSpecific.rejected, (state) => { state.fetchingStatus = 'failed'; })
+      .addCase(getClassCountByFilter.rejected, (state) => { state.fetchingStatus = 'failed'; })
 
       .addCase(saveClass.pending, (state) => { state.savingStatus = 'loading'; })
       .addCase(saveClass.fulfilled, (state, action) => {
