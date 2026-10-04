@@ -82,6 +82,10 @@ import PromotionPreview from './component/promotion/PromotionPreview';
 import PromotionSetup from './component/promotion/PromotionSetup';
 import SelectivePromotion from './component/promotion/SelectivePromotion';
 
+import AttendanceExport from './component/attendance/AttendanceExport';
+import AttendanceWeekGrid from './component/attendance/AttendanceWeekGrid';
+import TeachingDaysConfig from './component/attendance/TeachingDaysConfig';
+
 
 function App() {
 
@@ -144,6 +148,13 @@ const AppRoutes = () => (
     <Route exact path='/class/add-class' element={<AddClass />} />
      <Route exact path='/class/add-custom-class' element={<AddCustomClass />} />
     <Route exact path='/class/update-class/:className' element={<UpdateClass />} />
+
+
+        {/* ---------- Attendace ---------- */}
+   <Route exact path='/attendance/week' element={<AttendanceWeekGrid />} />
+   <Route exact path='/attendance/teaching-days' element={<TeachingDaysConfig />} />
+<Route exact path='/attendance/export' element={<AttendanceExport />} />
+
 
     {/* ---------- Subject ---------- */}
     <Route exact path='/subject/add-subjects' element={<AddSubjects />} />

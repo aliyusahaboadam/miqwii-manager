@@ -203,6 +203,28 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                     </div>
                 </div>
 
+
+
+
+                
+              {/* Attendance */}
+<div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-14')} className={headerClass('chevron-14')}>
+    <header className={navbar['collapsible__header']}>
+        <div className={navbar['collapsible__icon']}>
+            <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                <use href="/images/sprite.svg#attendance"></use>
+            </svg>
+            <p className={navbar['collapsible__heading']}>Attendance</p>
+        </div>
+        <span onClick={() => toggleChevron('chevron-14')} className={navbar['icon-container']}>{chevron}</span>
+    </header>
+    <div className={navbar['collapsible__content--drawer']}>
+        <a href="/attendance/week" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Mark Attendance</a>
+        <a href="/attendance/teaching-days" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Teaching Days</a>
+        <a href="/attendance/export" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Export Record</a>
+    </div>
+</div>
+
                 {/* Promotion */}
                 <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-10')} className={headerClass('chevron-10')}>
                     <header className={navbar['collapsible__header']}>

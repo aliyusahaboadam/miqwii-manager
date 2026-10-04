@@ -87,6 +87,24 @@ const TeacherDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) =>
                     </div>
                 </div>
 
+                                
+                              {/* Attendance */}
+                <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-14')} className={headerClass('chevron-14')}>
+                    <header className={navbar['collapsible__header']}>
+                        <div className={navbar['collapsible__icon']}>
+                            <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                                <use href="/images/sprite.svg#attendance"></use>
+                            </svg>
+                            <p className={navbar['collapsible__heading']}>Attendance</p>
+                        </div>
+                        <span onClick={() => toggleChevron('chevron-14')} className={navbar['icon-container']}>{chevron}</span>
+                    </header>
+                    <div className={navbar['collapsible__content--drawer']}>
+                        <a href="/attendance/week" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Mark Attendance</a>
+                        
+                    </div>
+                </div>
+
                 {/* Profile */}
                 <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-9')} className={headerClass('chevron-9')}>
                     <header className={navbar['collapsible__header']}>
