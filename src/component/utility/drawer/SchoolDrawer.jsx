@@ -215,7 +215,8 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                         <span onClick={() => toggleChevron('chevron-10')} className={navbar['icon-container']}>{chevron}</span>
                     </header>
                     <div className={navbar['collapsible__content--drawer']}>
-                        <a href="/promotion/setup" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Setup Promotion</a>
+                        <a href="/promotion/setup" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Promote Classes</a>
+                        <a href="/promotion/selective" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Selective Promotion</a>
                         <a href="/promotion/history" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Promotion History</a>
                     </div>
                 </div>
@@ -233,6 +234,7 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                     </header>
                     <div className={navbar['collapsible__content--drawer']}>
                         <a href="/graduation/graduate-class" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Graduate a Class</a>
+                        <a href="/graduation/selective" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Selective Graduation</a>
                         <a href="/graduation/graduated-students" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Graduated Students</a>
                         <a href="/graduation/history" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Graduation History</a>
                     </div>

@@ -429,6 +429,14 @@ const handleClose = (event, reason) => {
 
              <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Submitting...' : 'Add Subjects'}</button>
              <span className={style['form-link']} >Add classes to be able to add subject to a particuler class entity</span>
+             <div style={{ textAlign: 'center', marginTop: 8 }}>
+  <a
+    href="/subject/add-custom-subject"
+    style={{ color: '#0e387a', textDecoration: 'underline', fontSize: 15 }}
+  >
+    Don't see your subject? Add Custom Subject
+  </a>
+</div>
     </Card>
 
 )}

@@ -8,6 +8,23 @@ const BASE_URL = `${import.meta.env.VITE_API_URL}/v1/api/promotion`;
 // THUNKS
 // ===================================================================
 
+export const promoteSelected = createAsyncThunk(
+  'promotion/promoteSelected',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post(
+        `${import.meta.env.VITE_API_URL}/v1/api/promotion/promote-selected`,
+        payload,
+        { headers: { Authorization: `Bearer ${JSON.parse(token)}` } }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong" });
+    }
+  }
+);
+
 export const previewPromotion = createAsyncThunk(
   'promotion/preview',
   async (requestData, { rejectWithValue }) => {
@@ -188,6 +205,11 @@ const promotionSlice = createSlice({
         state.executingStatus = 'failed';
         state.error = action.payload?.message || 'Execute failed';
       })
+
+
+.addCase(promoteSelected.pending, (state) => { state.executingStatus = 'loading'; })
+.addCase(promoteSelected.fulfilled, (state) => { state.executingStatus = 'succeeded'; })
+.addCase(promoteSelected.rejected, (state) => { state.executingStatus = 'failed'; })
 
       // ---- history ----
       .addCase(getPromotionHistory.pending, (state) => {

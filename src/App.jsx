@@ -58,6 +58,7 @@ import Students from './component/student/Students';
 import UpdateStudent from './component/student/UpdateStudent';
 import ViewStudents from './component/student/ViewStudents';
 import AddSubjects from './component/subject/AddSubjects';
+import CustomAddSubject from './component/subject/CustomAddSubject';
 import Subjects from './component/subject/Subjects';
 import UpdateSubject from './component/subject/UpdateSubject';
 import ViewSubjects from './component/subject/ViewSubjects';
@@ -75,9 +76,11 @@ import { useSubdomain } from './component/utility/useSubdomain';
 import GraduateClass from './component/graduation/GraduateClass';
 import GraduatedStudents from './component/graduation/GraduatedStudents';
 import GraduationHistory from './component/graduation/GraduationHistory';
+import SelectiveGraduation from './component/graduation/SelectiveGraduation';
 import PromotionHistory from './component/promotion/PromotionHistory';
 import PromotionPreview from './component/promotion/PromotionPreview';
 import PromotionSetup from './component/promotion/PromotionSetup';
+import SelectivePromotion from './component/promotion/SelectivePromotion';
 
 
 function App() {
@@ -144,6 +147,7 @@ const AppRoutes = () => (
 
     {/* ---------- Subject ---------- */}
     <Route exact path='/subject/add-subjects' element={<AddSubjects />} />
+    <Route exact path='/subject/add-custom-subject' element={<CustomAddSubject />} />
     <Route exact path='/subject/view-subjects' element={<ViewSubjects />} />
     <Route exact path='/subject/subjects/:className' element={<Subjects />} />
     <Route exact path='/subject/update-subject/:id/:className' element={<UpdateSubject />} />
@@ -163,11 +167,14 @@ const AppRoutes = () => (
     <Route exact path='/promotion/setup' element={<PromotionSetup />} />
     <Route exact path='/promotion/preview' element={<PromotionPreview />} />
     <Route exact path='/promotion/history' element={<PromotionHistory />} />
+    <Route exact path='/promotion/selective' element={<SelectivePromotion />} />
+
 
     {/* ---------- Graduation ---------- */}
     <Route exact path='/graduation/graduate-class' element={<GraduateClass />} />
     <Route exact path='/graduation/graduated-students' element={<GraduatedStudents />} />
     <Route exact path='/graduation/history' element={<GraduationHistory />} />
+    <Route exact path='/graduation/selective' element={<SelectiveGraduation />} />
 
     {/* ---------- Receipt ---------- */}
     <Route exact path='/receipt/view-student-reciept' element={<ViewStudentReceipt />} />

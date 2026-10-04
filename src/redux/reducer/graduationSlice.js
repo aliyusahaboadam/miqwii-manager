@@ -57,6 +57,24 @@ export const getGraduationHistory = createAsyncThunk(
   }
 );
 
+
+export const graduateSelected = createAsyncThunk(
+  'graduation/graduateSelected',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.post(
+        `${import.meta.env.VITE_API_URL}/v1/api/graduation/graduate-selected`,
+        payload,
+        { headers: { Authorization: `Bearer ${JSON.parse(token)}` } }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || { message: "Something went wrong" });
+    }
+  }
+);
+
 export const getGraduationBatchDetail = createAsyncThunk(
   'graduation/batchDetail',
   async (batchId, { rejectWithValue }) => {
@@ -200,6 +218,11 @@ const graduationSlice = createSlice({
       .addCase(getGraduationBatchEnrollments.rejected, (state) => {
         state.fetchingStatus = 'failed';
       })
+
+
+      .addCase(graduateSelected.pending, (state) => { state.executingStatus = 'loading'; })
+      .addCase(graduateSelected.fulfilled, (state) => { state.executingStatus = 'succeeded'; })
+      .addCase(graduateSelected.rejected, (state) => { state.executingStatus = 'failed'; })
 
       .addCase(getGraduatedStudents.pending, (state) => {
         state.fetchingStatus = 'loading';

@@ -1,17 +1,12 @@
-import {Document, Page, pdf, View, StyleSheet, Font} from '@react-pdf/renderer';
-import { ScoreTable } from './ScoreTable';
-import { KeyTable } from './KeyTable';
-import { Text } from '@react-pdf/renderer';
-import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
-import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
-import { getResultByClassId } from '../../redux/reducer/scoreSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { Document, Font, Page, pdf, StyleSheet, Text } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { ClassScoreSheetTable } from './ClassScoreSheetTable';
-import { getStudentsWithBasicDetailsByClassId } from '../../redux/reducer/studentSlice';
-import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
 import { getSchoolWithBasicDetails } from '../../redux/reducer/schoolSlice';
+import { getSessionDashboardDetails } from '../../redux/reducer/sessionSlice';
+import { ClassScoreSheetTable } from './ClassScoreSheetTable';
+import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
+import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
 
 const SchoolFeeSheet = ({ rows, className }) => {
   const dispatch = useDispatch();
