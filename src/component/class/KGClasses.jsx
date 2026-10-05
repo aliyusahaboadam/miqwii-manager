@@ -19,10 +19,10 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-    deleteClass,
-    getClassCount,
-    getClassCountByFilter,
-    getClassesByFilter
+  deleteClass,
+  getClassCount,
+  getClassCountByFilter,
+  getClassesByFilter
 } from '../../redux/reducer/classSlice';
 import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
@@ -34,10 +34,10 @@ import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { Menu as MenuIcon } from "@mui/icons-material";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Toolbar
+  AppBar,
+  Box,
+  CssBaseline,
+  Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -135,7 +135,7 @@ const KGClasses = () => {
   };
 
   const navigateToAddKGClass = () => {
-    navigate('/class/add-kg-class');
+    navigate('/class/add-class');
   };
 
   const handleChangePage = (event, newPage) => setPage(newPage);

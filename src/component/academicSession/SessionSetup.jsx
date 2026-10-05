@@ -129,7 +129,10 @@ const SessionSetup  = () => {
  const [alertType, setAlertType] = useState(""); 
  const [message, setMessage] = useState(""); 
  const [initialSelectedId, setInitialSelectedId] = useState(null);
-const rows = Array.isArray(sessions) ? sessions : [];
+
+
+ const rows = Array.isArray(sessions) ? sessions : [];
+
  const params = useParams();
 const location = useLocation()
 
@@ -176,6 +179,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
     }
 
 
+      console.log("Session JSON " + JSON.stringify(rows) );
    
 
     // Avoid a layout jump when reaching the last page with empty rows.
@@ -204,7 +208,7 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
            }
                     
          setOpen(true);
-         resetForm(); // This will reset the forto the initial values
+        //  resetForm(); // This will reset the forto the initial values
       };
 
    
@@ -368,8 +372,9 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                    
 
                       <Formik
+                       enableReinitialize
                        initialValues={{
-                        selectedId: rows.find((r) => r.current)?.id ?? null,
+                       selectedId: rows.find((r) => r.current)?.id ?? null,
                                   
                         }}
                                 validationSchema={subjectRegistrationSchema}
