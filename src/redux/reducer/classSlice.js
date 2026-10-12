@@ -98,6 +98,25 @@ export const getClassCount = createAsyncThunk(
   }
 );
 
+
+export const getClassSection = createAsyncThunk(
+  'class/getClassSection',
+  async (classId, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.get(
+        `${BASE_URL}/get-section/${classId}`,
+        { headers: { Authorization: `Bearer ${JSON.parse(token)}` } }
+      );
+      return response.data; // { id, name, section }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: 'Something went wrong' }
+      );
+    }
+  }
+);
+
 export const getTeacherOwnedClass = createAsyncThunk(
   'class/getTeacherOwnedClass',
   async (_, { rejectWithValue }) => {
@@ -224,6 +243,7 @@ const classSlice = createSlice({
     classCount: 0,
     classCountSpecific: 0,
     classExist: null,
+    classSection: null,
     savingStatus: 'idle',
     fetchingStatus: 'idle',
     deletingStatus: 'idle',
@@ -247,7 +267,19 @@ const classSlice = createSlice({
         state.classNames = action.payload;
       })
       .addCase(getClassNames.rejected, (state) => { state.fetchingStatus = 'failed'; })
+      
 
+      .addCase(getClassSection.pending, (state) => {
+        state.fetchingStatus = 'loading';
+      })
+      .addCase(getClassSection.fulfilled, (state, action) => {
+        state.fetchingStatus = 'succeeded';
+        state.classSection = action.payload;
+      })
+      .addCase(getClassSection.rejected, (state) => {
+        state.fetchingStatus = 'failed';
+      })
+      
       .addCase(getAllClass.pending, (state) => { state.fetchingStatus = 'loading'; })
       .addCase(getAllClass.fulfilled, (state, action) => {
         state.fetchingStatus = 'succeeded';

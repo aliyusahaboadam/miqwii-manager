@@ -1,7 +1,8 @@
 // File: src/App.js
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
-import Settings from './component/Settings/Settings';
+import InputControl from './component/Settings/InputControl';
+import ResultSettings from './component/Settings/ResultSettings';
 import AddNextTermFeeAndResumptionDate from './component/academicSession/AddNextFeeAndResumptionDate';
 import AddSession from './component/academicSession/AddSession';
 import SessionSetup from './component/academicSession/SessionSetup';
@@ -13,6 +14,7 @@ import Sessions from './component/admin/Sessions';
 import UpdateDomainName from './component/admin/UpdateDomainName';
 import UpdateSchool from './component/admin/UpdateSchool';
 import UpdateSessionAdmin from './component/admin/UpdateSessionAdmin';
+import AssessmentScheme from './component/assessment/AssessmentScheme';
 import AddClass from './component/class/AddClass';
 import AddCustomClass from './component/class/AddCustomClass';
 import CrecheClasses from './component/class/CrecheClasses';
@@ -73,6 +75,9 @@ import Teachers from './component/teacher/Teachers';
 import UpdateTeacher from './component/teacher/UpdateTeacher';
 import { useSubdomain } from './component/utility/useSubdomain';
 // Promotion & Graduation screens
+import AttendanceExport from './component/attendance/AttendanceExport';
+import AttendanceWeekGrid from './component/attendance/AttendanceWeekGrid';
+import TeachingDaysConfig from './component/attendance/TeachingDaysConfig';
 import GraduateClass from './component/graduation/GraduateClass';
 import GraduatedStudents from './component/graduation/GraduatedStudents';
 import GraduationHistory from './component/graduation/GraduationHistory';
@@ -81,10 +86,8 @@ import PromotionHistory from './component/promotion/PromotionHistory';
 import PromotionPreview from './component/promotion/PromotionPreview';
 import PromotionSetup from './component/promotion/PromotionSetup';
 import SelectivePromotion from './component/promotion/SelectivePromotion';
-
-import AttendanceExport from './component/attendance/AttendanceExport';
-import AttendanceWeekGrid from './component/attendance/AttendanceWeekGrid';
-import TeachingDaysConfig from './component/attendance/TeachingDaysConfig';
+import ReleaseResults from './component/result/ReleaseResults';
+import AddComponent from './component/score/AddComponent';
 
 
 function App() {
@@ -168,6 +171,7 @@ const AppRoutes = () => (
     <Route exact path='/score/add-first-ca/:subjectId/:classId/:className/:subjectName' element={<AddFirstCA />} />
     <Route exact path='/score/add-second-ca/:subjectId/:classId/:className/:subjectName' element={<AddSecondCA />} />
     <Route exact path='/score/add-exam/:subjectId/:classId/:className/:subjectName' element={<AddExam />} />
+    <Route exact path='/score/add-component/:field/:subjectId/:classId/:className/:subjectName' element={<AddComponent />} />
 
     {/* ---------- Session ---------- */}
     <Route exact path='/session/add-session' element={<AddSession />} />
@@ -196,7 +200,9 @@ const AppRoutes = () => (
     <Route exact path='/payment/all-payments' element={<Payments />} />
 
     {/* ---------- Settings ---------- */}
-    <Route exact path='/settings/settings' element={<Settings />} />
+    <Route exact path='/settings/input-control' element={<InputControl />} />
+    <Route exact path='/settings/result-settings' element={<ResultSettings />} />
+    <Route exact path='/settings/assessment-settings' element={<AssessmentScheme />} />
 
     {/* ---------- Password ---------- */}
     <Route exact path='/password/password-request' element={<PasswordRequest />} />
@@ -208,9 +214,9 @@ const AppRoutes = () => (
     <Route exact path='/result/show-results' element={<ShowResults />} />
     <Route exact path='/result/show-mastersheet' element={<ShowMasterSheet />} />
     <Route exact path='/result/student-result-by-regNo' element={<ShowResultByRegNo />} />
-    <Route exact path='/result/student-result-by-regNo' element={<StudentResultByRegNoStudentDashboard />} />
+<Route exact path='/result/student-result-by-regNo-student' element={<StudentResultByRegNoStudentDashboard />} />
     <Route exact path='/result/teacher-search-by-regNo' element={<StudentResultByRegNoTeacherDashboard />} />
-
+    <Route exact path='/result/release-results' element={<ReleaseResults />} />
     {/* ---------- School ---------- */}
     <Route exact path='/school/student-activator' element={<StudentActivator />} />
     <Route exact path='/admin/school-activator/:id' element={<SchoolActivator />} />

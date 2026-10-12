@@ -184,6 +184,26 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                         <a href="/result/show-results" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Generate Result</a>
                         <a href="/result/show-mastersheet" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>View Master Sheet</a>
                         <a href="/result/student-result-by-regNo" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Search Result</a>
+                        <a href="/result/release-results" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Release Results</a>
+                    </div>
+                </div>
+
+
+
+                  {/* Assessment */}
+                <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-15')} className={headerClass('chevron-15')}>
+                    <header className={navbar['collapsible__header']}>
+                        <div className={navbar['collapsible__icon']}>
+                            <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                                <use href="/images/sprite.svg#assessment"></use>
+                            </svg>
+                            <p className={navbar['collapsible__heading']}>Assessment</p>
+                        </div>
+                        <span onClick={() => toggleChevron('chevron-15')} className={navbar['icon-container']}>{chevron}</span>
+                    </header>
+                    <div className={navbar['collapsible__content--drawer']}>
+                      
+                           <a href="/settings/assessment-settings" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Assessment Mode</a>
                     </div>
                 </div>
 
@@ -309,7 +329,9 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                         <span onClick={() => toggleChevron('chevron-5')} className={navbar['icon-container']}>{chevron}</span>
                     </header>
                     <div className={navbar['collapsible__content--drawer']}>
-                        <a href="/settings/settings" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Settings</a>
+                       <a href="/settings/result-settings" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Result Settings</a>
+                         <a href="/settings/input-control" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Input Control</a>
+                   
                     </div>
                 </div>
 

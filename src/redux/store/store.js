@@ -9,6 +9,7 @@ import passwordSlice from '../reducer/passwordSlice';
 import paymentSlice from '../reducer/paymentSlice';
 import promotionSlice from '../reducer/promotionSlice';
 import receiptSlice from '../reducer/receiptSlice';
+import resultSlice from '../reducer/resultSlice';
 import schoolSlice from '../reducer/schoolSlice';
 import scoreSlice from '../reducer/scoreSlice';
 import sessionSlice from '../reducer/sessionSlice';
@@ -34,6 +35,7 @@ const store = configureStore({
         promotion: promotionSlice,
         graduation: graduationSlice,
         attendance: attendanceSlice,
+        results: resultSlice,
     },
 
     devTools: composeWithDevTools(),

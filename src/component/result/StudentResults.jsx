@@ -3,19 +3,29 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { encode } from 'uqr';
 import { getResultByClassId } from '../../redux/reducer/scoreSlice';
-import { getSettingsState } from '../../redux/reducer/settingsSlice';
 import { formatPosition } from '../utility/FormatPositon';
+import {
+  buildFeeKeyData,
+  buildQrText,
+  buildScoreColumns,
+  feesKeyColumns,
+  getAverageRemark,
+  getTermPerformanceRow,
+  resolveLayout,
+  SCORE_KEY_DATA,
+  scoreKeyColumns,
+  TERM_PERF_ROWS
+} from '../utility/resultHelpers';
 import { KeyTable } from './KeyTable';
 import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import roboto from './pdffonts/RobotoRegular-3m4L.ttf';
 import { ScoreTable } from './ScoreTable';
 
-
-// ✅ FIX 1: Register fonts ONCE outside the component (not on every render)
+// Register fonts once, at module scope.
 Font.register({ family: 'Roboto', src: roboto });
 Font.register({ family: 'Oswald', src: Oswald });
 
-// ✅ FIX 2: Logo cache outside component so it persists across renders
+// Logo cache at module scope.
 const logoCache = {};
 
 const preloadImage = async (url) => {
@@ -26,27 +36,21 @@ const preloadImage = async (url) => {
     const arrayBuffer = await response.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
 
-    // Detect real image type from magic bytes
     const getMimeType = (bytes) => {
       if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) return 'image/jpeg';
       if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) return 'image/png';
       if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return 'image/gif';
       if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[4] === 0x57) return 'image/webp';
-      // Check for SVG (starts with '<svg' or '<?xml')
       const text = new TextDecoder().decode(bytes.slice(0, 100));
       if (text.includes('<svg') || text.includes('<?xml')) return 'image/svg+xml';
-      return 'image/png'; // fallback
+      return 'image/png';
     };
 
     const mimeType = getMimeType(bytes);
-    console.log('Detected MIME:', mimeType);
-
-    // Convert buffer to base64
     let binary = '';
-    bytes.forEach(b => binary += String.fromCharCode(b));
+    bytes.forEach((b) => (binary += String.fromCharCode(b)));
     const base64 = `data:${mimeType};base64,${btoa(binary)}`;
 
-    // If SVG, convert to PNG for react-pdf compatibility
     if (mimeType === 'image/svg+xml') {
       const png = await new Promise((resolve, reject) => {
         const img = new window.Image();
@@ -72,80 +76,69 @@ const preloadImage = async (url) => {
   }
 };
 
+function generateQRBase64(text) {
+  const result = encode(text);
+  const cells = result.data;
+  const size = cells.length;
+  const cellSize = 4;
+  const padding = 16;
+  const dimension = size * cellSize + padding * 2;
 
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${dimension} ${dimension}" width="${dimension}" height="${dimension}">`;
+  svg += `<rect width="${dimension}" height="${dimension}" fill="white"/>`;
 
-
-// -----------------------------------------------------------------------
-// Average-based teacher remark (replaces percentile-based remark)
-// -----------------------------------------------------------------------
-const getAverageRemark = (average) => {
-  const a = Number(average);
-  if (!Number.isFinite(a)) return "Keep working hard!";
-  if (a >= 75) return "Outstanding! Keep up the excellent effort.";
-  if (a >= 70) return "Excellent! You're among the very best.";
-  if (a >= 60) return "Very good performance. Keep it up!";
-  if (a >= 50) return "Good effort. You can do better. Aim higher!";
-  if (a >= 40) return "Fair performance. More effort is needed.";
-  if (a >= 30) return "Put in more effort. Seek help when needed.";
-  return "Much improvement needed. Work harder!";
-};
-
-const termPerfRows = [
-  { accessorKey: 'subjectOffered',  header: () => 'Total Subject Offered',    bold: true },
-  { accessorKey: 'marksObtained',   header: () => 'Total Marks Obtained',     bold: true },
-  { accessorKey: 'marksObtainable', header: () => 'Total Marks Obtainable',   bold: true },
-  { accessorKey: 'personalAvg',     header: () => 'Personal Average Marks',   bold: true },
-  { accessorKey: 'avgObtainable',   header: () => 'Average Marks Obtainable', bold: true },
-];
-
-
-
-
-// ✅ FIX 3: Move MyDocument OUTSIDE StudentResults so it's not recreated every render
-const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, ScoreColumns, ScoreKeyColumns, feesKeyColumns, scoreKeyData }) => {
-  const feeKeyData = [
-    {
-      nextSSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextSSSTermFee || "Unset"),
-      nextJSSTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextJSSTermFee || "Unset"),
-      nextPRITermFee: formatAmount(resultsData?.[0]?.academicSession?.nextPRITermFee || "Unset"),
-      nextNURTermFee: formatAmount(resultsData?.[0]?.academicSession?.nextNURTermFee || "Unset")
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      if (cells[row][col]) {
+        svg += `<rect x="${col * cellSize + padding}" y="${row * cellSize + padding}" width="${cellSize}" height="${cellSize}" fill="black"/>`;
+      }
     }
-  ];
+  }
 
+  svg += `</svg>`;
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
 
+// ---------------------------------------------------------------------
+// PDF Document — one Page per student
+// ---------------------------------------------------------------------
 
+const MyDocument = ({ resultsData, logoUrl }) => {
+  const first = resultsData[0];
+  const layout = resolveLayout(first?.layout);
+  const scoreColumns = buildScoreColumns(first?.columns);
 
   return (
     <Document>
       {resultsData.map((result, index) => {
-        // ✅ Average-based remark (replaces position-based remark)
         const teacherRemark = getAverageRemark(result.overallAverage);
-        const perf = getTermPerformanceRow(result); 
+
         const resumptionDate = result.academicSession.resumptionDate
           ? new Date(result.academicSession.resumptionDate).toLocaleDateString('en-US', {
-              year: 'numeric', month: 'long', day: 'numeric'
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
             })
-          : "Not Set";
+          : 'Not Set';
 
-
-
-           const qrText =
-          `Student Result\n` +
-          `Name: ${result.student.firstname} ${result.student.surname} ${result.student.lastname}\n` +
-          `School: ${result.school.name}\n` +
-          `Class: ${result.class1.name}\n` +
-          `Session: ${result.academicSession.session}\n` +
-          `Term: ${result.academicSession.term}\n` +
-          `Position: ${formatPosition(result.position)}\n` +
-          `Average: ${result.overallAverage}`;
-
+        // QR text — strip Position line if positioning is disabled.
+        let qrText = buildQrText(result);
+        if (layout.disablePositioning) {
+          qrText = qrText
+            .split('\n')
+            .filter((line) => !line.startsWith('Position:'))
+            .join('\n');
+        }
         const qrBase64 = generateQRBase64(qrText);
+
+        const feeKeyData = buildFeeKeyData(result);
+        const termPerfData = [getTermPerformanceRow(result)];
 
         return (
           <Page key={index} size="A4" style={resultStyle.body}>
             <View style={resultStyle.logoAndHeadingContainer}>
               <View style={resultStyle.logo}>
-                <Image src={logoUrl} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                <Image src={logoUrl} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </View>
               <View style={resultStyle.heading}>
                 <Text style={resultStyle.schoolName}>{result.school.name}</Text>
@@ -154,11 +147,13 @@ const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, ScoreColu
                   Motto: <Text style={resultStyle.motto}>{result.school.motto}</Text>
                 </Text>
                 <Text style={resultStyle.boldText}>
-                  School Reg: No.: <Text style={resultStyle.address}>{result.school.regNo}</Text> Tel: <Text style={resultStyle.address}>{result.school.contact}</Text>
+                  School Reg: No.:{' '}
+                  <Text style={resultStyle.address}>{result.school.regNo}</Text> Tel:{' '}
+                  <Text style={resultStyle.address}>{result.school.contact}</Text>
                 </Text>
               </View>
               <View style={resultStyle.logo}>
-                <Image src={logoUrl} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                <Image src={logoUrl} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </View>
             </View>
 
@@ -169,7 +164,10 @@ const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, ScoreColu
             <View style={resultStyle.detailsContainer}>
               <View style={resultStyle.childContainer}>
                 <Text style={resultStyle.boldTextSecondary}>
-                  Name: <Text style={resultStyle.detailsText}>{result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}</Text>
+                  Name:{' '}
+                  <Text style={resultStyle.detailsText}>
+                    {result.student.firstname + ' ' + result.student.surname + ' ' + result.student.lastname}
+                  </Text>
                 </Text>
                 <Text style={resultStyle.boldTextSecondary}>
                   Reg No: <Text style={resultStyle.detailsText}>{result.student.regNo}</Text>
@@ -180,9 +178,11 @@ const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, ScoreColu
               </View>
               <View style={resultStyle.childContainer}>
                 <Text style={resultStyle.boldTextSecondary}>
-                  {positioning ? 'Position:' : 'No. of Subjects:'}
+                  {!layout.disablePositioning ? 'Position:' : 'No. of Subjects:'}
                   <Text style={resultStyle.detailsText}>
-                    {positioning ? formatPosition(result.position) : (result.scores.length || 'N/A')}
+                    {!layout.disablePositioning
+                      ? formatPosition(result.position)
+                      : result.scores.length || 'N/A'}
                   </Text>
                 </Text>
                 <Text style={resultStyle.boldTextSecondary}>
@@ -205,25 +205,29 @@ const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, ScoreColu
               </View>
             </View>
 
-            <ScoreTable columns={ScoreColumns} data={result.scores} />
+            <ScoreTable columns={scoreColumns} data={result.scores} />
 
             <View style={resultStyle.bottomSection}>
               <View style={resultStyle.leftColumn}>
                 <View style={resultStyle.secondaryContainer}>
                   <Text style={resultStyle.subtitle}>KEYS</Text>
-                  <KeyTable columns={ScoreKeyColumns} data={scoreKeyData} />
+                  <KeyTable columns={scoreKeyColumns()} data={SCORE_KEY_DATA} />
                 </View>
-                <View style={resultStyle.remarkContainer}>
-                  <Text style={resultStyle.subtitle}>CLASSROOM TEACHER'S REMARK</Text>
-                  <Text style={resultStyle.remarkText}>{teacherRemark}</Text>
-                </View>
+                {!layout.disableTeacherRemark && (
+                  <View style={resultStyle.remarkContainer}>
+                    <Text style={resultStyle.subtitle}>CLASSROOM TEACHER'S REMARK</Text>
+                    <Text style={resultStyle.remarkText}>{teacherRemark}</Text>
+                  </View>
+                )}
               </View>
 
               <View style={resultStyle.rightColumn}>
-                <View style={resultStyle.secondaryContainer}>
-                  <Text style={resultStyle.subtitle}>SCHOOL NEXT TERM FEES</Text>
-                  <KeyTable columns={feesKeyColumns} data={feeKeyData} />
-                </View>
+                {!layout.disableNextTermFees && (
+                  <View style={resultStyle.secondaryContainer}>
+                    <Text style={resultStyle.subtitle}>SCHOOL NEXT TERM FEES</Text>
+                    <KeyTable columns={feesKeyColumns()} data={feeKeyData} />
+                  </View>
+                )}
                 <View style={resultStyle.resumptionContainer}>
                   <Text style={resultStyle.subtitle}>NEXT TERM RESUMPTION DATE</Text>
                   <Text style={resultStyle.resumptionDate}>{resumptionDate}</Text>
@@ -231,29 +235,20 @@ const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, ScoreColu
               </View>
             </View>
 
-
-             
-                     
-                     // in StudentResults, inside the map
-// or: const perf = getTermPerformanceRow(fetchedResult); // not needed — computed in MyDocument
-
-<View style={resultStyle.qrAndSummaryRow}>
-   <View style={resultStyle.qrScannerContainer}>
-    <Text style={resultStyle.qrText}>VERIFY (SCAN ME)</Text>
-    <Image src={qrBase64} style={resultStyle.qrScannerImage} />
-  </View>
-  
-  <View style={resultStyle.termPerformanceContainer}>
-    <Text style={resultStyle.subtitle}>TERM PERFORMANCE SUMMARY</Text>
-    <KeyTable
-      columns={termPerfRows}
-      data={[getTermPerformanceRow(result)]}
-      layout="vertical"
-    />
-  </View>
-
- 
-</View>
+            <View style={resultStyle.qrAndSummaryRow}>
+              {!layout.disableQrCode && (
+                <View style={resultStyle.qrScannerContainer}>
+                  <Text style={resultStyle.qrText}>VERIFY (SCAN ME)</Text>
+                  <Image src={qrBase64} style={resultStyle.qrScannerImage} />
+                </View>
+              )}
+              {!layout.disableTermPerformanceSummary && (
+                <View style={resultStyle.termPerformanceContainer}>
+                  <Text style={resultStyle.subtitle}>TERM PERFORMANCE SUMMARY</Text>
+                  <KeyTable columns={TERM_PERF_ROWS} data={termPerfData} layout="vertical" />
+                </View>
+              )}
+            </View>
 
             <Text style={resultStyle.brandName}>~Generated By MiQwii Manager~</Text>
           </Page>
@@ -263,70 +258,33 @@ const MyDocument = ({ resultsData, logoUrl, positioning, formatAmount, ScoreColu
   );
 };
 
+// ---------------------------------------------------------------------
+// React component
+// ---------------------------------------------------------------------
 
 const StudentResults = ({ classId }) => {
   const dispatch = useDispatch();
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-
-
-  const formatAmount = (amount) => `N${new Intl.NumberFormat('en-NG').format(amount)}`;
-
-  const ScoreColumns = [
-    { accessorKey: 'subjectName', header: () => 'Subject', size: 50 },
-    { accessorKey: 'max', header: () => 'Max', size: 15 },
-    { accessorKey: 'firstTest', header: () => 'CA1', size: 15 },
-    { accessorKey: 'secondTest', header: () => 'CA2', size: 15 },
-    { accessorKey: 'totalTest', header: () => 'Sum', size: 16 },
-    { accessorKey: 'exam', header: () => 'Exam', size: 15 },
-    { accessorKey: 'totalExam', header: () => 'Total', size: 15 },
-    { accessorKey: 'positionPerSubjectFormatted', header: () => 'Pos', size: 16 },
-    { accessorKey: 'grade', header: () => 'Grade', size: 16 },
-    { accessorKey: 'remark', header: () => 'Remark', size: 30 }
-  ];
-
-  const feesKeyColumns = [
-    { accessorKey: 'nextSSSTermFee', header: () => 'SSS', size: 35, bold: false },
-    { accessorKey: 'nextJSSTermFee', header: () => 'JSS', size: 35 },
-    { accessorKey: 'nextPRITermFee', header: () => 'Primary', size: 35 },
-    { accessorKey: 'nextNURTermFee', header: () => 'Nursery', size: 35 }
-  ];
-
-  const ScoreKeyColumns = [
-    { accessorKey: 'a', size: 35, bold: false },
-    { accessorKey: 'b', size: 35 },
-    { accessorKey: 'c', size: 20 },
-    { accessorKey: 'd', size: 20 },
-    { accessorKey: 'e', size: 20 }
-  ];
-
-  const scoreKeyData = [
-    { a: 'A', b: 'B', c: 'C', d: 'D', e: 'E' },
-    { a: 'Excellence', b: 'Very Good', c: 'Good', d: 'Pass', e: 'Fail' }
-  ];
-
- 
-
-  // ✅ FIX 4: Shared PDF generation logic to avoid duplication
   const generatePDF = async () => {
-
     const fetchStart = performance.now();
-
-     setProgress('Fetching results...');
+    setProgress('Fetching results...');
     const resultAction = await dispatch(getResultByClassId(classId));
-    const positioningAction = await dispatch(getSettingsState());
     const fetchEnd = performance.now();
+    console.log(`API Fetch Time: ${(fetchEnd - fetchStart).toFixed(2)}ms`);
 
-
-     console.log(`API Fetch Time: ${(fetchEnd - fetchStart).toFixed(2)}ms`);
     if (!getResultByClassId.fulfilled.match(resultAction)) {
-      throw new Error('Failed to fetch results');
+      const payload = resultAction.payload;
+      const message =
+        typeof payload === 'string'
+          ? payload
+          : payload?.message || 'Failed to fetch results';
+      throw new Error(message);
     }
 
     const fetchedResults = resultAction.payload;
-    const positioning = positioningAction.payload.disabledPositioning;
-     // Add this line
     console.log(`Number of results (pages): ${fetchedResults.length}`);
 
     if (!fetchedResults || fetchedResults.length === 0) {
@@ -335,46 +293,28 @@ const StudentResults = ({ classId }) => {
 
     const s3Url = `https://d39kcxvd290stw.cloudfront.net/${fetchedResults[0]?.school?.logo}`;
 
-    // ✅ FIX 5: Use cached/preloaded base64 logo instead of fetching from S3 every time
-
     const imageStart = performance.now();
-
     setProgress('Loading school logo...');
     const logoUrl = await preloadImage(s3Url);
-      const imageEnd = performance.now();
+    const imageEnd = performance.now();
     console.log(`Image Preload Time: ${(imageEnd - imageStart).toFixed(2)}ms`);
 
-
-     const pdfStart = performance.now();
-
-
-     setProgress(`Building PDF (${fetchedResults.length} pages)...`);
+    const pdfStart = performance.now();
+    setProgress(`Building PDF (${fetchedResults.length} pages)...`);
     const blob = await pdf(
-      <MyDocument
-        resultsData={fetchedResults}
-        logoUrl={logoUrl}
-        positioning={positioning}
-        formatAmount={formatAmount}
-        ScoreColumns={ScoreColumns}
-        ScoreKeyColumns={ScoreKeyColumns}
-        feesKeyColumns={feesKeyColumns}
-        scoreKeyData={scoreKeyData}
-      />
+      <MyDocument resultsData={fetchedResults} logoUrl={logoUrl} />
     ).toBlob();
-
-
     const pdfEnd = performance.now();
     console.log(`PDF Generation Time: ${(pdfEnd - pdfStart).toFixed(2)}ms`);
 
-    console.log(`Total Time: ${(pdfEnd - pdfStart).toFixed(2)}ms`);
-
-     setProgress('Almost done...');
+    setProgress('Almost done...');
     return { blob, className: fetchedResults[0]?.class1?.name };
   };
 
   const handleDownloadPDF = async () => {
     try {
       setIsGenerating(true);
+      setErrorMessage('');
       const { blob, className } = await generatePDF();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -385,162 +325,119 @@ const StudentResults = ({ classId }) => {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch (error) {
-      alert(error.message || 'Error generating PDF. Please try again.');
+      setErrorMessage(error.message || 'Error generating PDF. Please try again.');
     } finally {
       setIsGenerating(false);
+      setProgress('');
     }
   };
 
   const handleViewPDF = async () => {
     try {
       setIsGenerating(true);
+      setErrorMessage('');
       const { blob } = await generatePDF();
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
-      alert(error.message || 'Error generating PDF. Please try again.');
+      setErrorMessage(error.message || 'Error generating PDF. Please try again.');
     } finally {
       setIsGenerating(false);
+      setProgress('');
     }
   };
 
   return (
-    <div style={{ display: 'flex', gap: '10px' }}>
-      <button
-        onClick={handleDownloadPDF}
-        disabled={isGenerating}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: isGenerating ? '#ccc' : '#007bff',
-          color: 'white', border: 'none', borderRadius: '4px',
-          cursor: isGenerating ? 'not-allowed' : 'pointer'
-        }}
-      >
-        {isGenerating ? (progress || 'Generating...') : 'Download Results'}
-      </button>
+    <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+      {errorMessage && (
+        <div style={{ color: '#a94442', fontSize: 14 }}>{errorMessage}</div>
+      )}
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button
+          onClick={handleDownloadPDF}
+          disabled={isGenerating}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: isGenerating ? '#ccc' : '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: isGenerating ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {isGenerating ? progress || 'Generating...' : 'Download Results'}
+        </button>
 
-      <button
-        onClick={handleViewPDF}
-        disabled={isGenerating}
-        style={{
-          padding: '10px 20px',
-          backgroundColor: isGenerating ? '#ccc' : '#28a745',
-          color: 'white', border: 'none', borderRadius: '4px',
-          cursor: isGenerating ? 'not-allowed' : 'pointer'
-        }}
-      >
-        {isGenerating ? (progress || 'Generating...') : 'View Results'}
-      </button>
+        <button
+          onClick={handleViewPDF}
+          disabled={isGenerating}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: isGenerating ? '#ccc' : '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: isGenerating ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {isGenerating ? progress || 'Generating...' : 'View Results'}
+        </button>
+      </div>
     </div>
   );
 };
 
 export default StudentResults;
 
+// ---------------------------------------------------------------------
+// Styles — same as the other two
+// ---------------------------------------------------------------------
+
 const resultStyle = StyleSheet.create({
-  body: {
-    paddingTop: 30,
-    paddingBottom: 30,
-    paddingHorizontal: 35,
-  },
+  body: { paddingTop: 30, paddingBottom: 30, paddingHorizontal: 35 },
   logoAndHeadingContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 8,
   },
-  heading: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  logo: {
-    width: 60,
-    height: 60,
-  },
-  schoolName: {
-    fontSize: 15,
-    textAlign: 'center',
-    fontFamily: 'Oswald'
-  },
-  address: {
-    fontSize: 12,
-    textAlign: 'center',
-    marginBottom: 0,
-    fontFamily: 'Roboto'
-  },
-  motto: {
-    fontSize: 12,
-    textAlign: 'center',
-    marginBottom: 0,
-    fontFamily: 'Roboto'
-  },
-  detailsText: {
-    fontSize: 10,
-    textAlign: 'start',
-    marginBottom: 2,
-    fontFamily: 'Roboto'
-  },
+  heading: { flexDirection: 'column', justifyContent: 'center', alignItems: 'center' },
+  logo: { width: 60, height: 60 },
+  schoolName: { fontSize: 15, textAlign: 'center', fontFamily: 'Oswald' },
+  address: { fontSize: 12, textAlign: 'center', marginBottom: 0, fontFamily: 'Roboto' },
+  motto: { fontSize: 12, textAlign: 'center', marginBottom: 0, fontFamily: 'Roboto' },
+  detailsText: { fontSize: 10, textAlign: 'start', marginBottom: 2, fontFamily: 'Roboto' },
   boldText: {
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 5,
     fontFamily: 'Oswald',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   boldMottoText: {
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 0,
     fontFamily: 'Oswald',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
-  boldTextSecondary: {
-    fontSize: 10,
-    textAlign: 'left',
-    marginTop: 5,
-    fontWeight: 'bold'
-  },
+  boldTextSecondary: { fontSize: 10, textAlign: 'left', marginTop: 5, fontWeight: 'bold' },
   secondHeader: {
     fontSize: 12,
     textAlign: 'center',
     marginBottom: 0,
     fontFamily: 'Oswald',
     fontWeight: 'bold',
-    borderStyle: "solid",
-    borderColor: "#3f3f3f",
+    borderStyle: 'solid',
+    borderColor: '#3f3f3f',
     borderWidth: 1,
     paddingHorizontal: 5,
   },
-  subtitle: {
-    fontSize: 10,
-    marginBottom: 5,
-    fontWeight: 'bold',
-    fontFamily: 'Oswald'
-  },
-
-
-
-
-
-  
-  text: {
-    margin: 12,
-    fontSize: 14,
-    textAlign: 'justify',
-    fontFamily: 'Times-Roman'
-  },
-  image: {
-    marginVertical: 15,
-    marginHorizontal: 100,
-  },
-  header: {
-    fontSize: 12,
-    marginBottom: 20,
-    textAlign: 'center',
-    color: 'grey',
-  },
+  subtitle: { fontSize: 10, marginBottom: 5, fontWeight: 'bold', fontFamily: 'Oswald' },
+  text: { margin: 12, fontSize: 14, textAlign: 'justify', fontFamily: 'Times-Roman' },
+  image: { marginVertical: 15, marginHorizontal: 100 },
+  header: { fontSize: 12, marginBottom: 20, textAlign: 'center', color: 'grey' },
   brandName: {
     position: 'absolute',
     fontSize: 12,
@@ -550,37 +447,22 @@ const resultStyle = StyleSheet.create({
     textAlign: 'center',
     color: 'grey',
   },
-  secondaryContainer: {
-    marginTop: 10,
-    width: '100%'
-  },
+  secondaryContainer: { marginTop: 10, width: '100%' },
   detailsContainer: {
-    flexDirection: "row",
+    flexDirection: 'row',
     justifyContent: 'center',
     width: '100%',
     marginBottom: 5,
   },
-  childContainer: {
-    width: 'auto',
-    flexDirection: 'column',
-    paddingLeft: 10,
-    margin: 0 
-  },
-  // New styles for bottom section
-   bottomSection: {
+  childContainer: { width: 'auto', flexDirection: 'column', paddingLeft: 10, margin: 0 },
+  bottomSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 5,
-    gap: 10
+    gap: 10,
   },
-  leftColumn: {
-    width: '48%',
-    flexDirection: 'column'
-  },
-  rightColumn: {
-    width: '48%',
-    flexDirection: 'column'
-  },
+  leftColumn: { width: '48%', flexDirection: 'column' },
+  rightColumn: { width: '48%', flexDirection: 'column' },
   remarkContainer: {
     marginTop: 10,
     padding: 4,
@@ -588,13 +470,13 @@ const resultStyle = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#3f3f3f',
     borderRadius: 4,
-    backgroundColor: '#f9f9f9'
+    backgroundColor: '#f9f9f9',
   },
-     qrScannerContainer: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center",
+  qrScannerContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 85,
     width: 85,
     borderStyle: 'solid',
@@ -602,111 +484,35 @@ const resultStyle = StyleSheet.create({
     borderColor: '#130909',
     borderRadius: 5,
   },
-
-
-     qrScannerImage: {
-    height: 80,
-    width: 80,
-  },
-
-
-   qrText: {
+  qrScannerImage: { height: 80, width: 80 },
+  qrText: {
     fontSize: 7,
     fontWeight: '600',
     fontFamily: 'Roboto',
     textAlign: 'center',
     marginTop: 1,
-    marginBottom: 1
+    marginBottom: 1,
   },
-  remarkText: {
-    fontSize: 9,
-    fontFamily: 'Roboto',
-    textAlign: 'justify',
-    lineHeight: 1.4
-  },
+  remarkText: { fontSize: 9, fontFamily: 'Roboto', textAlign: 'justify', lineHeight: 1.4 },
   resumptionContainer: {
     marginTop: 10,
     padding: 4,
     borderStyle: 'solid',
     borderWidth: 1,
     borderColor: '#0e387a',
-    borderRadius: 4
-  
+    borderRadius: 4,
   },
   resumptionDate: {
     fontSize: 11,
     fontFamily: 'Oswald',
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#0e387a'
+    color: '#0e387a',
   },
-
-
-
-
   qrAndSummaryRow: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginTop: 3
-
-},
-
-termPerformanceContainer: {
-  width: '50%',
-},
-
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 3,
+  },
+  termPerformanceContainer: { width: '50%' },
 });
-
-
-
-
-function generateQRBase64(text) {
-  const result = encode(text);
-  const cells = result.data;
-  const size = cells.length;
-  const cellSize = 4;
-  const padding = 16;
-  const dimension = size * cellSize + padding * 2;
-
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${dimension} ${dimension}" width="${dimension}" height="${dimension}">`;
-  svg += `<rect width="${dimension}" height="${dimension}" fill="white"/>`;
-
-  for (let row = 0; row < size; row++) {
-    for (let col = 0; col < size; col++) {
-      if (cells[row][col]) {
-        svg += `<rect x="${col * cellSize + padding}" y="${row * cellSize + padding}" width="${cellSize}" height="${cellSize}" fill="black"/>`;
-      }
-    }
-  }
-
-  svg += `</svg>`;
-
-  const base64 = btoa(svg);
-  return `data:image/svg+xml;base64,${base64}`;
-}
-
-
-function getTermPerformanceRow(result) {
-  const scores = Array.isArray(result?.scores) ? result.scores : [];
-
-  const subjectsOffered = scores.length;
-  const totalObtained = scores.reduce(
-    (sum, s) => sum + (Number(s?.totalExam) || 0),
-    0
-  );
-  const totalObtainable = scores.reduce(
-    (sum, s) => sum + (Number(s?.max) || 0),
-    0
-  );
-  const personalAverage = Number(result?.overallAverage) || 0;
-  const averageObtainable =
-    subjectsOffered > 0 ? totalObtainable / subjectsOffered : 0;
-
-  return {
-    subjectOffered: subjectsOffered,
-    marksObtained: totalObtained,
-    marksObtainable: totalObtainable,
-    personalAvg: personalAverage.toFixed(2),
-    avgObtainable: averageObtainable.toFixed(2),
-  };
-}
