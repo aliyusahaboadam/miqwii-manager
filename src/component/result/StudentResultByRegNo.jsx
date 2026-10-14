@@ -15,7 +15,7 @@ import {
   SCORE_KEY_DATA,
   scoreKeyColumns,
   TERM_PERF_ROWS
-} from '../utility/resultHelpers';
+} from './resultHelpers';
 import { KeyTable } from './KeyTable';
 import Oswald from './pdffonts/Oswald-VariableFont_wght.ttf';
 import roboto from './pdffonts/RobotoRegular-3m4L.ttf';

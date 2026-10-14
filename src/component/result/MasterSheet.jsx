@@ -111,16 +111,16 @@ const MyDocument = ({ resultsData }) => {
     ? resultsData 
     : resultsData?.students || [];
 
-  // If no data, return empty document or show error
-  if (!mastersheetData || mastersheetData.length === 0) {
-    return (
-      <Document>
-        <Page size="A3" orientation='landscape' style={resultStyle.body}>
-          <Text>No data available</Text>
-        </Page>
-      </Document>
-    );
-  }
+  // // If no data, return empty document or show error
+  // if (!mastersheetData || mastersheetData.length === 0) {
+  //   return (
+  //     <Document>
+  //       <Page size="A3" orientation='landscape' style={resultStyle.body}>
+  //         <Text>No data available</Text>
+  //       </Page>
+  //     </Document>
+  //   );
+  // }
 
 
 
@@ -131,22 +131,29 @@ const MyDocument = ({ resultsData }) => {
           <Page  size="A3" orientation='landscape' style={resultStyle.body}>
             <View style={resultStyle.logoAndHeadingContainer}>
           
-              <View style={resultStyle.heading}>
-                <Text style={resultStyle.schoolName}>{resultsData.students[0].school?.name || 'School Name'}</Text>
-                <Text style={resultStyle.address}>{resultsData.students[0].school?.address || ''}</Text>
-                <Text style={resultStyle.boldMottoText}>
-                  Motto: <Text style={resultStyle.motto}>{resultsData.students[0].school?.motto || ''}</Text>
-                </Text>
-                <Text style={resultStyle.boldText}>
-                  School Reg: No.: <Text style={resultStyle.address}>{resultsData.students[0].school?.regNo || ''}</Text> Tel: <Text style={resultStyle.address}>{resultsData.students[0].school?.contact || ''}</Text>
-                </Text>
-              </View>
+            {(() => {
+  const first = resultsData?.students?.[0];
+  return (
+    <View style={resultStyle.heading}>
+      <Text style={resultStyle.schoolName}>{first?.school?.name || 'School Name'}</Text>
+      <Text style={resultStyle.address}>{first?.school?.address || ''}</Text>
+      <Text style={resultStyle.boldMottoText}>
+        Motto: <Text style={resultStyle.motto}>{first?.school?.motto || ''}</Text>
+      </Text>
+      <Text style={resultStyle.boldText}>
+        School Reg: No.: <Text style={resultStyle.address}>{first?.school?.regNo || ''}</Text> Tel:{' '}
+        <Text style={resultStyle.address}>{first?.school?.contact || ''}</Text>
+      </Text>
+    </View>
+  );
+})()}
          
             </View>
             
-            <Text style={resultStyle.secondHeader}>
-              MASTER SHEET FOR {resultsData.students[0].academicSession?.term || ''} TERM {resultsData.students[0].academicSession?.session || ''} ACADEMIC SESSION
-            </Text>
+          <Text style={resultStyle.secondHeader}>
+  MASTER SHEET FOR {resultsData?.students?.[0]?.academicSession?.term || ''} TERM{' '}
+  {resultsData?.students?.[0]?.academicSession?.session || ''} ACADEMIC SESSION
+</Text>
     
             <MasterSheetTable data={resultsData} />
           

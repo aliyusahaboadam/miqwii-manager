@@ -49,8 +49,18 @@ export const resolveColumns = (raw) =>
  * 15, Sum 16, Pos 16, Grade 16, Remark 30. Total exceeds 100, react-pdf
  * squeezes proportionally, and all templates produce exactly 10 columns
  * so they render with identical proportions.
+ *
+ * @param {Array}  backendColumns  columns from the backend (result.columns)
+ * @param {Object} options
+ * @param {boolean} options.arabicOrder
+ *   When true, the entire column list is reversed:
+ *     Subject | Max | CA1 | CA2 | Sum | Exam | Total | Pos | Grade | Remark
+ *   becomes
+ *     Remark | Grade | Pos | Total | Exam | Sum | CA2 | CA1 | Max | Subject
+ *   The header labels and cell content are unchanged. Only the left-to-right
+ *   order of the columns flips.
  */
-export const buildScoreColumns = (backendColumns) => {
+export const buildScoreColumns = (backendColumns, { arabicOrder = false } = {}) => {
   const cols = resolveColumns(backendColumns);
 
   const head = [
@@ -70,7 +80,13 @@ export const buildScoreColumns = (backendColumns) => {
     { accessorKey: 'remark',                      header: () => 'Remark', size: 30 },
   ];
 
-  return [...head, ...middle, ...tail];
+  const ordered = [...head, ...middle, ...tail];
+
+  if (arabicOrder) {
+    return [...ordered].reverse();
+  }
+
+  return ordered;
 };
 
 /**

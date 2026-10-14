@@ -330,13 +330,6 @@ const ResultSettings = () => {
                     sx={{ '.MuiFormControlLabel-label': { fontSize: '1.8rem' } }}
                   />
                 </FormGroup>
-
-                <div className={style.footer__brand}>
-                  <img src="/images/logo.png" alt="" />
-                  <p className={style.footer__copyright}>
-                    (c) 2026 Miqwii, All Rights Reserved
-                  </p>
-                </div>
               </Card>
             </SignInContainer>
           </Box>

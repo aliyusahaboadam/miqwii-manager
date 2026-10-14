@@ -21,7 +21,6 @@ import { Menu as MenuIcon } from "@mui/icons-material";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import React from "react";
 import navbar from '../style/dashboard/SchoolDashboard.module.css';
-import SchoolDrawer from '../utility/drawer/SchoolDrawer';
 
 import {
     AppBar, Box, CssBaseline, IconButton, Toolbar, Typography,
@@ -264,13 +263,6 @@ const AttendanceWeekGrid = () => {
                                     </div>
                                 </Toolbar>
                             </AppBar>
-
-                            <SchoolDrawer
-                                isLargeScreen={isLargeScreen}
-                                isDrawerOpen={isDrawerOpen}
-                                toggleDrawer={toggleDrawer}
-                                logout={logout}
-                            />
 
                             <Box component="main" sx={{ flexGrow: 1, marginTop: 8, fontSize: 20, overflowX: 'auto', width: '100%' }}>
                                 <SignInContainer>
