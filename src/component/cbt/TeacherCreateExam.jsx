@@ -24,6 +24,8 @@ import { Box, Button, CssBaseline, IconButton, MenuItem, Paper, Typography } fro
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import Loading from '../Chunks/loading'; // ← NEW
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex', flexDirection: 'column', alignSelf: 'center', width: '100%',
   minHeight: '550px', maxHeight: '85vh', overflowY: 'auto', '&::-webkit-scrollbar': { display: 'none' },
@@ -42,6 +44,13 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
     backgroundRepeat: 'no-repeat', backgroundSize: 'cover',
   },
 }));
+
+// Reusable sx to bump all input text at once
+const inputSizing = {
+  '& .MuiInputBase-input': { fontSize: 18 },
+  '& .MuiInputLabel-root': { fontSize: 16 },
+  '& .MuiFormHelperText-root': { fontSize: 14 },
+};
 
 const createEmptyQuestion = () => ({
   questionText: '', questionType: 'SINGLE_CHOICE',
@@ -94,7 +103,7 @@ const TeacherCreateExam = () => {
   const [message, setMessage] = useState("");
 
   const classState = useSelector((state) => state.classes);
-  const { classNames } = classState;
+  const { classNames, fetchingStatus } = classState;   // ← ADD fetchingStatus
   const subjectState = useSelector((state) => state.subjects);
   const { subjectWithClassname } = subjectState;
 
@@ -113,13 +122,11 @@ const TeacherCreateExam = () => {
     setOpen(false);
   };
 
-  // 🔥 Dynamically get the question count based on the backend rules
   const getQuestionCount = (slot) => {
     return templateRules[slot] || 0;
   };
 
   const handleFormSubmit = async (values, { resetForm }) => {
-    // 🛡️ Frontend Validation
     const maxMarks = templateRules[values.assessmentSlot];
     if (values.questions.length > maxMarks) {
       setAlertType("error");
@@ -141,11 +148,16 @@ const TeacherCreateExam = () => {
     }
   };
 
+  // ✅ LOADING GATE — same pattern as ViewSubjects
+  if (fetchingStatus === 'loading') {
+    return <Loading />;
+  }
+
   return (
     <ClickAwayListener onClickAway={() => {}}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <Box component="main" sx={{ flexGrow: 1, marginTop: 4, fontSize: 20 }}>
+        <Box component="main" sx={{ flexGrow: 1, fontSize: 20 }}>
           <SignInContainer>
             <Formik enableReinitialize initialValues={initialValues} onSubmit={handleFormSubmit}>
               {({ errors, handleChange, handleSubmit, values, isSubmitting, touched, handleBlur, setFieldValue }) => {
@@ -160,76 +172,89 @@ const TeacherCreateExam = () => {
                     <section className={style.container__brand}><img src="/images/logo.png" alt="Logo"/></section>
                     <p className={style['form-header']}>{isEdit ? 'Edit CBT Exam' : 'Create CBT Exam'}</p>
 
-                    <Paper sx={{ p: 3, mb: 3, width: '100%', background: '#f9f9f9' }}>
+                    {/* EXAM DETAILS — sx bumps input/label font sizes */}
+                    <Paper sx={{ p: 3, mb: 3, width: '100%', background: '#f9f9f9', ...inputSizing }}>
                       <div style={{ display: 'grid', gridTemplateColumns: isLargeScreen ? '1fr 1fr' : '1fr', gap: '1rem' }}>
-                        
+
                         <TextField label="Exam Name" name="name" onChange={handleChange} value={values.name} variant="filled" fullWidth required />
-                        
+
                         <TextField label="Duration (Minutes)" type="number" name="durationMinutes" onChange={handleChange} value={values.durationMinutes} variant="filled" fullWidth />
 
-                       <TextField
-                        select 
-                        label="Class" 
-                        name="className"
-                        onChange={async (e) => {
-                          const selectedClass = e.target.value;
-                          setFieldValue("className", selectedClass);
-                          setFieldValue("subjectId", "");
-                          setFieldValue("assessmentSlot", "");
-                          setTemplateRules({});
-
-                          if (selectedClass) {
-                            setFetchingRules(true);
-                            try {
-                              // ✅ USE THE REDUX THUNK HERE
-                              const rules = await dispatch(getTemplateRules(selectedClass)).unwrap();
-                              setTemplateRules(rules);
-                              
-                              // Auto-select the first available slot
-                              const availableSlots = Object.keys(rules);
-                              if (availableSlots.length > 0) {
-                                setFieldValue("assessmentSlot", availableSlots[0]);
-                              }
-                            } catch (err) {
-                              console.error("Failed to fetch template rules", err);
-                              alert("Could not load template rules for this class.");
-                            } finally {
-                              setFetchingRules(false);
-                            }
-                          }
-                        }}
-                        value={values.className} 
-                        variant="filled" 
-                        fullWidth 
-                        required
-                      >
-                        {classNames && classNames.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-                      </TextField>
-
-                        {/* ASSESSMENT SLOT DROPDOWN - Dynamically filtered */}
                         <TextField
-                          select label="Assessment Slot" name="assessmentSlot"
+                          select
+                          label="Class"
+                          name="className"
+                          onChange={async (e) => {
+                            const selectedClass = e.target.value;
+                            setFieldValue("className", selectedClass);
+                            setFieldValue("subjectId", "");
+                            setFieldValue("assessmentSlot", "");
+                            setTemplateRules({});
+
+                            if (selectedClass) {
+                              setFetchingRules(true);
+                              try {
+                                const rules = await dispatch(getTemplateRules(selectedClass)).unwrap();
+                                setTemplateRules(rules);
+
+                                const availableSlots = Object.keys(rules);
+                                if (availableSlots.length > 0) {
+                                  setFieldValue("assessmentSlot", availableSlots[0]);
+                                }
+                              } catch (err) {
+                                console.error("Failed to fetch template rules", err);
+                                alert("Could not load template rules for this class.");
+                              } finally {
+                                setFetchingRules(false);
+                              }
+                            }
+                          }}
+                          value={values.className}
+                          variant="filled"
+                          fullWidth
+                          required
+                        >
+                          {classNames && classNames.map(c => (
+                            <MenuItem key={c} value={c} sx={{ fontSize: 16 }}>{c}</MenuItem>
+                          ))}
+                        </TextField>
+
+                        <TextField
+                          select
+                          label="Assessment Slot"
+                          name="assessmentSlot"
                           onChange={(e) => {
                             setFieldValue("assessmentSlot", e.target.value);
-                            // Reset questions when slot changes to prevent overflow
                             setFieldValue("questions", [createEmptyQuestion()]);
                           }}
-                          value={values.assessmentSlot} variant="filled" fullWidth required
+                          value={values.assessmentSlot}
+                          variant="filled"
+                          fullWidth
+                          required
                           disabled={fetchingRules || Object.keys(templateRules).length === 0}
                           helperText={fetchingRules ? "Loading rules..." : ""}
                         >
                           {Object.keys(templateRules).map(slot => (
-                            <MenuItem key={slot} value={slot}>{slot} (Max {templateRules[slot]} Questions)</MenuItem>
+                            <MenuItem key={slot} value={slot} sx={{ fontSize: 16 }}>
+                              {slot} (Max {templateRules[slot]} Questions)
+                            </MenuItem>
                           ))}
                         </TextField>
 
-                        {/* SUBJECT DROPDOWN */}
                         <TextField
-                          select label="Subject" name="subjectId" onChange={handleChange}
-                          value={values.subjectId} variant="filled" fullWidth required
+                          select
+                          label="Subject"
+                          name="subjectId"
+                          onChange={handleChange}
+                          value={values.subjectId}
+                          variant="filled"
+                          fullWidth
+                          required
                           disabled={!values.className || filteredSubjects.length === 0}
                         >
-                          {filteredSubjects.map((subj) => <MenuItem key={subj.id} value={subj.id}>{subj.name}</MenuItem>)}
+                          {filteredSubjects.map((subj) => (
+                            <MenuItem key={subj.id} value={subj.id} sx={{ fontSize: 16 }}>{subj.name}</MenuItem>
+                          ))}
                         </TextField>
 
                         <TextField label="Available From" type="datetime-local" name="availableFrom" onChange={handleChange} value={values.availableFrom} variant="filled" InputLabelProps={{ shrink: true }} fullWidth />
@@ -243,14 +268,14 @@ const TeacherCreateExam = () => {
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                             <Typography variant="h6" sx={{ color: '#0e387a' }}>Questions ({values.questions.length})</Typography>
 
-                            {/* AUTO-GENERATE USING DYNAMIC TEMPLATE RULES */}
                             <Button
-                              variant="contained" color="secondary"
+                              variant="contained"
+                              color="secondary"
                               disabled={!values.assessmentSlot}
                               onClick={() => {
                                 const count = getQuestionCount(values.assessmentSlot);
                                 const newQuestions = [];
-                                for(let i = 0; i < count; i++) newQuestions.push(createEmptyQuestion());
+                                for (let i = 0; i < count; i++) newQuestions.push(createEmptyQuestion());
                                 setFieldValue('questions', newQuestions);
                               }}
                             >
@@ -259,22 +284,30 @@ const TeacherCreateExam = () => {
                           </div>
 
                           {values.questions.map((q, qIndex) => (
-                            <Paper key={qIndex} sx={{ p: 3, mb: 2, borderLeft: '4px solid #0e387a' }}>
+                            <Paper
+                              key={qIndex}
+                              sx={{ p: 3, mb: 2, borderLeft: '4px solid #0e387a', ...inputSizing }}
+                            >
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                                 <Typography variant="subtitle1" fontWeight="bold">Question {qIndex + 1}</Typography>
-                                {values.questions.length > 1 && <IconButton onClick={() => remove(qIndex)} color="error"><DeleteIcon /></IconButton>}
+                                {values.questions.length > 1 && (
+                                  <IconButton onClick={() => remove(qIndex)} color="error"><DeleteIcon /></IconButton>
+                                )}
                               </div>
 
                               <TextField label="Question Text" name={`questions.${qIndex}.questionText`} onChange={handleChange} value={q.questionText} fullWidth multiline rows={2} sx={{ mb: 2 }} variant="filled" />
 
-                              <Typography variant="caption" color="textSecondary">Select the correct answer:</Typography>
+                              <Typography variant="caption" color="textSecondary" sx={{ fontSize: 14 }}>Select the correct answer:</Typography>
                               <div style={{ display: 'grid', gridTemplateColumns: isLargeScreen ? '1fr 1fr' : '1fr', gap: '1rem', mt: 1 }}>
                                 {q.options.map((opt, oIndex) => (
                                   <div key={oIndex} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <Checkbox checked={opt.isCorrect} onChange={() => {
-                                      q.options.forEach((_, i) => setFieldValue(`questions.${qIndex}.options.${i}.isCorrect`, false));
-                                      setFieldValue(`questions.${qIndex}.options.${oIndex}.isCorrect`, true);
-                                    }} />
+                                    <Checkbox
+                                      checked={opt.isCorrect}
+                                      onChange={() => {
+                                        q.options.forEach((_, i) => setFieldValue(`questions.${qIndex}.options.${i}.isCorrect`, false));
+                                        setFieldValue(`questions.${qIndex}.options.${oIndex}.isCorrect`, true);
+                                      }}
+                                    />
                                     <TextField label={`Option ${opt.optionLabel}`} name={`questions.${qIndex}.options.${oIndex}.optionText`} onChange={handleChange} value={opt.optionText} size="medium" fullWidth variant="outlined" />
                                   </div>
                                 ))}
@@ -282,20 +315,30 @@ const TeacherCreateExam = () => {
                             </Paper>
                           ))}
 
-                          <Button variant="outlined" startIcon={<AddIcon />} onClick={() => {
-                            if (values.questions.length >= getQuestionCount(values.assessmentSlot)) {
+                          <Button
+                            variant="outlined"
+                            startIcon={<AddIcon />}
+                            onClick={() => {
+                              if (values.questions.length >= getQuestionCount(values.assessmentSlot)) {
                                 alert("You cannot add more questions than the maximum marks for this assessment.");
                                 return;
-                            }
-                            push(createEmptyQuestion());
-                          }} sx={{ mb: 3 }}>
+                              }
+                              push(createEmptyQuestion());
+                            }}
+                            sx={{ mb: 3 }}
+                          >
                             Add Single Question
                           </Button>
                         </div>
                       )}
                     </FieldArray>
 
-                    <button disabled={isSubmitting} type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>
+                    <button
+                      disabled={isSubmitting}
+                      type="submit"
+                      onClick={handleSubmit}
+                      className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}
+                    >
                       {isSubmitting ? 'Saving Exam...' : (isEdit ? 'Update Exam' : 'Save & Publish Exam')}
                     </button>
                   </Card>
@@ -304,7 +347,8 @@ const TeacherCreateExam = () => {
             </Formik>
 
             <div className={style.footer__brand}>
-              <img src="/images/logo.png" alt=""/><p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
+              <img src="/images/logo.png" alt="" />
+              <p className={style.footer__copyright}>(c) 2026 Miqwii, All Rights Reserved</p>
             </div>
           </SignInContainer>
         </Box>
