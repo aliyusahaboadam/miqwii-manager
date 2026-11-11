@@ -2,6 +2,7 @@
 import { composeWithDevTools } from '@redux-devtools/extension';
 import { configureStore } from '@reduxjs/toolkit';
 import attendanceSlice from '../reducer/attendanceSlice';
+import cbtSlice from '../reducer/cbtSlice';
 import classSlice from '../reducer/classSlice';
 import graduationSlice from '../reducer/graduationSlice';
 import loginSlice from '../reducer/loginSlice';
@@ -36,6 +37,7 @@ const store = configureStore({
         graduation: graduationSlice,
         attendance: attendanceSlice,
         results: resultSlice,
+        cbt: cbtSlice,
     },
 
     devTools: composeWithDevTools(),

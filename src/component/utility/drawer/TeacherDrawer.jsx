@@ -105,6 +105,24 @@ const TeacherDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) =>
                     </div>
                 </div>
 
+
+                  {/* CBT */}
+                            <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-16')} className={headerClass('chevron-11')}>
+                                <header className={navbar['collapsible__header']}>
+                                    <div className={navbar['collapsible__icon']}>
+                                        <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                                            <use href="/images/sprite.svg#cbt"></use>
+                                        </svg>
+                                        <p className={navbar['collapsible__heading']}>CBT</p>
+                                    </div>
+                                    <span onClick={() => toggleChevron('chevron-16')} className={navbar['icon-container']}>{chevron}</span>
+                                </header>
+                                <div className={navbar['collapsible__content--drawer']}>
+                                    <a href="/cbt/teacher/create-exam" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Create Exam</a>
+                                    <a href="/cbt/teacher/list" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Exam List</a>
+                                </div>
+                            </div>
+
                 {/* Profile */}
                 <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-9')} className={headerClass('chevron-9')}>
                     <header className={navbar['collapsible__header']}>

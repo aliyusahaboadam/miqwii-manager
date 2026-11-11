@@ -12,6 +12,7 @@ const publicUrls = [
   "/v1/api/password",
   "/v1/api/is-valid",
   "/v1/api/check-password",
+   "/v1/api/cbt/login",
 ];
 
 api.interceptors.response.use(
