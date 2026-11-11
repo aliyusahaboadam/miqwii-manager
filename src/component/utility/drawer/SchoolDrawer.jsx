@@ -284,7 +284,7 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
 
 
               {/* CBT */}
-            <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-16')} className={headerClass('chevron-11')}>
+            <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-16')} className={headerClass('chevron-16')}>
                 <header className={navbar['collapsible__header']}>
                     <div className={navbar['collapsible__icon']}>
                         <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>

@@ -89,6 +89,7 @@ import SelectivePromotion from './component/promotion/SelectivePromotion';
 import ReleaseResults from './component/result/ReleaseResults';
 import AddComponent from './component/score/AddComponent';
 
+import CbtDownload from './component/cbt/CbtDownload';
 import CbtExamSubmitted from './component/cbt/CbtExamSubmitted';
 import CbtLogin from './component/cbt/CbtLogin';
 import CbtStudentDashboard from './component/cbt/CbtStudentDashboard';
@@ -170,6 +171,7 @@ const AppRoutes = () => (
 <Route exact path='/cbt/teacher/edit/:examId' element={<TeacherCreateExam />} />
 <Route exact path='/cbt/teacher/details/:examId' element={<TeacherExamDetails />} />
 <Route exact path='/cbt/login' element={<CbtLogin />} />
+<Route exact path='/cbt/download' element={<CbtDownload />} />
 <Route exact path='/cbt/student/submitted' element={<CbtExamSubmitted />} />
 
         {/* ---------- Attendace ---------- */}
