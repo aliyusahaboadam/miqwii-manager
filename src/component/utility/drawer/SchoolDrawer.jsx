@@ -296,7 +296,7 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
                 </header>
                 <div className={navbar['collapsible__content--drawer']}>
                     <a href="/cbt/teacher/create-exam" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Create Exam</a>
-                    <a href="/cbt/teacher/list" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Exam List</a>
+                    <a href="/cbt/admin/exam-list" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Exam List</a>
                   <a href="/cbt/download" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Download CBT Module</a>
                 </div>
             </div>

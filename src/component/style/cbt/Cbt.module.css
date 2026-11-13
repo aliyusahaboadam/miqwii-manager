@@ -180,3 +180,53 @@
     height: 20px;
     border-radius: 50%;
 }
+
+/* ---------- Exam info strip ---------- */
+.exam-info-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+}
+
+/* Reg No — neutral dark blue (student identity) */
+.info-badge--reg {
+  background: #eef3fb;
+  color: #0e387a;
+  border-color: #c9d9f0;
+}
+
+/* Subject — GREEN (academic content) */
+.info-badge--subject {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-color: #a5d6a7;
+}
+
+/* Class — light indigo (organizational) */
+.info-badge--class {
+  background: #f0f4ff;
+  color: #3949ab;
+  border-color: #c5cae9;
+}
+
+/* Slot — RED (assessment, high stakes) */
+.info-badge--slot {
+  background: #ffebee;
+  color: #c62828;
+  border-color: #ef9a9a;
+}

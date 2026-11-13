@@ -93,9 +93,11 @@ import CbtDownload from './component/cbt/CbtDownload';
 import CbtExamSubmitted from './component/cbt/CbtExamSubmitted';
 import CbtLogin from './component/cbt/CbtLogin';
 import CbtStudentDashboard from './component/cbt/CbtStudentDashboard';
+import ExamDetails from './component/cbt/ExamDetails';
+import PreviousExams from './component/cbt/PreviousExams';
+import SchoolExamList from './component/cbt/SchoolExamList';
 import StudentExam from './component/cbt/StudentExam';
 import TeacherCreateExam from './component/cbt/TeacherCreateExam';
-import TeacherExamDetails from './component/cbt/TeacherExamDetails';
 import TeacherExamList from './component/cbt/TeacherExamList';
 
 
@@ -168,11 +170,13 @@ const AppRoutes = () => (
 <Route exact path='/cbt/exam/:examId' element={<StudentExam />} />
 <Route exact path='/cbt/teacher/create-exam' element={<TeacherCreateExam />} />
 <Route exact path='/cbt/teacher/list' element={<TeacherExamList />} />
-<Route exact path='/cbt/teacher/edit/:examId' element={<TeacherCreateExam />} />
-<Route exact path='/cbt/teacher/details/:examId' element={<TeacherExamDetails />} />
+<Route exact path='/cbt/exam/edit/:examId' element={<TeacherCreateExam />} />
+<Route exact path='/cbt/exam/details/:examId' element={<ExamDetails />} />
 <Route exact path='/cbt/login' element={<CbtLogin />} />
 <Route exact path='/cbt/download' element={<CbtDownload />} />
 <Route exact path='/cbt/student/submitted' element={<CbtExamSubmitted />} />
+<Route exact path='/cbt/admin/exam-list' element={<SchoolExamList />} />
+<Route exact path='/cbt/teacher/previous-exams' element={<PreviousExams />} />
 
         {/* ---------- Attendace ---------- */}
    <Route exact path='/attendance/week' element={<AttendanceWeekGrid />} />

@@ -159,15 +159,33 @@ const StudentExam = () => {
         {/* LEFT: QUESTION AREA */}
         <div className={styles['question-area']}>
           <div>
-            <div className={styles['question-header']}>
-              <div>
-                <div className={styles['question-title']}>{currentAttempt.examName}</div>
-                <button onClick={handleMarkForReview} style={{ marginTop: '10px', cursor: 'pointer' }}>
-                  {currentAns.isMarkedForReview ? '⭐ Unmark Review' : '☆ Mark for Review'}
-                </button>
-              </div>
-              <div className={styles['timer-box']}>{formatTime(timeLeft)}</div>
-            </div>
+           <div className={styles['question-header']}>
+  <div style={{ flex: 1, minWidth: 0 }}>
+    <div className={styles['exam-info-strip']}>
+      <span className={`${styles['info-badge']} ${styles['info-badge--reg']}`}>
+        {currentAttempt.regNo}
+      </span>
+      <span className={`${styles['info-badge']} ${styles['info-badge--subject']}`}>
+        {currentAttempt.subjectName}
+      </span>
+      <span className={`${styles['info-badge']} ${styles['info-badge--class']}`}>
+        {currentAttempt.className}
+      </span>
+      <span className={`${styles['info-badge']} ${styles['info-badge--slot']}`}>
+        {currentAttempt.assessmentSlot}
+      </span>
+    </div>
+
+    <button
+      onClick={handleMarkForReview}
+      style={{ marginTop: '10px', cursor: 'pointer' }}
+    >
+      {currentAns.isMarkedForReview ? '⭐ Unmark Review' : '☆ Mark for Review'}
+    </button>
+  </div>
+
+  <div className={styles['timer-box']}>{formatTime(timeLeft)}</div>
+</div>
 
             <div className={styles['question-text']}>
               <strong>Q{currentQIndex + 1}.</strong> {currentQ.questionText}
