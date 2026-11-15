@@ -148,15 +148,7 @@ const handleClose = (event, reason) => {
           console.log(result);
           setAlertType("success");
           setMessage(result.message);
-          // if (className.startsWith('P')) {
-          //    navigate("/class/primary-classes");
-          // } else if (className.startsWith('J')) {
-          //   navigate("/class/jss-classes");
-          // } else if (className.startsWith('S')) {
-          //   navigate("/class/sss-classes");
-          // }  else if (className.startsWith('N')) {
-          //   navigate("/class/nursery-classes");
-          // }
+   
            } catch (error) {
           console.log(error);
           setAlertType("error");
@@ -179,7 +171,7 @@ const handleClose = (event, reason) => {
 
         <Formik
                initialValues={{
-                 name: className || ""
+                 name: state.name || "",
                }}
                validationSchema={classRegistrationSchema}
                onSubmit={handleFormSubmit}
@@ -248,7 +240,7 @@ const handleClose = (event, reason) => {
         {/* {BUTTON } */}
 
         <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Submitting...' : 'Update Class'}</button>
-        <span className={style['form-link']} >Class name  must start with this convention JSS, SSS, PRE, JIS, SIS, PRI, NUR </span>
+      
         </Card>
 
 )}
