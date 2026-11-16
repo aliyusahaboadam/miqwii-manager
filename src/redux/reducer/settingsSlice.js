@@ -1,3 +1,4 @@
+// src/redux/reducer/settingsSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../../component/routing/Interceptor';
 
@@ -11,12 +12,12 @@ const DEFAULT_TEMPLATE = 'DEFAULT_2CA_20_20_EXAM_60';
 
 /**
  * Read the school's settings.
- * Returns a flat object with all 15 settings fields plus `id`:
+ * Returns a flat object with all 16 settings fields plus `id`:
  *   disableFirstCA, disableSecondCA, disableThirdCA, disableAssignment,
  *   disableExam, disablePositioning, disableTeacherRemark,
  *   disableNextTermFees, disableQrCode, disableTermPerformanceSummary,
  *   crecheTemplate, kgTemplate, nurseryTemplate, primaryTemplate,
- *   secondaryTemplate
+ *   juniorSecondaryTemplate, seniorSecondaryTemplate
  *
  * All disable fields are booleans: false = enabled/shown, true = disabled/hidden.
  */
@@ -49,7 +50,10 @@ export const getSettingsState = createAsyncThunk(
  *   ResultSettings page     → { disablePositioning, disableTeacherRemark,
  *                               disableNextTermFees, disableQrCode,
  *                               disableTermPerformanceSummary }
- *   AssessmentSettings page → { crecheTemplate, kgTemplate, ... }
+ *   AssessmentSettings page → { crecheTemplate, kgTemplate,
+ *                               nurseryTemplate, primaryTemplate,
+ *                               juniorSecondaryTemplate,
+ *                               seniorSecondaryTemplate }
  *
  * Returns the full updated settings object, so the reducer can replace
  * the entire state in one go.
@@ -81,6 +85,10 @@ export const updateResultConfig = createAsyncThunk(
 // ---------------------------------------------------------------------
 // Helper — one place copies every field from the backend payload into
 // state. Used by both fulfilled cases so the two never drift.
+//
+// Backward compat: if the backend hasn't been upgraded yet, it will
+// still return `secondaryTemplate` instead of the two new fields. We
+// use `secondaryTemplate` as the fallback so nothing breaks mid-deploy.
 // ---------------------------------------------------------------------
 
 const applySettingsPayload = (state, payload) => {
@@ -101,11 +109,19 @@ const applySettingsPayload = (state, payload) => {
   state.disableTermPerformanceSummary = d.disableTermPerformanceSummary ?? false;
 
   // Templates
-  state.crecheTemplate    = d.crecheTemplate    ?? DEFAULT_TEMPLATE;
-  state.kgTemplate        = d.kgTemplate        ?? DEFAULT_TEMPLATE;
-  state.nurseryTemplate   = d.nurseryTemplate   ?? DEFAULT_TEMPLATE;
-  state.primaryTemplate   = d.primaryTemplate   ?? DEFAULT_TEMPLATE;
-  state.secondaryTemplate = d.secondaryTemplate ?? DEFAULT_TEMPLATE;
+  state.crecheTemplate  = d.crecheTemplate  ?? DEFAULT_TEMPLATE;
+  state.kgTemplate      = d.kgTemplate      ?? DEFAULT_TEMPLATE;
+  state.nurseryTemplate = d.nurseryTemplate ?? DEFAULT_TEMPLATE;
+  state.primaryTemplate = d.primaryTemplate ?? DEFAULT_TEMPLATE;
+
+  // Secondary split — fall back to legacy `secondaryTemplate` if the
+  // backend hasn't been upgraded yet (graceful mid-deploy state).
+  const legacySecondary = d.secondaryTemplate ?? DEFAULT_TEMPLATE;
+
+  state.juniorSecondaryTemplate =
+    d.juniorSecondaryTemplate ?? legacySecondary;
+  state.seniorSecondaryTemplate =
+    d.seniorSecondaryTemplate ?? legacySecondary;
 };
 
 // ---------------------------------------------------------------------
@@ -130,11 +146,12 @@ const settingsSlice = createSlice({
     disableTermPerformanceSummary: false,
 
     // Assessment templates
-    crecheTemplate:    DEFAULT_TEMPLATE,
-    kgTemplate:        DEFAULT_TEMPLATE,
-    nurseryTemplate:   DEFAULT_TEMPLATE,
-    primaryTemplate:   DEFAULT_TEMPLATE,
-    secondaryTemplate: DEFAULT_TEMPLATE,
+    crecheTemplate:          DEFAULT_TEMPLATE,
+    kgTemplate:              DEFAULT_TEMPLATE,
+    nurseryTemplate:         DEFAULT_TEMPLATE,
+    primaryTemplate:         DEFAULT_TEMPLATE,
+    juniorSecondaryTemplate: DEFAULT_TEMPLATE,   // ← new
+    seniorSecondaryTemplate: DEFAULT_TEMPLATE,   // ← new
 
     // Status
     fetchingStatus: 'idle',

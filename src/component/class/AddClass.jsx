@@ -81,11 +81,12 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 // Section → Name options
 // ---------------------------------------------------------------
 const NAME_OPTIONS_BY_SECTION = {
-  CRECHE:    ['Creche'],
-  KG:        ['KG'],
-  NURSERY:   ['PreNursery', 'Nursery'],
-  PRIMARY:   ['Basic', 'PRI'],
-  SECONDARY: ['JSS', 'SSS', "JIS", "SIS", "JAS", "SAS"],
+  CRECHE:           ['Creche'],
+  KG:               ['KG'],
+  NURSERY:          ['PreNursery', 'Nursery'],
+  PRIMARY:          ['Basic', 'PRI'],
+  JUNIOR_SECONDARY: ['JSS', 'JIS', 'JAS'],
+  SENIOR_SECONDARY: ['SSS', 'SIS', 'SAS'],
 };
 
 // Level options — same list for every section
@@ -99,11 +100,12 @@ const LEVEL_OPTIONS = [
 ];
 
 const SECTION_OPTIONS = [
-  { value: 'CRECHE',    label: 'Creche' },
-  { value: 'KG',        label: 'KG' },
-  { value: 'NURSERY',   label: 'Nursery' },
-  { value: 'PRIMARY',   label: 'Primary' },
-  { value: 'SECONDARY', label: 'Secondary' },
+  { value: 'CRECHE',           label: 'Creche' },
+  { value: 'KG',               label: 'KG' },
+  { value: 'NURSERY',          label: 'Nursery' },
+  { value: 'PRIMARY',          label: 'Primary' },
+  { value: 'JUNIOR_SECONDARY', label: 'Junior Secondary' },
+  { value: 'SENIOR_SECONDARY', label: 'Senior Secondary' },
 ];
 
 const classRegistrationSchema = object({

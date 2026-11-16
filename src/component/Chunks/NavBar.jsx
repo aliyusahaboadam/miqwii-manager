@@ -1,12 +1,11 @@
-import navbar from '../style/chunks/NavBar.module.css';
-import { useState } from 'react';
+import { Cancel, Menu as MenuIcon } from "@mui/icons-material";
+import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import { IconButton } from '@mui/material';
-import { Menu as MenuIcon, Close as CloseIcon, Cancel } from "@mui/icons-material";
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import navbar from '../style/chunks/NavBar.module.css';
 
 const NavBar = () =>{
 
@@ -20,6 +19,11 @@ const NavBar = () =>{
 
   const navigateToLogin = () => {
     navigate("/school/login");
+  }
+
+
+  const navigateToPartnerLogin = () => {
+    navigate("/partner/login");
   }
 
   const navigateToService = () => {
@@ -51,6 +55,7 @@ const NavBar = () =>{
           <li onClick={() => navigateToService()} className={navbar["nav__item"]}><a style={{cursor: "pointer"}}>Service</a></li>
           <li onClick={() => navigateToAboutUs()} className={navbar["nav__item"]}><a style={{cursor: "pointer"}}>About Us</a></li>
           <li onClick={() => navigateToContactUs()} className={navbar["nav__item"]}><a style={{cursor: "pointer"}}>Contact Us</a></li>
+          <li onClick={() => navigateToPartnerLogin()} className={navbar["nav__item"]}><a style={{cursor: "pointer"}}>Partner</a></li>
          
          
          

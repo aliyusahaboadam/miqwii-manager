@@ -19,19 +19,31 @@ const SchoolDemographicsCharts = () => {
 
   const { chartCounts } = useSelector(state => state.classes);
 
-  // Class counts — one per section
-  const CRECHE    = chartCounts.CRECHE?.length    || 0;
-  const KG        = chartCounts.KG?.length        || 0;
-  const NURSERY   = chartCounts.NURSERY?.length   || 0;
-  const PRIMARY   = chartCounts.PRIMARY?.length   || 0;
-  const SECONDARY = chartCounts.SECONDARY?.length || 0;
+  // =====================================================================
+  // Class counts — one per section.
+  //
+  // Backend now returns 6 sections after the SECONDARY split. Fall back to
+  // the legacy SECONDARY key so this component renders correctly whether
+  // or not the backend has been redeployed. Once both new keys are always
+  // populated, the fallback is a no-op.
+  // =====================================================================
+  const CRECHE           = chartCounts.CRECHE?.length           || 0;
+  const KG               = chartCounts.KG?.length               || 0;
+  const NURSERY          = chartCounts.NURSERY?.length          || 0;
+  const PRIMARY          = chartCounts.PRIMARY?.length          || 0;
+  const JUNIOR_SECONDARY = (chartCounts.JUNIOR_SECONDARY ?? chartCounts.SECONDARY)?.length || 0;
+  const SENIOR_SECONDARY = (chartCounts.SENIOR_SECONDARY ?? chartCounts.SECONDARY)?.length || 0;
 
-  // Teacher counts — sum of teacherCount across classes in each section
-  const CRECHE_TEACHERS    = chartCounts.CRECHE?.reduce((sum, cls) => sum + cls.teacherCount, 0)    || 0;
-  const KG_TEACHERS        = chartCounts.KG?.reduce((sum, cls) => sum + cls.teacherCount, 0)        || 0;
-  const NURSERY_TEACHERS   = chartCounts.NURSERY?.reduce((sum, cls) => sum + cls.teacherCount, 0)   || 0;
-  const PRIMARY_TEACHERS   = chartCounts.PRIMARY?.reduce((sum, cls) => sum + cls.teacherCount, 0)   || 0;
-  const SECONDARY_TEACHERS = chartCounts.SECONDARY?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
+  // =====================================================================
+  // Teacher counts — sum of teacherCount across classes in each section.
+  // Same fallback as above.
+  // =====================================================================
+  const CRECHE_TEACHERS           = chartCounts.CRECHE?.reduce((sum, cls) => sum + cls.teacherCount, 0)           || 0;
+  const KG_TEACHERS               = chartCounts.KG?.reduce((sum, cls) => sum + cls.teacherCount, 0)               || 0;
+  const NURSERY_TEACHERS          = chartCounts.NURSERY?.reduce((sum, cls) => sum + cls.teacherCount, 0)          || 0;
+  const PRIMARY_TEACHERS          = chartCounts.PRIMARY?.reduce((sum, cls) => sum + cls.teacherCount, 0)          || 0;
+  const JUNIOR_SECONDARY_TEACHERS = (chartCounts.JUNIOR_SECONDARY ?? chartCounts.SECONDARY)?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
+  const SENIOR_SECONDARY_TEACHERS = (chartCounts.SENIOR_SECONDARY ?? chartCounts.SECONDARY)?.reduce((sum, cls) => sum + cls.teacherCount, 0) || 0;
 
   const chartStyle = {
     container: {
@@ -121,22 +133,31 @@ const SchoolDemographicsCharts = () => {
     { name: 'Male Students',   value: studentCountDetails?.maleCount   || 0, color: '#00529B' }
   ];
 
-  // Teacher distribution — one slice per section
+  // =====================================================================
+  // Teacher distribution — 6 slices now
+  //
+  // SECONDARY split into Junior + Senior. Colors chosen so the two new
+  // slices are clearly distinct from each other and from Primary.
+  // =====================================================================
   const teacherData = [
-    { name: 'Creche Teachers',    value: CRECHE_TEACHERS,    color: '#00008B' },
-    { name: 'KG Teachers',        value: KG_TEACHERS,        color: '#1F75FE' },
-    { name: 'Nursery Teachers',   value: NURSERY_TEACHERS,   color: '#74BBFB' },
-    { name: 'Primary Teachers',   value: PRIMARY_TEACHERS,   color: '#5788b3ff' },
-    { name: 'Secondary Teachers', value: SECONDARY_TEACHERS, color: 'rgb(14, 79, 136)' },
+    { name: 'Creche Teachers',            value: CRECHE_TEACHERS,           color: '#00008B' },
+    { name: 'KG Teachers',                value: KG_TEACHERS,               color: '#1F75FE' },
+    { name: 'Nursery Teachers',           value: NURSERY_TEACHERS,          color: '#74BBFB' },
+    { name: 'Primary Teachers',           value: PRIMARY_TEACHERS,          color: '#5788b3ff' },
+    { name: 'Junior Secondary Teachers',  value: JUNIOR_SECONDARY_TEACHERS, color: '#0e4f88' },
+    { name: 'Senior Secondary Teachers',  value: SENIOR_SECONDARY_TEACHERS, color: 'rgb(69, 78, 128)' },
   ];
 
-  // Class distribution — one slice per section
+  // =====================================================================
+  // Class distribution — 6 slices now
+  // =====================================================================
   const classData = [
-    { name: 'Creche Classes',    value: CRECHE,    color: '#7D77DE' },
-    { name: 'KG Classes',        value: KG,        color: '#1432dcff' },
-    { name: 'Nursery Classes',   value: NURSERY,   color: '#013375' },
-    { name: 'Primary Classes',   value: PRIMARY,   color: '#0167AD' },
-    { name: 'Secondary Classes', value: SECONDARY, color: 'rgb(69, 78, 128)' },
+    { name: 'Creche Classes',             value: CRECHE,           color: '#7D77DE' },
+    { name: 'KG Classes',                 value: KG,               color: '#1432dcff' },
+    { name: 'Nursery Classes',            value: NURSERY,          color: '#013375' },
+    { name: 'Primary Classes',            value: PRIMARY,          color: '#0167AD' },
+    { name: 'Junior Secondary Classes',   value: JUNIOR_SECONDARY, color: '#0e4f88' },
+    { name: 'Senior Secondary Classes',   value: SENIOR_SECONDARY, color: 'rgb(69, 78, 128)' },
   ];
 
   const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {

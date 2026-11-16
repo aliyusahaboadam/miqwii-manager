@@ -1,4 +1,4 @@
-// File: src/component/class/SecondaryClasses.jsx
+// File: src/component/class/JuniorSecondaryClasses.jsx
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
@@ -19,10 +19,10 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  deleteClass,
-  getClassCount,
-  getClassCountByFilter,
-  getClassesByFilter
+    deleteClass,
+    getClassCount,
+    getClassCountByFilter,
+    getClassesByFilter
 } from '../../redux/reducer/classSlice';
 import Loading from '../Chunks/loading';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
@@ -34,10 +34,10 @@ import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import { Menu as MenuIcon } from "@mui/icons-material";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import {
-  AppBar,
-  Box,
-  CssBaseline,
-  Toolbar
+    AppBar,
+    Box,
+    CssBaseline,
+    Toolbar
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -66,9 +66,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const SECONDARY_FILTER = { section: 'SECONDARY' };
+const JUNIOR_SECONDARY_FILTER = { section: 'JUNIOR_SECONDARY' };
 
-const SecondaryClasses = () => {
+const JuniorSecondaryClasses = () => {
 
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
@@ -112,9 +112,9 @@ const SecondaryClasses = () => {
     try {
       setIsInitialLoad(true);
       await Promise.all([
-        dispatch(getClassesByFilter(SECONDARY_FILTER)).unwrap(),
+        dispatch(getClassesByFilter(JUNIOR_SECONDARY_FILTER)).unwrap(),
         dispatch(getClassCount()).unwrap(),
-        dispatch(getClassCountByFilter(SECONDARY_FILTER)).unwrap()
+        dispatch(getClassCountByFilter(JUNIOR_SECONDARY_FILTER)).unwrap()
       ]);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -134,7 +134,7 @@ const SecondaryClasses = () => {
     navigate(`/class/update-class/${name}`);
   };
 
-  const navigateToAddSecondaryClass = () => {
+  const navigateToAddJuniorSecondaryClass = () => {
     navigate('/class/add-class');
   };
 
@@ -212,7 +212,7 @@ const SecondaryClasses = () => {
                         </span>
                         <span className={[dashboard['badge'], dashboard['']].join(' ')}>{classCountSpecific}</span>
                       </div>
-                      Available Secondary Classes
+                      Available Junior Secondary Classes
                     </div>
                   </div>
 
@@ -233,9 +233,9 @@ const SecondaryClasses = () => {
                   <div className={[dashboard['card--add'], dashboard['card--primary']].join(' ')}>
                     <div className={dashboard['card_body']}>
                       <div className={dashboard['card--small-head']}>
-                        Add Secondary Classes
+                        Add Junior Secondary Classes
                       </div>
-                      <button onClick={navigateToAddSecondaryClass} className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Secondary Class</button>
+                      <button onClick={navigateToAddJuniorSecondaryClass} className={[dashboard['btn'], dashboard['btn--block'], dashboard['btn--primary']].join(' ')}>Add Junior Secondary Class</button>
                     </div>
                   </div>
 
@@ -247,7 +247,7 @@ const SecondaryClasses = () => {
                       <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                           <TableRow>
-                            <StyledTableCell>Secondary Classes</StyledTableCell>
+                            <StyledTableCell>Junior Secondary Classes</StyledTableCell>
                             <StyledTableCell>Score Sheet</StyledTableCell>
                             <StyledTableCell align="left">No. of student</StyledTableCell>
                             <StyledTableCell align="right">Action&nbsp;</StyledTableCell>
@@ -284,7 +284,7 @@ const SecondaryClasses = () => {
                           <TableRow>
                             <TablePagination
                               rowsPerPageOptions={[100, 200, 300, { label: 'All', value: -1 }]}
-                              colSpan={3}
+                              colSpan={4}
                               count={rows.length}
                               rowsPerPage={rowsPerPage}
                               page={page}
@@ -319,7 +319,7 @@ const SecondaryClasses = () => {
   );
 };
 
-export default SecondaryClasses;
+export default JuniorSecondaryClasses;
 
 function TablePaginationActions(props) {
   const theme = useTheme();

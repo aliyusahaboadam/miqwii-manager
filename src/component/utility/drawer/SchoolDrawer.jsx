@@ -127,7 +127,8 @@ const SchoolDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => 
 
 <a href="/class/nursery-classes" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Nursery Classes</a>
 <a href="/class/primary-classes" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Primary Classes</a>
-<a href="/class/secondary-classes" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Secondary Classes</a>
+<a href="/class/junior-secondary-classes" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Junior Secondary</a>
+<a href="/class/senior-secondary-classes" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Senior Secondary</a>
     <a href="/class/creche-classes" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>Creche Classes</a>
 <a href="/class/kg-classes" className={navbar['link--drawer']} onClick={(e) => e.stopPropagation()}>KG Classes</a>
 {/* ---------- Add class ---------- */}

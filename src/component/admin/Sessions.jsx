@@ -264,7 +264,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                           <StyledTableCell align="left">Term</StyledTableCell>
                           <StyledTableCell align="left">is Current</StyledTableCell>
                           <StyledTableCell align="left">Status</StyledTableCell>
-                          <StyledTableCell align="left">Expiry Date</StyledTableCell>
                           <StyledTableCell align="right">Action</StyledTableCell>
                         </TableRow>
                       </TableHead>
@@ -284,7 +283,6 @@ localStorage.setItem('authenticated', JSON.stringify(authenticated));
                             <StyledTableCell component="th" align="left">{row.term}</StyledTableCell>
                             <StyledTableCell component="th" align="left">{row.current === true ? 'True' : 'False'}</StyledTableCell>
                             <StyledTableCell component="th" align="left">{row.status}</StyledTableCell>
-                            <StyledTableCell component="th" align="left">{formatDate(row.expiryDate)}</StyledTableCell>
                             <StyledTableCell component="th" align="right">
                             <div>
 

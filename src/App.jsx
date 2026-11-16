@@ -21,7 +21,6 @@ import CrecheClasses from './component/class/CrecheClasses';
 import KGClasses from './component/class/KGClasses';
 import NurseryClasses from './component/class/NurseryClasses';
 import PrimaryClasses from './component/class/PrimaryClasses';
-import SecondaryClasses from './component/class/SecondaryClasses';
 import UpdateClass from './component/class/UpdateClass';
 import AdminDashboard from './component/dashboards/AdminDashboard';
 import SchoolDashboard from './component/dashboards/SchoolDashboard';
@@ -100,6 +99,19 @@ import StudentExam from './component/cbt/StudentExam';
 import TeacherCreateExam from './component/cbt/TeacherCreateExam';
 import TeacherExamList from './component/cbt/TeacherExamList';
 
+import PartnerDashboard from './component/dashboards/PartnerDashboard';
+import CreatePartnerSchool from './component/partner/CreatePartnerSchool';
+import PartnerProfile from './component/partner/PartnerProfile';
+import PartnerProfileAdmin from './component/partner/PartnerProfileAdmin';
+import PartnerSchools from './component/partner/PartnerSchools';
+import PartnerSessions from './component/partner/PartnerSessions';
+// Admin partner pages
+import JuniorSecondaryClasses from './component/class/JuniorSecondaryClasses';
+import SeniorSecondaryClasses from './component/class/SeniorSecondaryClasses';
+import CreatePartner from './component/partner/CreatePartner';
+import PartnerList from './component/partner/PartnerList';
+import PartnerLogin from './component/partner/PartnerLogin';
+import UpdatePartner from './component/partner/UpdatePartner';
 
 function App() {
 
@@ -156,7 +168,8 @@ const AppRoutes = () => (
     <Route exact path='/class/kg-classes' element={<KGClasses />} />
     <Route exact path='/class/nursery-classes' element={<NurseryClasses />} />
     <Route exact path='/class/primary-classes' element={<PrimaryClasses />} />
-    <Route exact path='/class/secondary-classes' element={<SecondaryClasses />} />
+    <Route exact path='/class/junior-secondary-classes' element={<JuniorSecondaryClasses />} />
+<Route exact path='/class/senior-secondary-classes' element={<SeniorSecondaryClasses />} />
 
     {/* ---------- Class add/edit ---------- */}
     <Route exact path='/class/add-class' element={<AddClass />} />
@@ -203,6 +216,22 @@ const AppRoutes = () => (
     <Route exact path='/session/setup-session' element={<SessionSetup />} />
     <Route exact path='/session/update-session' element={<AddNextTermFeeAndResumptionDate />} />
 
+
+
+
+{/* Partner */}
+<Route exact path='/partner/home' element={<PartnerDashboard />} />
+<Route exact path='/partner/schools' element={<PartnerSchools />} />
+<Route exact path='/partner/sessions' element={<PartnerSessions />} />
+<Route exact path='/partner/profile' element={<PartnerProfile />} />
+<Route exact path='/partner/create-school' element={<CreatePartnerSchool />} />
+<Route exact path='/partner/login' element={<PartnerLogin />} />
+{/* Admin — partner management */}
+<Route exact path='/admin/partners' element={<PartnerList />} />
+<Route exact path='/admin/create-partner' element={<CreatePartner />} />
+<Route exact path='/admin/partner-profile/:id' element={<PartnerProfileAdmin />} />
+<Route exact path='/admin/update-partner/:id' element={<UpdatePartner />} />
+
     {/* ---------- Promotion ---------- */}
     <Route exact path='/promotion/setup' element={<PromotionSetup />} />
     <Route exact path='/promotion/preview' element={<PromotionPreview />} />
@@ -228,7 +257,7 @@ const AppRoutes = () => (
     <Route exact path='/settings/input-control' element={<InputControl />} />
     <Route exact path='/settings/result-settings' element={<ResultSettings />} />
     <Route exact path='/settings/assessment-settings' element={<AssessmentScheme />} />
-
+ 
     {/* ---------- Password ---------- */}
     <Route exact path='/password/password-request' element={<PasswordRequest />} />
     <Route exact path='/password/password-reset' element={<ResetPassword />} />

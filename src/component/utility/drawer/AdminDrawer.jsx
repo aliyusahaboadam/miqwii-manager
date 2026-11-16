@@ -73,6 +73,34 @@ const AdminDrawer = ({ isLargeScreen, isDrawerOpen, toggleDrawer, logout }) => {
                     </div>
                 </div>
 
+
+                   {/* Partner */}
+
+                   <div
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => toggleChevron('chevron-1')}
+                          className={[navbar['collapsible'], navbar[activeChevron === 'chevron-1' ? 'collapsible--expanded' : null]].join(' ')}
+                        >
+                          <header className={navbar['collapsible__header']}>
+                            <div className={navbar['collapsible__icon']}>
+                              <svg className={[navbar['collapsible--icon'], navbar['icon--primary']].join(' ')}>
+                                <use href="/images/sprite.svg#profile"></use>
+                              </svg>
+                              <p className={navbar['collapsible__heading']}>Partner</p>
+                            </div>
+                            <span onClick={() => toggleChevron('chevron-1')} className={navbar['icon-container']}>
+                              <svg className={[navbar['icon'], navbar['icon--primary'], navbar['icon--white'], navbar['collapsible--chevron']].join(' ')}>
+                                <use href="/images/sprite.svg#chevron"></use>
+                              </svg>
+                            </span>
+                          </header>
+                          <div className={navbar['collapsible__content--drawer']}>
+                            <a href="/admin/create-partner" className={[navbar['link--drawer'], navbar['']].join(' ')} onClick={(e) => e.stopPropagation()}>Create Partner</a>
+                          <a href="/admin/partners" className={[navbar['link--drawer'], navbar['']].join(' ')} onClick={(e) => e.stopPropagation()}>Partners</a>
+                          </div>
+                        </div>
+                
+
                 {/* Profile */}
                 <div style={{ cursor: 'pointer' }} onClick={() => toggleChevron('chevron-9')} className={headerClass('chevron-9')}>
                     <header className={navbar['collapsible__header']}>

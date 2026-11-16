@@ -26,11 +26,11 @@ import React from "react";
 import navbar from '../style/dashboard/SchoolDashboard.module.css';
 
 import {
-    AppBar,
-    Box,
-    CssBaseline,
-    Toolbar,
-    Typography
+  AppBar,
+  Box,
+  CssBaseline,
+  Toolbar,
+  Typography
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -87,11 +87,12 @@ const LEVEL_OPTIONS = [
 ];
 
 const SECTION_OPTIONS = [
-  { value: 'CRECHE',    label: 'Creche' },
-  { value: 'KG',        label: 'KG' },
-  { value: 'NURSERY',   label: 'Nursery' },
-  { value: 'PRIMARY',   label: 'Primary' },
-  { value: 'SECONDARY', label: 'Secondary' },
+  { value: 'CRECHE',           label: 'Creche' },
+  { value: 'KG',               label: 'KG' },
+  { value: 'NURSERY',          label: 'Nursery' },
+  { value: 'PRIMARY',          label: 'Primary' },
+  { value: 'JUNIOR_SECONDARY', label: 'Junior Secondary' },
+  { value: 'SENIOR_SECONDARY', label: 'Senior Secondary' },
 ];
 
 const classRegistrationSchema = object({

@@ -28,40 +28,21 @@ import { default as dashboard, default as navbar } from '../style/dashboard/Scho
 import style from '../style/form/StudentRegistration.module.css';
 import SchoolDrawer from '../utility/drawer/SchoolDrawer';
 
-// ---------------------------------------------------------------------
-// Template options — must match the backend ResultTemplate enum exactly.
-// ---------------------------------------------------------------------
-
 const TEMPLATE_OPTIONS = [
-  {
-    value: 'DEFAULT_2CA_20_20_EXAM_60',
-    label: 'CA1 (20) + CA2 (20) + Exam (60)',
-  },
-  {
-    value: 'THREE_TESTS_ONE_ASSIGNMENT_EXAM_60',
-    label: 'Test 1 (10) + Test 2 (10) + Test 3 (10) + Assignment (10) + Exam (60)',
-  },
-  {
-    value: 'TWO_TESTS_ONE_ASSIGNMENT_EXAM_70',
-    label: 'Test 1 (10) + Test 2 (10) + Assignment (10) + Exam (70)',
-  },
-  {
-    value: 'TEST_20_ASSIGNMENT_20_EXAM_60',
-    label: 'Test (20) + Assignment (20) + Exam (60)',
-  },
+  { value: 'DEFAULT_2CA_20_20_EXAM_60',                label: 'CA1 (20) + CA2 (20) + Exam (60)' },
+  { value: 'THREE_TESTS_ONE_ASSIGNMENT_EXAM_60',       label: 'Test 1 (10) + Test 2 (10) + Test 3 (10) + Assignment (10) + Exam (60)' },
+  { value: 'TWO_TESTS_ONE_ASSIGNMENT_EXAM_70',         label: 'Test 1 (10) + Test 2 (10) + Assignment (10) + Exam (70)' },
+  { value: 'TEST_20_ASSIGNMENT_20_EXAM_60',            label: 'Test (20) + Assignment (20) + Exam (60)' },
 ];
 
 const SECTION_FIELDS = [
-  { key: 'crecheTemplate', label: 'Creche' },
-  { key: 'kgTemplate', label: 'KG' },
-  { key: 'nurseryTemplate', label: 'Nursery' },
-  { key: 'primaryTemplate', label: 'Primary' },
-  { key: 'secondaryTemplate', label: 'Secondary' },
+  { key: 'crecheTemplate',            label: 'Creche' },
+  { key: 'kgTemplate',                label: 'KG' },
+  { key: 'nurseryTemplate',           label: 'Nursery' },
+  { key: 'primaryTemplate',           label: 'Primary' },
+  { key: 'juniorSecondaryTemplate',   label: 'Junior Secondary (JSS/JIS/JAS)' },   // ← new
+  { key: 'seniorSecondaryTemplate',   label: 'Senior Secondary (SSS/SIS/SAS)' },   // ← new
 ];
-
-// ---------------------------------------------------------------------
-// Styled components
-// ---------------------------------------------------------------------
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -110,10 +91,6 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-// ---------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------
-
 const AssessmentScheme = () => {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -135,44 +112,37 @@ const AssessmentScheme = () => {
     localStorage.setItem('authenticated', JSON.stringify(false));
   };
 
-  // ---------------------------------------------------------------------
-  // Redux state
-  // ---------------------------------------------------------------------
+  // ---- Redux state ----
+  const crecheTemplate           = useSelector((s) => s.settings.crecheTemplate);
+  const kgTemplate               = useSelector((s) => s.settings.kgTemplate);
+  const nurseryTemplate          = useSelector((s) => s.settings.nurseryTemplate);
+  const primaryTemplate          = useSelector((s) => s.settings.primaryTemplate);
+  const juniorSecondaryTemplate  = useSelector((s) => s.settings.juniorSecondaryTemplate);   // ← new
+  const seniorSecondaryTemplate  = useSelector((s) => s.settings.seniorSecondaryTemplate);   // ← new
+  const fetchingStatus           = useSelector((s) => s.settings.fetchingStatus);
+  const updatingStatus           = useSelector((s) => s.settings.updatingStatus);
+  const settingsError            = useSelector((s) => s.settings.error);
 
-  const crecheTemplate = useSelector((s) => s.settings.crecheTemplate);
-  const kgTemplate = useSelector((s) => s.settings.kgTemplate);
-  const nurseryTemplate = useSelector((s) => s.settings.nurseryTemplate);
-  const primaryTemplate = useSelector((s) => s.settings.primaryTemplate);
-  const secondaryTemplate = useSelector((s) => s.settings.secondaryTemplate);
-  const fetchingStatus = useSelector((s) => s.settings.fetchingStatus);
-  const updatingStatus = useSelector((s) => s.settings.updatingStatus);
-  const settingsError = useSelector((s) => s.settings.error);
-
-  // ---------------------------------------------------------------------
-  // Local form state — the admin's in-progress edits.
-  // ---------------------------------------------------------------------
-
+  // ---- Local form state ----
   const [form, setForm] = useState({
-    crecheTemplate: 'DEFAULT_2CA_20_20_EXAM_60',
-    kgTemplate: 'DEFAULT_2CA_20_20_EXAM_60',
-    nurseryTemplate: 'DEFAULT_2CA_20_20_EXAM_60',
-    primaryTemplate: 'DEFAULT_2CA_20_20_EXAM_60',
-    secondaryTemplate: 'DEFAULT_2CA_20_20_EXAM_60',
+    crecheTemplate:           'DEFAULT_2CA_20_20_EXAM_60',
+    kgTemplate:               'DEFAULT_2CA_20_20_EXAM_60',
+    nurseryTemplate:          'DEFAULT_2CA_20_20_EXAM_60',
+    primaryTemplate:          'DEFAULT_2CA_20_20_EXAM_60',
+    juniorSecondaryTemplate:  'DEFAULT_2CA_20_20_EXAM_60',
+    seniorSecondaryTemplate:  'DEFAULT_2CA_20_20_EXAM_60',
   });
 
   useEffect(() => {
     setForm({
-      crecheTemplate: crecheTemplate || 'DEFAULT_2CA_20_20_EXAM_60',
-      kgTemplate: kgTemplate || 'DEFAULT_2CA_20_20_EXAM_60',
-      nurseryTemplate: nurseryTemplate || 'DEFAULT_2CA_20_20_EXAM_60',
-      primaryTemplate: primaryTemplate || 'DEFAULT_2CA_20_20_EXAM_60',
-      secondaryTemplate: secondaryTemplate || 'DEFAULT_2CA_20_20_EXAM_60',
+      crecheTemplate:          crecheTemplate          || 'DEFAULT_2CA_20_20_EXAM_60',
+      kgTemplate:              kgTemplate              || 'DEFAULT_2CA_20_20_EXAM_60',
+      nurseryTemplate:         nurseryTemplate         || 'DEFAULT_2CA_20_20_EXAM_60',
+      primaryTemplate:         primaryTemplate         || 'DEFAULT_2CA_20_20_EXAM_60',
+      juniorSecondaryTemplate: juniorSecondaryTemplate || 'DEFAULT_2CA_20_20_EXAM_60',
+      seniorSecondaryTemplate: seniorSecondaryTemplate || 'DEFAULT_2CA_20_20_EXAM_60',
     });
-  }, [crecheTemplate, kgTemplate, nurseryTemplate, primaryTemplate, secondaryTemplate]);
-
-  // ---------------------------------------------------------------------
-  // Alert + confirm dialog state
-  // ---------------------------------------------------------------------
+  }, [crecheTemplate, kgTemplate, nurseryTemplate, primaryTemplate, juniorSecondaryTemplate, seniorSecondaryTemplate]);
 
   const [open, setOpen] = useState(false);
   const [alertType, setAlertType] = useState('');
@@ -183,10 +153,6 @@ const AssessmentScheme = () => {
     if (reason === 'clickaway') return;
     setOpen(false);
   };
-
-  // ---------------------------------------------------------------------
-  // Effects
-  // ---------------------------------------------------------------------
 
   useEffect(() => {
     dispatch(getSettingsState());
@@ -200,28 +166,26 @@ const AssessmentScheme = () => {
     }
   }, [settingsError, fetchingStatus, updatingStatus]);
 
-  // ---------------------------------------------------------------------
-  // Handlers
-  // ---------------------------------------------------------------------
-
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const hasChanges = () =>
-    form.crecheTemplate !== crecheTemplate ||
-    form.kgTemplate !== kgTemplate ||
-    form.nurseryTemplate !== nurseryTemplate ||
-    form.primaryTemplate !== primaryTemplate ||
-    form.secondaryTemplate !== secondaryTemplate;
+    form.crecheTemplate          !== crecheTemplate ||
+    form.kgTemplate              !== kgTemplate ||
+    form.nurseryTemplate         !== nurseryTemplate ||
+    form.primaryTemplate         !== primaryTemplate ||
+    form.juniorSecondaryTemplate !== juniorSecondaryTemplate ||
+    form.seniorSecondaryTemplate !== seniorSecondaryTemplate;
 
   const changedSections = () => {
     const list = [];
-    if (form.crecheTemplate !== crecheTemplate) list.push('Creche');
-    if (form.kgTemplate !== kgTemplate) list.push('KG');
-    if (form.nurseryTemplate !== nurseryTemplate) list.push('Nursery');
-    if (form.primaryTemplate !== primaryTemplate) list.push('Primary');
-    if (form.secondaryTemplate !== secondaryTemplate) list.push('Secondary');
+    if (form.crecheTemplate          !== crecheTemplate)          list.push('Creche');
+    if (form.kgTemplate              !== kgTemplate)              list.push('KG');
+    if (form.nurseryTemplate         !== nurseryTemplate)         list.push('Nursery');
+    if (form.primaryTemplate         !== primaryTemplate)         list.push('Primary');
+    if (form.juniorSecondaryTemplate !== juniorSecondaryTemplate) list.push('Junior Secondary');
+    if (form.seniorSecondaryTemplate !== seniorSecondaryTemplate) list.push('Senior Secondary');
     return list;
   };
 
@@ -240,11 +204,12 @@ const AssessmentScheme = () => {
     try {
       await dispatch(
         updateResultConfig({
-          crecheTemplate: form.crecheTemplate,
-          kgTemplate: form.kgTemplate,
-          nurseryTemplate: form.nurseryTemplate,
-          primaryTemplate: form.primaryTemplate,
-          secondaryTemplate: form.secondaryTemplate,
+          crecheTemplate:          form.crecheTemplate,
+          kgTemplate:              form.kgTemplate,
+          nurseryTemplate:         form.nurseryTemplate,
+          primaryTemplate:         form.primaryTemplate,
+          juniorSecondaryTemplate: form.juniorSecondaryTemplate,
+          seniorSecondaryTemplate: form.seniorSecondaryTemplate,
         })
       ).unwrap();
 
@@ -252,7 +217,7 @@ const AssessmentScheme = () => {
       setMessage('Assessment templates updated. Existing scores were recomputed.');
       setOpen(true);
     } catch (err) {
-      // reducer already set state.error; effect opens dialog
+      // reducer sets error state
     }
   };
 
@@ -265,7 +230,6 @@ const AssessmentScheme = () => {
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
 
-          {/* Navbar */}
           <AppBar position="fixed" sx={{ zIndex: 2, background: 'white', color: '#0e387a' }}>
             <Toolbar sx={{ zIndex: 2, display: 'flex', justifyContent: 'space-between' }}>
               {!isLargeScreen && (
@@ -276,34 +240,20 @@ const AssessmentScheme = () => {
               <div>
                 <IconButton
                   onClick={profilePopup}
-                  sx={{
-                    backgroundColor: '#0e387a',
-                    '&:hover': { backgroundColor: '#0c3371' },
-                  }}
+                  sx={{ backgroundColor: '#0e387a', '&:hover': { backgroundColor: '#0c3371' } }}
                 >
                   <PersonOutlineOutlinedIcon sx={{ color: 'white', fontSize: 25 }} />
                 </IconButton>
 
-                <BasePopup
-                  sx={{ zIndex: 2 }}
-                  id={idProfile}
-                  open={openProfile}
-                  anchor={anchorProfile}
-                >
+                <BasePopup sx={{ zIndex: 2 }} id={idProfile} open={openProfile} anchor={anchorProfile}>
                   <div className={navbar['profile--selection__container']}>
                     <div className={navbar['profile']}>
-                      <a
-                        href="/school/school-profile"
-                        className={[navbar['link--profile'], navbar['']].join(' ')}
-                      >
+                      <a href="/school/school-profile" className={[navbar['link--profile'], navbar['']].join(' ')}>
                         Profile
                       </a>
                     </div>
                     <div className={navbar['logout']}>
-                      <a
-                        onClick={logout}
-                        className={[navbar['link--profile'], navbar['']].join(' ')}
-                      >
+                      <a onClick={logout} className={[navbar['link--profile'], navbar['']].join(' ')}>
                         Logout
                       </a>
                     </div>
@@ -313,7 +263,6 @@ const AssessmentScheme = () => {
             </Toolbar>
           </AppBar>
 
-          {/* Drawer */}
           <SchoolDrawer
             isLargeScreen={isLargeScreen}
             isDrawerOpen={isDrawerOpen}
@@ -321,7 +270,6 @@ const AssessmentScheme = () => {
             logout={logout}
           />
 
-          {/* Main */}
           <Box
             component="main"
             sx={{
@@ -362,11 +310,7 @@ const AssessmentScheme = () => {
                       }}
                     >
                       {TEMPLATE_OPTIONS.map((opt) => (
-                        <MenuItem
-                          key={opt.value}
-                          value={opt.value}
-                          sx={{ fontSize: '1.3rem' }}
-                        >
+                        <MenuItem key={opt.value} value={opt.value} sx={{ fontSize: '1.3rem' }}>
                           {opt.label}
                         </MenuItem>
                       ))}
@@ -394,7 +338,6 @@ const AssessmentScheme = () => {
         </Box>
       </ClickAwayListener>
 
-      {/* Confirm dialog — sits outside ClickAwayListener */}
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <Box sx={{ p: 3, minWidth: 400 }}>
           <h3 style={{ marginTop: 0 }}>Save Assessment Templates</h3>
@@ -403,25 +346,18 @@ const AssessmentScheme = () => {
             {changed.length === 1 ? '' : 's'}:
           </p>
           <ul style={{ color: '#0e387a', fontSize: '1.4rem' }}>
-            {changed.map((s) => (
-              <li key={s}>{s}</li>
-            ))}
+            {changed.map((s) => (<li key={s}>{s}</li>))}
           </ul>
           <p style={{ color: '#7a1f1f', fontSize: '1.3rem' }}>
             The recompute may take a few seconds on large classes. Continue?
           </p>
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-            <Button variant="outlined" onClick={() => setConfirmOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="contained" onClick={handleConfirmSave}>
-              Confirm
-            </Button>
+            <Button variant="outlined" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button variant="contained" onClick={handleConfirmSave}>Confirm</Button>
           </div>
         </Box>
       </Dialog>
 
-      {/* Alert dialog */}
       <Snackbar
         open={open}
         autoHideDuration={3000}
@@ -436,22 +372,13 @@ const AssessmentScheme = () => {
             sx={{ '& .MuiDialog-paper': { width: '100%', borderRadius: '15px' } }}
           >
             {alertType === 'success' ? (
-              <div
-                style={{ width: '100%', background: '#fff' }}
-                className={[dashboard['card--alert-success']].join(' ')}
-              >
+              <div style={{ width: '100%', background: '#fff' }} className={[dashboard['card--alert-success']].join(' ')}>
                 <div className={dashboard['card_body']}>
-                  <span
-                    className={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}
-                  >
-                    <IconButton onClick={handleClose}>
-                      <Cancel sx={{ fontSize: 30 }} />
-                    </IconButton>
+                  <span className={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
+                    <IconButton onClick={handleClose}><Cancel sx={{ fontSize: 30 }} /></IconButton>
                   </span>
                   <span className={dashboard['icon-container']}>
-                    <svg
-                      className={[dashboard['icon--big'], dashboard['icon--success']].join(' ')}
-                    >
+                    <svg className={[dashboard['icon--big'], dashboard['icon--success']].join(' ')}>
                       <use href="/images/sprite.svg#success-icon"></use>
                     </svg>
                   </span>
@@ -460,17 +387,10 @@ const AssessmentScheme = () => {
                 <p className={dashboard['card_footer']}>success</p>
               </div>
             ) : (
-              <div
-                style={{ width: '100%', background: '#fff' }}
-                className={[dashboard['card--alert-error']].join(' ')}
-              >
+              <div style={{ width: '100%', background: '#fff' }} className={[dashboard['card--alert-error']].join(' ')}>
                 <div className={dashboard['card_body']}>
-                  <span
-                    className={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}
-                  >
-                    <IconButton onClick={handleClose}>
-                      <Cancel sx={{ fontSize: 30 }} />
-                    </IconButton>
+                  <span className={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
+                    <IconButton onClick={handleClose}><Cancel sx={{ fontSize: 30 }} /></IconButton>
                   </span>
                   <span className={dashboard['icon-container']}>
                     <svg className={[dashboard['icon--big'], dashboard['icon--error']].join(' ')}>

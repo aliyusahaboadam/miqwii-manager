@@ -1,0 +1,277 @@
+// File: src/component/utility/PartnerDemographicsCharts.jsx
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import dashboard from '../style/dashboard/SchoolDashboard.module.css';
+
+import {
+    getMyPartnerClassCounts,
+    getMyPartnerStudentGenderCounts,
+    getMyPartnerTeacherCounts,
+} from '../../redux/reducer/partnerSlice';
+
+const PartnerDemographicsCharts = () => {
+
+  const partnerState = useSelector((state) => state.partner);
+  const {
+    partnerStudentGenderCounts,
+    partnerClassCounts,
+    partnerTeacherCounts,
+  } = partnerState;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = () => {
+    dispatch(getMyPartnerStudentGenderCounts());
+    dispatch(getMyPartnerClassCounts());
+    dispatch(getMyPartnerTeacherCounts());
+  };
+
+  const chartStyle = {
+    container: {
+      width: '100%',
+      backgroundColor: '#f8f9fa',
+      padding: '10px',
+      fontFamily: 'Roboto'
+    },
+    chartGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+      gap: '10px',
+      marginBottom: '0px'
+    },
+    chartCard: {
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+      padding: '0px',
+      margin: '0'
+    },
+    chartTitle: {
+      fontSize: '20px',
+      fontWeight: '500',
+      marginBottom: '0px',
+      textAlign: 'center',
+      color: '#9a99ac',
+      fontFamily: 'Roboto',
+      fontStyle: 'italic'
+    },
+    chartTotal: {
+      marginTop: '16px',
+      textAlign: 'center',
+      fontSize: '14px',
+      color: '#0e387a'
+    },
+    summaryCard: {
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+      padding: '10px'
+    },
+    summaryTitle: {
+      fontSize: '15px',
+      fontWeight: '500',
+      marginBottom: '10px',
+      textAlign: 'center',
+      color: '#0e387a'
+    },
+    summaryGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '16px'
+    },
+    summaryItem: {
+      textAlign: 'center',
+      padding: '16px',
+      borderRadius: '8px'
+    },
+    summaryItemTitle: {
+      fontSize: '10px',
+      fontWeight: '600',
+      marginBottom: '8px'
+    },
+    summaryItemValue: {
+      fontSize: '20px',
+      fontWeight: 'bold'
+    }
+  };
+
+  const summaryStyles = {
+    students: { ...chartStyle.summaryItem, backgroundColor: '#e3f2fd', color: '#0e387a' },
+    staff:    { ...chartStyle.summaryItem, backgroundColor: '#e8f5e8', color: '#0e387a' },
+    classes:  { ...chartStyle.summaryItem, backgroundColor: '#f3e5f5', color: '#0e387a' }
+  };
+
+  // Student gender split
+  const studentGenderData = [
+    { name: 'Female Students', value: partnerStudentGenderCounts.femaleCount || 0, color: '#007CC3' },
+    { name: 'Male Students',   value: partnerStudentGenderCounts.maleCount   || 0, color: '#00529B' }
+  ];
+
+  // Teacher distribution — one slice per section
+  const teacherData = [
+    { name: 'Creche Teachers',    value: partnerTeacherCounts.CRECHE    || 0, color: '#00008B' },
+    { name: 'KG Teachers',        value: partnerTeacherCounts.KG        || 0, color: '#1F75FE' },
+    { name: 'Nursery Teachers',   value: partnerTeacherCounts.NURSERY   || 0, color: '#74BBFB' },
+    { name: 'Primary Teachers',   value: partnerTeacherCounts.PRIMARY   || 0, color: '#5788b3ff' },
+    { name: 'Secondary Teachers', value: partnerTeacherCounts.SECONDARY || 0, color: 'rgb(14, 79, 136)' },
+  ];
+
+  // Class distribution — one slice per section
+  const classData = [
+    { name: 'Creche Classes',    value: partnerClassCounts.CRECHE    || 0, color: '#7D77DE' },
+    { name: 'KG Classes',        value: partnerClassCounts.KG        || 0, color: '#1432dcff' },
+    { name: 'Nursery Classes',   value: partnerClassCounts.NURSERY   || 0, color: '#013375' },
+    { name: 'Primary Classes',   value: partnerClassCounts.PRIMARY   || 0, color: '#0167AD' },
+    { name: 'Secondary Classes', value: partnerClassCounts.SECONDARY || 0, color: 'rgb(69, 78, 128)' },
+  ];
+
+  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="central"
+        fontSize="12"
+        fontWeight="bold"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
+  return (
+    <div style={chartStyle.container}>
+
+      <div className={[dashboard['grid'], dashboard['grid--1x3']].join(' ')}>
+
+        {/* Student Gender Distribution */}
+        <div style={chartStyle.chartCard}>
+          <h2 style={chartStyle.chartTitle}>Student Gender Distribution</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={studentGenderData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomLabel}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                fontFamily='Roboto'
+              >
+                {studentGenderData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [value, 'Students']} />
+              <Legend wrapperStyle={legendStyle} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div style={chartStyle.chartTotal}>
+            <p>Total Students: {studentGenderData.reduce((sum, item) => sum + item.value, 0)}</p>
+          </div>
+        </div>
+
+        {/* Teacher Distribution */}
+        <div style={chartStyle.chartCard}>
+          <h2 style={chartStyle.chartTitle}>Teacher Distribution</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={teacherData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomLabel}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {teacherData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [value, 'Staff']} />
+              <Legend wrapperStyle={legendStyle} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div style={chartStyle.chartTotal}>
+            <p>Total Staff: {teacherData.reduce((sum, item) => sum + item.value, 0)}</p>
+          </div>
+        </div>
+
+        {/* Class Distribution */}
+        <div style={chartStyle.chartCard}>
+          <h2 style={chartStyle.chartTitle}>Class Distribution</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={classData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={renderCustomLabel}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {classData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => [value, 'Classes']} />
+              <Legend wrapperStyle={legendStyle} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div style={chartStyle.chartTotal}>
+            <p>Total Classes: {classData.reduce((sum, item) => sum + item.value, 0)}</p>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Summary Statistics */}
+      <div style={chartStyle.summaryCard}>
+        <h2 style={chartStyle.summaryTitle}>Partner Network Summary</h2>
+        <div style={chartStyle.summaryGrid}>
+          <div style={summaryStyles.students}>
+            <h3 style={chartStyle.summaryItemTitle}>Total Students</h3>
+            <p style={chartStyle.summaryItemValue}>{studentGenderData.reduce((sum, item) => sum + item.value, 0)}</p>
+          </div>
+          <div style={summaryStyles.staff}>
+            <h3 style={chartStyle.summaryItemTitle}>Total Staff</h3>
+            <p style={chartStyle.summaryItemValue}>{teacherData.reduce((sum, item) => sum + item.value, 0)}</p>
+          </div>
+          <div style={summaryStyles.classes}>
+            <h3 style={chartStyle.summaryItemTitle}>Total Classes</h3>
+            <p style={chartStyle.summaryItemValue}>{classData.reduce((sum, item) => sum + item.value, 0)}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+};
+
+export default PartnerDemographicsCharts;
+
+const legendStyle = {
+  fontSize: '16px',
+  fontWeight: '500',
+  color: '#9a99ac',
+  fontFamily: 'Roboto',
+  margin: '0px'
+};

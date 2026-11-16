@@ -24,6 +24,11 @@ const Home = () => {
     navigate("/school/login");
   }
 
+
+    const navigateToPartnerLogin = () => {
+    navigate("/partner/login");
+  }
+
   const navigateToService = () => {
     navigate("/services");
   }

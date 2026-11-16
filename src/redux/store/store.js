@@ -6,6 +6,7 @@ import cbtSlice from '../reducer/cbtSlice';
 import classSlice from '../reducer/classSlice';
 import graduationSlice from '../reducer/graduationSlice';
 import loginSlice from '../reducer/loginSlice';
+import partnerSlice from '../reducer/partnerSlice';
 import passwordSlice from '../reducer/passwordSlice';
 import paymentSlice from '../reducer/paymentSlice';
 import promotionSlice from '../reducer/promotionSlice';
@@ -38,6 +39,7 @@ const store = configureStore({
         attendance: attendanceSlice,
         results: resultSlice,
         cbt: cbtSlice,
+        partner: partnerSlice,
     },
 
     devTools: composeWithDevTools(),

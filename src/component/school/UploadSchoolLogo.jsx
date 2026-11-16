@@ -1,48 +1,38 @@
+// File: src/component/school/UploadSchoolLogo.jsx
 import { Close as Cancel } from "@mui/icons-material";
-import { Button, IconButton, Snackbar } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { IconButton, Snackbar } from '@mui/material';
 import MuiCard from '@mui/material/Card';
 import Dialog from '@mui/material/Dialog';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { object, string } from 'yup';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { uploadLogo } from '../../redux/reducer/schoolSlice';
 import dashboard from '../style/dashboard/SchoolDashboard.module.css';
 import style from '../style/form/SchoolRegistration.module.css';
-
-
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignSelf: 'center',
   width: '100%',
-  overflowY: 'auto', // Enables vertical scrolling
-  '&::-webkit-scrollbar': {
-          display: 'none',
-        },
-        // Hide scrollbar for Firefox
-        scrollbarWidth: 'none', // Firefox
-        msOverflowStyle: 'none', // IE and Edge
-        borderRadius: '10px',
+  overflowY: 'auto',
+  '&::-webkit-scrollbar': { display: 'none' },
+  scrollbarWidth: 'none',
+  msOverflowStyle: 'none',
+  borderRadius: '10px',
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
+  [theme.breakpoints.up('sm')]: { maxWidth: '450px' },
+  boxShadow: 'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
   ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+    boxShadow: 'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
   }),
 }));
-
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   position: 'relative',
@@ -53,329 +43,278 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
   padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
+  [theme.breakpoints.up('sm')]: { padding: theme.spacing(4) },
   '&::before': {
     content: '""',
     display: 'block',
     position: 'absolute',
     zIndex: -1,
     inset: 0,
-    backgroundImage:
-      'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+    backgroundImage: 'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+      backgroundImage: 'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
     }),
   },
 }));
 
-
-
 const UploadSchoolLogo = () => {
 
-  const schoolRegistrationSchema = object({
+  const [open, setOpen] = useState(false);
+  const [alertType, setAlertType] = useState("");
+  const [message, setMessage] = useState("");
 
-          logo: string().required("logo Required"),
-   
-         
+  // ---- File selection state ----
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const fileInputRef = useRef(null);
 
-  });
-  
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-const [open, setOpen] = useState(false); // Controls the Snackbar state
-const [alertType, setAlertType] = useState(""); // "success" or "error"
-const [message, setMessage] = useState(""); 
-const dispatch = useDispatch();
-const location = useLocation();
-const navigate = useNavigate();
-const { id } = useParams();
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") return;
+    setOpen(false);
+  };
 
+  const authenticated = false;
+  const logout = () => {
+    localStorage.removeItem('token');
+    navigate("/school/login");
+    localStorage.setItem('authenticated', JSON.stringify(authenticated));
+  };
 
-const handleClose = (event, reason) => {
-  if (reason === "clickaway") {
-    return; // Prevent closing if the user clicks away
-  }
-  setOpen(false); // Close the Snackbar
-};
+  // ---- File pick with validation ----
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
+    // Size check
+    if (file.size > 5 * 1024 * 1024) {
+      setAlertType("error");
+      setMessage("File too large. Maximum 5 MB.");
+      setOpen(true);
+      event.target.value = "";
+      return;
+    }
 
+    // Type check
+    if (!file.type.startsWith("image/")) {
+      setAlertType("error");
+      setMessage("Please select an image file (jpg, png, etc.)");
+      setOpen(true);
+      event.target.value = "";
+      return;
+    }
 
-const authenticated = false;
-const logout = () => {
-localStorage.removeItem('token');
-navigate("/school/login")
-localStorage.setItem('authenticated', JSON.stringify(authenticated));
-}
+    setSelectedFile(file);
 
+    // Live preview via object URL
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+  };
 
+  const handleRemoveSelected = () => {
+    setSelectedFile(null);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
-     const handleFormSubmit = async (values, { resetForm })  => {
+  // ---- Submit ----
+  const handleFormSubmit = async () => {
+    if (!selectedFile) {
+      setAlertType("error");
+      setMessage("Please select a logo image first.");
+      setOpen(true);
+      return;
+    }
 
-         const formData = new FormData();
-         formData.append("image", values.image)
-  
-                
-                    try {
-                      const body = await dispatch(uploadLogo(formData)).unwrap();
-                      console.log(body);
-                      setAlertType("success");
-                      setMessage(body.message)
-                   
-                     } catch (error) {
-                      console.log(error.message);
-                      setAlertType('error');
-                      setMessage(error.message);
-                     }
-                  // Handle form submission logic
-                  console.log('Form values:', values);
-                  setOpen(true);
-                  resetForm(); // This will reset the form to the initial values
-                };
-               
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+
+    try {
+      const body = await dispatch(uploadLogo(formData)).unwrap();
+      setAlertType("success");
+      setMessage(body.message || "Logo uploaded successfully");
+      setOpen(true);
+      handleRemoveSelected();
+    } catch (error) {
+      setAlertType('error');
+      setMessage(error.message || "Failed to upload logo");
+      setOpen(true);
+    }
+  };
+
   return (
+    <SignInContainer>
+      <Formik
+        initialValues={{ image: "", imageName: "" }}
+        onSubmit={handleFormSubmit}
+      >
+        {({ isSubmitting, handleSubmit }) => (
+          <Card>
 
- 
-              <SignInContainer>
+            {/* Card Image */}
+            <section className={style.container__brand}>
+              <img src="/images/logo.png" alt="Logo" />
+            </section>
 
-             <Formik
-                    initialValues={{
-                      image: "",
-                      imageName: ""
-    
+            {/* Card Header */}
+            <p className={style['form-header']}>Upload School Logo</p>
+
+            {/* ================= Logo Upload Block ================= */}
+            <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                style={{
+                  cursor: 'pointer',
+                  display: 'inline-block',
+                  position: 'relative',
+                }}
+                title="Click to select logo"
+              >
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="Logo preview"
+                    style={{
+                      width: 140,
+                      height: 140,
+                      objectFit: 'contain',
+                      borderRadius: 12,
+                      border: '2px solid #eee',
+                      padding: 8,
+                      background: '#fff',
                     }}
-                
-                    onSubmit={handleFormSubmit}
-                  >
-    
-                {({
-                  errors,
-                  handleChange, 
-                  handleSubmit, 
-                  setFieldValue,
-                  values,
-                  isSubmitting,
-                  touched,
-                  handleBlur
-                }) => (
-
-                  <Card>
-      
-
-      
-                  {/*Card Image*/}
-            
-                 <section class={style.container__brand}>
-                         <img src="/images/logo.png" alt="Logo"/>
-                </section>
-            
-                 
-             
-                  {/*Card Header*/}
-                {/* <p className={style['form-header']}>Upload School Logo</p> */}
-            
-                 
-                 
-                      <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-                 
-                    
-                   
-                 {/* <TextField
-                       type='file'
-                       variant="outlined"
-                       fullWidth
-                       margin="normal"
-                       onChange={handleChange}
-                       onBlur={handleBlur}
-                       value={values.logo}
-                       name='logo'
-                       error={touched.logo && Boolean(errors.logo)}
-                       helperText={touched.logo && errors.logo}
-                       slotProps={{
-                         formHelperText: {
-                           sx: { fontSize: 15 },  // Increase font size of helper text
-                         },
-                         inputLabel: {
-                           style: { fontSize: 16 }, // font size for label text
-                         },
-                         
-                       }}
-                     /> */}
-                        
-                 
-                     
-                 
-                      </div>
-                 
-                 <Button
-                 variant='outlined'
-                 component="label"
-                 sx={{padding: "2rem", fontSize: "1.5rem"}}
-                 >
-
-                  <input
-                  type='file'
-                  hidden
-                  accept='image/*'
-                  onChange={(event) => {
-                    const file = event.currentTarget.files[0];
-                    setFieldValue("image", file)
-                    setFieldValue("imageName", file.name)
-                  }}
                   />
-                  Click to upload logo
-                 </Button>
+                ) : (
+                  <div
+                    style={{
+                      width: 140,
+                      height: 140,
+                      borderRadius: 12,
+                      border: '2px dashed #ccc',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: '#f9f9f9',
+                      color: '#9a99ac',
+                      fontSize: 13,
+                      gap: 6,
+                    }}
+                  >
+                    <CloudUploadIcon sx={{ fontSize: 32, color: '#9a99ac' }} />
+                    No file selected
+                  </div>
+                )}
+              </div>
 
-                 <TextField
-                  value={values.imageName}
-                  variant='standard'
-                  placeholder='No File Selected'
-                  InputProps={{
-                    readOnly: true
-                  }}
-                  sx={{
-                    "& .MuiInputBase-input": {
-                      fontSize: "1.5rem"
-                    },
-                    "& fieldset": {
-                     borderColor: "transparent",
-                     backgroundColor: "#f5f5f5",
-                     border: "none",
-                    }
-                  }}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+              />
 
-                 />
-              
-            
-             {/* {BUTTON } */}
-
-             <button  disabled={isSubmitting}  type="submit" onClick={handleSubmit} className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}>{isSubmitting ? 'Uploading...' : 'Upload'}</button>
-            
-
-          <div className={style['form-link--container']}>
-
-          </div>
-
-     
-            
-    </Card>
-
-)}
-                   
-       
-       
-</Formik>  
-
-    
-     <div className={style.footer__brand}>
-              <img src="/images/logo.png" alt=""/>
-              <p className={style.footer__copyright}> (c) 2026 Miqwii, All Rights Reserved</p>
-       </div>
-
-           <Snackbar
-                          open={open}
-                          autoHideDuration={3000} // Automatically hide after 1 second
-                          onClose={handleClose}
-                          anchorOrigin={{ vertical: "center", horizontal: "center" }} // Position at the top center
-                        >
-           
-           
-           
-           
-                 <div>
-                 <Dialog
-                   open={open}
-                   onClose={handleClose}
-                   BackdropProps={{
-                     sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" }, // Darker overlay
-                   }}
-           
-                   sx={{
-                     "& .MuiDialog-paper": {
-                       width: '100%',
-                       borderRadius: "15px", // Optional: Rounded corners
-                     },
-                   }}
-                 
-                 >
-           
-                   {
-           
-                     alertType === 'success' ? 
-           
-                     <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-success']].join(' ')}>
-                     <div class={dashboard['card_body']}>
-           
-                                  
-                        <span class={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
-                             
-                             <IconButton onClick={handleClose}>
-                               <Cancel sx={{ fontSize: 30 }} />
-                             </IconButton>
+              <div style={{ marginTop: 8, fontSize: 13, color: '#9a99ac' }}>
+                {selectedFile ? (
+                  <>
+                    <span style={{ color: '#0e387a', fontWeight: 600 }}>
+                      {selectedFile.name}
                     </span>
-           
-                     <span class={dashboard['icon-container']}>
-                             <svg class={[dashboard['icon--big'], dashboard['icon--success']].join(' ')}>
-                                 <use href="/images/sprite.svg#success-icon"></use>
-                               </svg>
-                         </span>
-           
-                         <p  class={dashboard['alert-message']} >{message}</p>
-                      
-                     </div>
-                     <p class={dashboard['card_footer']}>success</p>
-                   </div>
-           
-                   : 
-           
-                   <div style={{width: '100%', background: '#fff'}} class={[dashboard['card--alert-error']].join(' ')}>
-                   <div class={dashboard['card_body']}>
-           
-           
-                      <span class={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
-                           
-                                <IconButton onClick={handleClose}>
-                                  <Cancel sx={{ fontSize: 30 }} />
-                                </IconButton>
-                       </span>
-           
-           
-                   <span class={dashboard['icon-container']}>
-                           <svg class={[dashboard['icon--big'], dashboard['icon--error']].join(' ')}>
-                               <use href="/images/sprite.svg#error-icon"></use>
-                             </svg>
-                       </span>
-           
-                       <p class={dashboard['alert-message']}>{message}</p>
-                    
-                   </div>
-                   <p class={dashboard['card_footer']}>error</p>
-                 </div>
-           
-           
-                   }
-                 
-           
-            
-                       
-                      
-                 </Dialog>
-           
-                 </div>
-           
-                 
-                        </Snackbar>
+                    {'  ·  '}
+                    <span
+                      onClick={handleRemoveSelected}
+                      style={{ color: '#F44336', cursor: 'pointer', fontWeight: 600 }}
+                    >
+                      Remove
+                    </span>
+                  </>
+                ) : (
+                  <>Click the box to select a logo (max 5 MB)</>
+                )}
+              </div>
+            </div>
+            {/* ================= End Logo Upload Block ================= */}
 
-   </SignInContainer>
-    
-   
+            {/* Submit */}
+            <button
+              disabled={isSubmitting || !selectedFile}
+              type="submit"
+              onClick={handleSubmit}
+              className={[style['btn'], style['btn--block'], style['btn--primary']].join(' ')}
+            >
+              {isSubmitting ? 'Uploading...' : 'Upload Logo'}
+            </button>
+
+          </Card>
+        )}
+      </Formik>
+
+      <div className={style.footer__brand}>
+        <img src="/images/logo.png" alt="" />
+        <p className={style.footer__copyright}>(c) 2026 Miqwii, All Rights Reserved</p>
+      </div>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "center", horizontal: "center" }}
+      >
+        <div>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            BackdropProps={{ sx: { backgroundColor: "rgba(157, 152, 202, 0.5)" } }}
+            sx={{ "& .MuiDialog-paper": { width: '100%', borderRadius: "15px" } }}
+          >
+            {alertType === 'success' ? (
+              <div style={{ width: '100%', background: '#fff' }} className={[dashboard['card--alert-success']].join(' ')}>
+                <div className={dashboard['card_body']}>
+                  <span className={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
+                    <IconButton onClick={handleClose}>
+                      <Cancel sx={{ fontSize: 30 }} />
+                    </IconButton>
+                  </span>
+                  <span className={dashboard['icon-container']}>
+                    <svg className={[dashboard['icon--big'], dashboard['icon--success']].join(' ')}>
+                      <use href="/images/sprite.svg#success-icon"></use>
+                    </svg>
+                  </span>
+                  <p className={dashboard['alert-message']}>{message}</p>
+                </div>
+                <p className={dashboard['card_footer']}>success</p>
+              </div>
+            ) : (
+              <div style={{ width: '100%', background: '#fff' }} className={[dashboard['card--alert-error']].join(' ')}>
+                <div className={dashboard['card_body']}>
+                  <span className={[dashboard['icon-container'], dashboard['alert-close']].join(' ')}>
+                    <IconButton onClick={handleClose}>
+                      <Cancel sx={{ fontSize: 30 }} />
+                    </IconButton>
+                  </span>
+                  <span className={dashboard['icon-container']}>
+                    <svg className={[dashboard['icon--big'], dashboard['icon--error']].join(' ')}>
+                      <use href="/images/sprite.svg#error-icon"></use>
+                    </svg>
+                  </span>
+                  <p className={dashboard['alert-message']}>{message}</p>
+                </div>
+                <p className={dashboard['card_footer']}>error</p>
+              </div>
+            )}
+          </Dialog>
+        </div>
+      </Snackbar>
+    </SignInContainer>
   );
 };
 
 export default UploadSchoolLogo;
-
-
-

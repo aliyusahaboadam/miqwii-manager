@@ -46,6 +46,19 @@ const AdminDemographicsCharts = () => {
     dispatch(getTeacherCountsBySection());
   };
 
+  // =====================================================================
+  // Class counts per section — fallback to legacy SECONDARY during the
+  // transition window (backend not yet redeployed).
+  // =====================================================================
+  const classCounts  = classCountsBySection  || {};
+  const teacherCounts = teacherCountsBySection || {};
+
+  const JUNIOR_SECONDARY_CLASSES  = (classCounts.JUNIOR_SECONDARY  ?? classCounts.SECONDARY) || 0;
+  const SENIOR_SECONDARY_CLASSES  = (classCounts.SENIOR_SECONDARY  ?? classCounts.SECONDARY) || 0;
+
+  const JUNIOR_SECONDARY_TEACHERS = (teacherCounts.JUNIOR_SECONDARY ?? teacherCounts.SECONDARY) || 0;
+  const SENIOR_SECONDARY_TEACHERS = (teacherCounts.SENIOR_SECONDARY ?? teacherCounts.SECONDARY) || 0;
+
   const chartStyle = {
     container: {
       width: '100%',
@@ -134,22 +147,28 @@ const AdminDemographicsCharts = () => {
     { name: 'Male Students',   value: allStudentCountMale   || 0, color: '#00529B' }
   ];
 
-  // Teacher distribution — one slice per section
+  // =====================================================================
+  // Teacher distribution — 6 slices (SECONDARY split into JSS + SSS)
+  // =====================================================================
   const teacherData = [
-    { name: 'Creche Teachers',    value: teacherCountsBySection.CRECHE    || 0, color: '#00008B' },
-    { name: 'KG Teachers',        value: teacherCountsBySection.KG        || 0, color: '#1F75FE' },
-    { name: 'Nursery Teachers',   value: teacherCountsBySection.NURSERY   || 0, color: '#74BBFB' },
-    { name: 'Primary Teachers',   value: teacherCountsBySection.PRIMARY   || 0, color: '#5788b3ff' },
-    { name: 'Secondary Teachers', value: teacherCountsBySection.SECONDARY || 0, color: 'rgb(14, 79, 136)' },
+    { name: 'Creche Teachers',           value: teacherCounts.CRECHE           || 0, color: '#00008B' },
+    { name: 'KG Teachers',               value: teacherCounts.KG               || 0, color: '#1F75FE' },
+    { name: 'Nursery Teachers',          value: teacherCounts.NURSERY          || 0, color: '#74BBFB' },
+    { name: 'Primary Teachers',          value: teacherCounts.PRIMARY          || 0, color: '#5788b3ff' },
+    { name: 'Junior Secondary Teachers', value: JUNIOR_SECONDARY_TEACHERS,          color: '#0e4f88' },
+    { name: 'Senior Secondary Teachers', value: SENIOR_SECONDARY_TEACHERS,          color: 'rgb(69, 78, 128)' },
   ];
 
-  // Class distribution — one slice per section
+  // =====================================================================
+  // Class distribution — 6 slices (SECONDARY split into JSS + SSS)
+  // =====================================================================
   const classData = [
-    { name: 'Creche Classes',    value: classCountsBySection.CRECHE    || 0, color: '#7D77DE' },
-    { name: 'KG Classes',        value: classCountsBySection.KG        || 0, color: '#1432dcff' },
-    { name: 'Nursery Classes',   value: classCountsBySection.NURSERY   || 0, color: '#013375' },
-    { name: 'Primary Classes',   value: classCountsBySection.PRIMARY   || 0, color: '#0167AD' },
-    { name: 'Secondary Classes', value: classCountsBySection.SECONDARY || 0, color: 'rgb(69, 78, 128)' },
+    { name: 'Creche Classes',           value: classCounts.CRECHE           || 0, color: '#7D77DE' },
+    { name: 'KG Classes',               value: classCounts.KG               || 0, color: '#1432dcff' },
+    { name: 'Nursery Classes',          value: classCounts.NURSERY          || 0, color: '#013375' },
+    { name: 'Primary Classes',          value: classCounts.PRIMARY          || 0, color: '#0167AD' },
+    { name: 'Junior Secondary Classes', value: JUNIOR_SECONDARY_CLASSES,          color: '#0e4f88' },
+    { name: 'Senior Secondary Classes', value: SENIOR_SECONDARY_CLASSES,          color: 'rgb(69, 78, 128)' },
   ];
 
   const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
