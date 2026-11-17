@@ -5,8 +5,8 @@
 // computed on the backend.
 //
 // Used by:
-//   - AddScore.jsx     → renders one input per entry, per student
-//   - AddComponent.jsx → looks up the header/max for a given field
+//   - AddScore.jsx       → renders one input per entry, per student
+//   - AddComponent.jsx   → looks up the header/max for a given field
 //   - TeacherSubject.jsx → decides which single-component buttons to render
 //
 // If you add a template on the backend, mirror it here so the UI knows
@@ -21,21 +21,21 @@ export const TEMPLATE_INPUTS = {
     { field: 'exam',       header: 'Exam', max: 60 },
   ],
   THREE_TESTS_ONE_ASSIGNMENT_EXAM_60: [
-    { field: 'firstTest',  header: 'CA1', max: 10 },
-    { field: 'secondTest', header: 'CA2', max: 10 },
-    { field: 'thirdTest',  header: 'CA3', max: 10 },
-    { field: 'assignment', header: 'Asg', max: 10 },
+    { field: 'firstTest',  header: 'CA1',  max: 10 },
+    { field: 'secondTest', header: 'CA2',  max: 10 },
+    { field: 'thirdTest',  header: 'CA3',  max: 10 },
+    { field: 'assignment', header: 'Asg',  max: 10 },
     { field: 'exam',       header: 'Exam', max: 60 },
   ],
   TWO_TESTS_ONE_ASSIGNMENT_EXAM_70: [
-    { field: 'firstTest',  header: 'CA1', max: 10 },
-    { field: 'secondTest', header: 'CA2', max: 10 },
-    { field: 'assignment', header: 'Asg', max: 10 },
+    { field: 'firstTest',  header: 'CA1',  max: 10 },
+    { field: 'secondTest', header: 'CA2',  max: 10 },
+    { field: 'assignment', header: 'Asg',  max: 10 },
     { field: 'exam',       header: 'Exam', max: 70 },
   ],
   TEST_20_ASSIGNMENT_20_EXAM_60: [
-    { field: 'firstTest',  header: 'CA1', max: 20 },
-    { field: 'assignment', header: 'Asg', max: 20 },
+    { field: 'firstTest',  header: 'CA1',  max: 20 },
+    { field: 'assignment', header: 'Asg',  max: 20 },
     { field: 'exam',       header: 'Exam', max: 60 },
   ],
 };
@@ -59,10 +59,51 @@ export const getInputByField = (template, field) => {
 
 /**
  * Resolve the template name from the Redux settings object and a section.
- * The settings keys are e.g. `primaryTemplate`, `secondaryTemplate`.
+ *
+ * Sections are UPPER_SNAKE_CASE (`JUNIOR_SECONDARY`) but the settings
+ * fields are camelCase (`juniorSecondaryTemplate`). Using
+ * `section.toLowerCase() + 'Template'` would produce
+ * `junior_secondaryTemplate` — which doesn't match anything — so we
+ * map explicitly.
+ *
+ * The `SECONDARY` case is a legacy fallback for any class still carrying
+ * the old section value (before the JSS/SSS split). It tries the old
+ * single field first, then either of the two new fields, so nothing
+ * blows up if the DB migration is partial.
  */
 export const templateForSection = (settings, section) => {
   if (!settings || !section) return DEFAULT_TEMPLATE;
-  const key = `${section.toLowerCase()}Template`;
-  return settings[key] || DEFAULT_TEMPLATE;
+
+  switch (section) {
+    case 'CRECHE':
+      return settings.crecheTemplate         || DEFAULT_TEMPLATE;
+    case 'KG':
+      return settings.kgTemplate             || DEFAULT_TEMPLATE;
+    case 'NURSERY':
+      return settings.nurseryTemplate        || DEFAULT_TEMPLATE;
+    case 'PRIMARY':
+      return settings.primaryTemplate        || DEFAULT_TEMPLATE;
+
+    // ── New split sections ──────────────────────────────────────────
+    case 'JUNIOR_SECONDARY':
+      return settings.juniorSecondaryTemplate || DEFAULT_TEMPLATE;
+    case 'SENIOR_SECONDARY':
+      return settings.seniorSecondaryTemplate || DEFAULT_TEMPLATE;
+
+    // ── Legacy fallback ─────────────────────────────────────────────
+    // If any class row somehow still has section = 'SECONDARY' (migration
+    // not fully applied, or an old cached response), fall back to
+    // whichever secondary template is available. Prefer the new fields
+    // over the old one.
+    case 'SECONDARY':
+      return (
+        settings.juniorSecondaryTemplate ||
+        settings.seniorSecondaryTemplate ||
+        settings.secondaryTemplate       ||
+        DEFAULT_TEMPLATE
+      );
+
+    default:
+      return DEFAULT_TEMPLATE;
+  }
 };
